@@ -49,6 +49,6 @@ License
 
 This blog is open and free (both source code and articles content).
 
-The blog source code is licensed under [BSD 2 Clause License](LICENSE). The articles content are written under [Creative Commons License](LICENSE).
+The blog source code is licensed under [BSD 2 Clause License](LICENSE). The articles content are written under [Creative Commons Attribution-NonCommercialLicense](http://creativecommons.org/licenses/by-nc/3.0/deed.en_US).
 
-So, you're free to fork this project, or to reuse the articles (quoting the original author).
+So, you're free to fork this project, or to reuse the articles quoting the original author and don't using them for commercial purposes.
