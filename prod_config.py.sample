@@ -1,0 +1,2 @@
+production = 'rarylson@gbzando:11235'
+dest_path = '/var/www/gbzando'

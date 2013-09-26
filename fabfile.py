@@ -2,13 +2,16 @@ from fabric.api import *
 import fabric.contrib.project as project
 import os
 
+# Production options from external file
+import prod_config
+
 # Local path configuration (can be absolute or relative to fabfile)
 env.deploy_path = 'output'
 DEPLOY_PATH = env.deploy_path
 
 # Remote server configuration
-production = 'root@localhost:22'
-dest_path = '/var/www'
+production = prod_config.production
+dest_path = prod_config.dest_path
 
 # Rackspace Cloud Files configuration settings
 env.cloudfiles_username = 'my_rackspace_username'
