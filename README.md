@@ -32,7 +32,7 @@ How to
 
 Build static content and serve in a simple python webserver:
 
-    pelican content -s settings.py
+    pelican -s pelicanconf.py
     cd output && python -m SimpleHTTPServer
 
 To automate this task using `make`:
