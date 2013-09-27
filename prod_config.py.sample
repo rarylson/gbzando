@@ -1,2 +1,2 @@
-production = 'rarylson@gbzando:11235'
-dest_path = '/var/www/gbzando'
+production = 'root@gbzando:22'
+dest_path = '/var/www/'
