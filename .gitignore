@@ -4,3 +4,4 @@ output/*
 deploy/*
 .virtualenv
 prod_config.py
+gbzando_rsa

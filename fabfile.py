@@ -15,13 +15,7 @@ DEPLOY_PATH = env.deploy_path
 # Remote server configuration
 production = prod_config.production
 dest_path = prod_config.dest_path
-dest_owner = prod_config.owner
-
-# Rackspace Cloud Files configuration settings
-env.cloudfiles_username = 'my_rackspace_username'
-env.cloudfiles_api_key = 'my_rackspace_api_key'
-env.cloudfiles_container = 'my_cloudfiles_container'
-
+env.key_filename = prod_config.key_filename
 
 def clean():
     if os.path.isdir(OUTPUT_PATH):
@@ -63,14 +57,12 @@ def preview():
 
 @hosts(production)
 def publish():
+    clean_prod()
     local('pelican {content_path} -o {deploy_path} -s publishconf.py'.format(**env))
     project.rsync_project(
         remote_dir=dest_path,
+        ssh_opts="-i {key_filename}".format(**env),
         exclude=".DS_Store",
         local_dir=DEPLOY_PATH.rstrip('/') + '/',
         delete=True
     )
-    # Change the owner
-    if dest_owner is not None and dest_owner != '':
-        sudo('chown -R {}: {}'.format(dest_owner, dest_path))
-
