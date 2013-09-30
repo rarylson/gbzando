@@ -1,2 +1,4 @@
 production = 'root@gbzando:22'
 dest_path = '/var/www/'
+# The files owner in production server
+owner = 'www-data'

@@ -1,6 +1,6 @@
 Title: Primeiro!
 Date: 2013-09-26 21:00
-Tags: sobre, geral
+Tags: geral, gbzando
 Slug: primeiro
 Author: Rarylson Freitas
 Summary: O que é GBzando? Um blog que apresenta temas e problemas de programação e infraestrutura de TI, mas abordando-os de uma forma prática, muito mais divertida. 
@@ -25,9 +25,9 @@ A ideia do GBzando é ou focar em um **problema do dia-a-dia** ou focar em um co
 
 De que adianta ser o **Sheldom** da computação, ler todas as RFCs se, ao deparar um problema, não saber sentar no computador e resolvê-lo?
 
-Por isso, o GBzando acredita fortemente em (além de ter conhecimento) fazer, entregar: sentar no computador, programar, dar comandos, errar, depurar, testar, fazer merda, corrigir a merda, fazer gambiarras, estudar e entender porque a gambiarra funcionaram, refatorar, e no fim entregar!!!
+Por isso, o GBzando acredita fortemente em fazer, em entregar: sentar no computador, programar, dar comandos, errar, depurar, testar, fazer merda, corrigir a merda, fazer gambiarras, estudar e entender porque as gambiarras funcionaram, refatorar e, no fim, entregar!!!
 
-E também não adianta executar comandos sem entender o que eles fazem por baixo dos panos... É preciso entender o que se está fazendo para uma solução eficaz, sem gerar novos erros que só serão descobertos em momentos de crise.
+E também não adianta executar comandos sem entender o que eles fazem por baixo dos panos... É preciso entender o que se está fazendo que a solução seja eficaz e não gere novos erros que somente serão descobertos em um momento de crise.
 
 Mais importante de tudo: aprender na prática é muito mais divertido!
 

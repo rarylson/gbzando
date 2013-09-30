@@ -6,12 +6,16 @@ import os
 import prod_config
 
 # Local path configuration (can be absolute or relative to fabfile)
-env.deploy_path = 'output'
+env.content_path = 'content'
+env.output_path = 'output'
+env.deploy_path = 'deploy'
+OUTPUT_PATH = env.output_path
 DEPLOY_PATH = env.deploy_path
 
 # Remote server configuration
 production = prod_config.production
 dest_path = prod_config.dest_path
+dest_owner = prod_config.owner
 
 # Rackspace Cloud Files configuration settings
 env.cloudfiles_username = 'my_rackspace_username'
@@ -20,44 +24,53 @@ env.cloudfiles_container = 'my_cloudfiles_container'
 
 
 def clean():
+    if os.path.isdir(OUTPUT_PATH):
+        local('rm -rf {output_path}'.format(**env))
+        local('mkdir {output_path}'.format(**env))
+
+def clean_prod():
     if os.path.isdir(DEPLOY_PATH):
         local('rm -rf {deploy_path}'.format(**env))
         local('mkdir {deploy_path}'.format(**env))
 
 def build():
-    local('pelican -s pelicanconf.py')
+    local('pelican {content_path} -o {output_path} -s pelicanconf.py'.format(**env))
 
 def rebuild():
     clean()
     build()
 
 def regenerate():
-    local('pelican -r -s pelicanconf.py')
+    local('pelican {content_path} -o {output_path} -r -s pelicanconf.py'.format(**env))
 
 def serve():
-    local('cd {deploy_path} && python -m SimpleHTTPServer'.format(**env))
+    local('cd {output_path} && python -m SimpleHTTPServer'.format(**env))
 
 def reserve():
     build()
     serve()
 
 def preview():
-    local('pelican -s publishconf.py')
+    local('pelican {content_path} -o {deploy_path} -s publishconf.py'.format(**env))
 
-def cf_upload():
-    rebuild()
-    local('cd {deploy_path} && '
-          'swift -v -A https://auth.api.rackspacecloud.com/v1.0 '
-          '-U {cloudfiles_username} '
-          '-K {cloudfiles_api_key} '
-          'upload -c {cloudfiles_container} .'.format(**env))
+#def cf_upload():
+#    rebuild()
+#    local('cd {deploy_path} && '
+#          'swift -v -A https://auth.api.rackspacecloud.com/v1.0 '
+#          '-U {cloudfiles_username} '
+#          '-K {cloudfiles_api_key} '
+#          'upload -c {cloudfiles_container} .'.format(**env))
 
 @hosts(production)
 def publish():
-    local('pelican -s publishconf.py')
+    local('pelican {content_path} -o {deploy_path} -s publishconf.py'.format(**env))
     project.rsync_project(
         remote_dir=dest_path,
         exclude=".DS_Store",
         local_dir=DEPLOY_PATH.rstrip('/') + '/',
         delete=True
     )
+    # Change the owner
+    if dest_owner is not None and dest_owner != '':
+        sudo('chown -R {}: {}'.format(dest_owner, dest_path))
+

@@ -1,5 +1,6 @@
 .DS_Store
 *.pyc
 output/*
+deploy/*
 .virtualenv
 prod_config.py
