@@ -10,7 +10,7 @@ import sys
 sys.path.append(os.curdir)
 from pelicanconf import *
 
-SITEURL = '/'
+SITEURL = 'http://www.gbzando.com.br'
 RELATIVE_URLS = False
 
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
@@ -18,7 +18,24 @@ CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
 
 DELETE_OUTPUT_DIRECTORY = True
 
-# Following items are often useful when publishing
+# Adding production plugins
+PLUGINS.extend(['sitemap', 'gzip_cache', 'assets'])
 
-#DISQUS_SITENAME = ""
-#GOOGLE_ANALYTICS = ""
+# Plugin configurations
+SITEMAP = {
+    'format': 'xml',
+    'priorities': {
+        'articles': 0.5,
+        'indexes': 0.5,
+        'pages': 0.5
+    },
+    'changefreqs': {
+        'articles': 'monthly',
+        'indexes': 'daily',
+        'pages': 'monthly'
+    }
+}
+
+# Google Analytics
+GOOGLE_ANALYTICS = "UA-44485503-1"
+

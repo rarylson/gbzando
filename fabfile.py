@@ -57,7 +57,6 @@ def preview():
 
 @hosts(production)
 def publish():
-    clean_prod()
     local('pelican {content_path} -o {deploy_path} -s publishconf.py'.format(**env))
     project.rsync_project(
         remote_dir=dest_path,

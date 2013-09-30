@@ -11,7 +11,8 @@ LOCALE = 'pt_BR.UTF-8'
 
 # Default author and category
 AUTHOR = u'Rarylson Freitas'
-DEFAULT_CATEGORY = 'Geral'
+AUTHOR_EMAIL = 'rarylson@gmail.com'
+DEFAULT_CATEGORY = u'Geral'
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -34,9 +35,15 @@ THEME = 'themes/notmyidea_gbzando'
 DEFAULT_PAGINATION = 10
 USE_FOLDER_AS_CATEGORY = False
 GITHUB_URL = 'https://github.com/rarylson/gbzando'
+DEFAULT_DATE_FORMAT = '%a, %d %b %Y'
+#DISQUS_SITENAME = ""
 
 # Custom template vars
 CREATIVE_COMMONS = True
+
+# Plugins
+PLUGIN_PATH = 'plugins'
+PLUGINS = ['gravatar', ]
 
 # Static content
 #STATIC_PATHS = [

@@ -25,12 +25,12 @@ Em sistemas Linux, os processos possuem um dos seguintes estados:
 - **Suspended:** Também chamado de **stopped**, este estado é geralmente obtido quando o usuário dá um _stop_ em um processo. Quando o usuário executa um _resume_, o processo retorna a _ready queue_ e voltará a executar do exato ponto (instrução) em que havia parado;
 - **Zombie:** Também chamado de **defunct**, é um processo que finalizou a execução (e portanto não ocupa memória), mas que ainda possui uma entrada na tabela de processos, porque seu processo pai ainda não "tomou conhecimento" que o filho terminou;
     - No fluxo normal, o pai, ao ser notificado que o filho terminou, desaloca recursos desnecessários e executa outras ações necessárias, e depois o sistema retira o processo filho da tabela de processos;
-    - Se o pai não realizar nenhuma ação, o filho permanecessá na tabela de processos (como um processo zumbi) até que o pai termine sua execução.
+    - Se o pai não realizar nenhuma ação, o filho permanecerá na tabela de processos (como um processo zumbi) até que o pai termine sua execução.
 
 Árvore de processos
 -------------------
 
-No Linux, cada processo possui um pai (o processo que o criou). A excessão é o processo **init**, que é o processo raiz da árvore de processos do sistema operacional.
+No Linux, cada processo possui um pai (o processo que o criou). A exceção é o processo **init**, que é o processo raiz da árvore de processos do sistema operacional.
 
 Para ver a árvore de processos, podemos utilizar o comando `pstree`. Um exemplo de output seria:
 
@@ -193,7 +193,7 @@ O segundo programa será o **sleeping.c**:
     #include <limits.h>
 
     int main(int argc, char *argv[]) {
-        sleep(UINT_MAX); // sleeeeeeeeeeping. is this Snow White?
+        sleep(UINT_MAX); // sleeeeeeeeeeping
         return 0;
     }   
 
@@ -275,7 +275,7 @@ Para deixar a experiência mais legal ainda, vamos matar o processo **waiting** 
     >   PID %CPU S COMMAND
     > 11439 37.0 R ./waiting
 
-Neste momento, o segundo processo **waiting** irá obter o lock do arquivo (pois, ao finalizar o primeiro processo, o sistema operacional liberará os recursos obtidos por este, incluindo o lock) e mudará seu estado para _running_. Na sequência, o processo entrará em loop infinito,consumindo bastante CPU.
+Neste momento, o segundo processo **waiting** irá obter o lock do arquivo (pois, ao finalizar o primeiro processo, o sistema operacional liberará os recursos obtidos por este, incluindo o lock) e mudará seu estado para _running_. Na sequência, o processo entrará em loop infinito, consumindo bastante CPU.
 
 Com a experiência finalizada, vamos matar todos os processos, para não deixá-los executando indefinidamente no sistema:
 
@@ -306,7 +306,7 @@ Agora, iremos enviar um [sinal SIGSTOP](http://major.io/2009/06/15/two-great-sig
 Vamos, agora, executar o comando `ps` para verificar o estado deste processo:
 
     :::bash
-    ps f -o pid,%cpu,state,command -p 11440
+    ps -o pid,%cpu,state,command -p 11440
     >   PID %CPU S COMMAND
     > 11440  0.0 T ./running
 
@@ -316,7 +316,7 @@ Ao enviar um sinal SIGCONT, este processo tornará a executar do ponto em que pa
 
     :::bash
     kill -s SIGCONT 11440
-    ps f -o pid,%cpu,state,command -p 11440
+    ps -o pid,%cpu,state,command -p 11440
     >   PID %CPU S COMMAND
     > 11440 82.7 R ./running
 

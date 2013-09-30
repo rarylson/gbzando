@@ -23,13 +23,13 @@ Outros sites são melhores que qualquer coisa que eu venha a escrever, mas não 
 
 A ideia do GBzando é ou focar em um **problema do dia-a-dia** ou focar em um conceito, mas abordando-o de **forma prática**.
 
-De que adianta ser o **Sheldom** da computação, ler todas as RFCs se, ao deparar um problema, não saber sentar no computador e resolvê-lo?
+De que adianta ser o **Sheldom** da computação, ler todas as RFCs se, ao deparar um problema, não se sabe sentar no computador e resolvê-lo?
 
 Por isso, o GBzando acredita fortemente em fazer, em entregar: sentar no computador, programar, dar comandos, errar, depurar, testar, fazer merda, corrigir a merda, fazer gambiarras, estudar e entender porque as gambiarras funcionaram, refatorar e, no fim, entregar!!!
 
-E também não adianta executar comandos sem entender o que eles fazem por baixo dos panos... É preciso entender o que se está fazendo que a solução seja eficaz e não gere novos erros que somente serão descobertos em um momento de crise.
+E também não adianta executar comandos sem entender o que eles fazem por baixo dos panos... É preciso entender o que se está fazendo para que a solução seja eficaz e não gere um novo erro que somente será será descoberto em um momento de crise.
 
-Mais importante de tudo: aprender na prática é muito mais divertido!
+E o mais importante de tudo: aprender na prática é muito mais divertido!
 
 Por que português?
 ------------------

@@ -7,7 +7,7 @@ Author: Rarylson Freitas
 Summary: Entenda melhor o que são processos órfão e zumbis. Neste artigo, mostraremos como reproduzí-los através de diversas experiências e programas em C, e você entenderá os motivos que podem levar a sua aparição em servidores.
 Status: hidden
 
-Em um artigo anterior, chamado [Tipos de processos no Linux](|filename|/processos-tipos.md), mostramos como funcionam os diversos tipos de processos e como funciona a hierarquia de processos no Linux.
+Em um artigo anterior, chamado [Tipos de processos no Linux]({filename}/processos-tipos.md), mostramos como funcionam os diversos tipos de processos e como funciona a hierarquia de processos no Linux.
 
 Agora, iremos realizar diversas experiências para mostrar como podemos simular o aparecimento de processos zumbis e processos órfãos. Além disso, iremos mostrar como evitar que eles ocorram.
 
