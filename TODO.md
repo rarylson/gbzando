@@ -9,3 +9,5 @@ TODO
   See: http://docs.getpelican.com/en/3.3.0/settings.html#url-settings
 - Use robots.txt
   http://docs.getpelican.com/en/3.3.0/settings.html#path-metadata
+- Google webmasters tools
+- CSS Assets with parameters

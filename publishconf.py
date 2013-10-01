@@ -21,7 +21,7 @@ DELETE_OUTPUT_DIRECTORY = True
 # Don't publish future date articles
 WITH_FUTURE_DATES = False
 # Don't process vim swap files
-IGNORE_FILES.extend(['.*.swp', ])
+IGNORE_FILES = ['.*.swp', ]
 
 # Adding production plugins
 PLUGINS.extend(['sitemap', 'gzip_cache', ])

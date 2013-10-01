@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 # Site
 SITENAME = u'GBzando'
+SITESUBTITLE = u'Computação (programação e infraestrutura) na prática'
 SITEURL = ''
 TIMEZONE = 'America/Sao_Paulo'
 DEFAULT_LANG = 'pt_BR'
