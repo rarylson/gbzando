@@ -466,6 +466,18 @@ article h2 {
     .blogroll a[href*='docs.python.org'] {background-image: url('../images/icons/python.png');}
     .blogroll a[href*='www.linux.com'] {background-image: url('../images/icons/linux.png');}
 
+/* code highlight */
+td.linenos, td.code {
+    padding: 0;
+}
+td.linenos {
+    width: 3%;
+}
+table.highlighttable pre {
+    margin: 0;
+}
+
+
 /* creative commons */
 #about a.img {
     background: none;

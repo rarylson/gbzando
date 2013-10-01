@@ -16,12 +16,17 @@ RELATIVE_URLS = False
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
 CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
 
-DELETE_OUTPUT_DIRECTORY = True
+DELETE_OUTPUT_DIRECTORY = True 
+# Don't publish future date articles
+WITH_FUTURE_DATES = False
+# Don't process vim swap files
+IGNORE_FILES.extend(['.*.swp', ])
 
 # Adding production plugins
-PLUGINS.extend(['sitemap', 'gzip_cache', 'assets'])
+PLUGINS.extend(['sitemap', 'gzip_cache', ])
 
 # Plugin configurations
+WEBASSETS = True
 SITEMAP = {
     'format': 'xml',
     'priorities': {
@@ -33,7 +38,7 @@ SITEMAP = {
         'articles': 'monthly',
         'indexes': 'daily',
         'pages': 'monthly'
-    }
+    },
 }
 
 # Google Analytics

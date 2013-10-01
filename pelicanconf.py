@@ -34,8 +34,14 @@ SOCIAL = (
 THEME = 'themes/notmyidea_gbzando'
 DEFAULT_PAGINATION = 10
 USE_FOLDER_AS_CATEGORY = False
+# Don't generate archieve pages
+DIRECT_TEMPLATES = ['index', 'tags', 'categories', ]
 GITHUB_URL = 'https://github.com/rarylson/gbzando'
 DEFAULT_DATE_FORMAT = '%a, %d %b %Y'
+TYPOGRIFY = True
+
+# Default syntax highlight
+MD_EXTENSIONS = ['codehilite(css_class=highlight,linenums=True)','extra']
 #DISQUS_SITENAME = ""
 
 # Custom template vars
@@ -43,7 +49,8 @@ CREATIVE_COMMONS = True
 
 # Plugins
 PLUGIN_PATH = 'plugins'
-PLUGINS = ['gravatar', ]
+PLUGINS = ['gravatar', 'assets', ]
+WEBASSETS = False
 
 # Static content
 #STATIC_PATHS = [
