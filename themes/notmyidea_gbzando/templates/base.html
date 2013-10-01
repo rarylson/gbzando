@@ -6,7 +6,7 @@
         {% if not WEBASSETS %}
             <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/{{ CSS_FILE }}" />
         {% else %}
-            {% assets filters="cssmin", output="css/style.min.css", "css/main.css" %}
+            {% assets filters="cssmin", output="css/style.min.css", "css/main.css", "css/reset.css", "css/pygment.css", "css/typogrify" %}
                 <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
             {% endassets %}
         {% endif %}

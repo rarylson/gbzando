@@ -1,3 +1,6 @@
 production = 'root@gbzando:22'
 dest_path = '/var/www/'
 key = '~/.ssh/id_rsa'
+
+homolog = 'root@gbzando-homolog:22'
+homolog_path = '/var/www/'

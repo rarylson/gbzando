@@ -14,9 +14,9 @@
       {% include 'article_infos.html' %}
       {{ article.content }}
     </div><!-- /.entry-content -->
-    {% if DISQUS_SITENAME and SITEURL and article.status != "draft" %}
+    {% if (DISQUS_SITENAME and SITEURL and article.status != "draft") or (DISQUS_SITENAME and DEBUG_DISQUS) %}
     <div class="comments">
-      <h2>Comments !</h2>
+      <h2>Comentários!</h2>
       <div id="disqus_thread"></div>
       <script type="text/javascript">
         var disqus_identifier = "{{ article.url }}";

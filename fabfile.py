@@ -17,6 +17,10 @@ production = prod_config.production
 dest_path = prod_config.dest_path
 env.key_filename = prod_config.key_filename
 
+# Homolog server configurations
+homolog = prod_config.homolog
+homolog_path = prod_config.homolog_path
+
 def clean():
     if os.path.isdir(OUTPUT_PATH):
         local('rm -rf {output_path}'.format(**env))
@@ -47,19 +51,22 @@ def reserve():
 def preview():
     local('pelican {content_path} -o {deploy_path} -s publishconf.py'.format(**env))
 
-#def cf_upload():
-#    rebuild()
-#    local('cd {deploy_path} && '
-#          'swift -v -A https://auth.api.rackspacecloud.com/v1.0 '
-#          '-U {cloudfiles_username} '
-#          '-K {cloudfiles_api_key} '
-#          'upload -c {cloudfiles_container} .'.format(**env))
-
 @hosts(production)
 def publish():
     local('pelican {content_path} -o {deploy_path} -s publishconf.py'.format(**env))
     project.rsync_project(
         remote_dir=dest_path,
+        ssh_opts="-i {key_filename}".format(**env),
+        exclude=".DS_Store",
+        local_dir=DEPLOY_PATH.rstrip('/') + '/',
+        delete=True
+    )
+
+@hosts(homolog)
+def publish_homolog():
+    local('pelican {content_path} -o {deploy_path} -s homologconf.py'.format(**env))
+    project.rsync_project(
+        remote_dir=homolog_path,
         ssh_opts="-i {key_filename}".format(**env),
         exclude=".DS_Store",
         local_dir=DEPLOY_PATH.rstrip('/') + '/',

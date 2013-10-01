@@ -42,7 +42,7 @@ TYPOGRIFY = True
 
 # Default syntax highlight
 MD_EXTENSIONS = ['codehilite(css_class=highlight,linenums=True)','extra']
-#DISQUS_SITENAME = ""
+DISQUS_SITENAME = "gbzando"
 
 # Custom template vars
 CREATIVE_COMMONS = True
