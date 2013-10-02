@@ -466,11 +466,11 @@ td.linenos, td.code {
 }
 td.linenos {
     width: 3%;
+    color: #C74451;
 }
 table.highlighttable pre {
     margin: 0;
 }
-
 
 /* creative commons */
 #about a.img {
@@ -479,3 +479,11 @@ table.highlighttable pre {
     float: right;
 }
 
+/* Disqus */
+div.comments {
+    padding-top: 10px;
+}
+div#disqus_thread {
+    padding: 20px;
+    background: #EEEEEE;
+}

@@ -111,7 +111,7 @@ Em outros casos, gostaríamos que o filho também morresse. Para isso, o softwar
 
 Vamos simular agora o surgimento de um processo órfão. Para isso, vamos criar um programa que se duplica, criando um filho idêntico. Para isso, vamos criar um arquivo com o nome **fork.c**:
 
-    :::c
+    #!c
     #include <unistd.h>
     #include <stdio.h>
 
@@ -179,7 +179,7 @@ Vamos criar 3 programas muito simples para demonstrar os estados mais comuns de 
 
 O primeiro programa será o **running.c**:
 
-    :::c
+    #!c
     int main(int argc, char *argv[]) {
         while (1) { } // infinite loop
         return 0; 
@@ -189,7 +189,7 @@ Esse programa é muito simples: apenas executa um loop infinito.
 
 O segundo programa será o **sleeping.c**:
 
-    :::c
+    #!c
     #include <limits.h>
 
     int main(int argc, char *argv[]) {
@@ -201,7 +201,7 @@ Este programa dormirá pelo máximo de tempo possível, pois usamos o [máximo v
 
 O terceiro programa será o **waiting.c**:
 
-    :::c
+    #!c
     #include <sys/file.h>
     #include <stdio.h>
     

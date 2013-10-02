@@ -45,6 +45,3 @@ SITEMAP = {
 # Google Analytics
 GOOGLE_ANALYTICS = "UA-44485503-1"
 
-# Disqus must to have tested in a homolog server with a trusted domain
-# See: http://help.disqus.com/customer/portal/articles/472098
-#      http://help.disqus.com/customer/portal/articles/472007-i-m-receiving-the-message-%22we-were-unable-to-load-disqus-%22

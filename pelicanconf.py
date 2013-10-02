@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 # Site
 SITENAME = u'GBzando'
-SITESUBTITLE = u'Computação (programação e infraestrutura) na prática'
+SITESUBTITLE = u'Programação e infraestrutura na prática'
 SITEURL = ''
 TIMEZONE = 'America/Sao_Paulo'
 DEFAULT_LANG = 'pt_BR'
@@ -40,9 +40,6 @@ DIRECT_TEMPLATES = ['index', 'tags', 'categories', ]
 GITHUB_URL = 'https://github.com/rarylson/gbzando'
 DEFAULT_DATE_FORMAT = '%a, %d %b %Y'
 TYPOGRIFY = True
-
-# Default syntax highlight
-MD_EXTENSIONS = ['codehilite(css_class=highlight,linenums=True)','extra']
 DISQUS_SITENAME = "gbzando"
 
 # Custom template vars
