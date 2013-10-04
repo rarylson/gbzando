@@ -3,6 +3,8 @@
 <head>
         <meta charset="utf-8" />
         <title>{% block title %}{{ SITENAME }}{%endblock%}</title>
+        <meta name="description" content="{{ SITE_DESCRIPTION }}">
+        <meta name="keywords" content="{{ SITE_KEYWORDS }}">
         {% if not WEBASSETS %}
             <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/{{ CSS_FILE }}" />
         {% else %}

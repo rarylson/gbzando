@@ -5,6 +5,8 @@ from __future__ import unicode_literals
 # Site
 SITENAME = u'GBzando'
 SITESUBTITLE = u'Programação e infraestrutura na prática'
+SITE_DESCRIPTION = u'Blog de programação e infraestrutura na prática. Conceitos e problemas do dia-a-dia sobre Python, C, Perl, Shell Script, Servidores, Linux, Nginx e outros'
+SITE_KEYWORDS = u'programação, computação, servidores, linux, python, shell, bash, nginx, gbzando'
 SITEURL = ''
 TIMEZONE = 'America/Sao_Paulo'
 DEFAULT_LANG = 'pt_BR'
@@ -12,7 +14,7 @@ LOCALE = 'pt_BR.UTF-8'
 
 # Default author and category
 AUTHOR = u'Rarylson Freitas'
-AUTHOR_EMAIL = 'rarylson@gmail.com'
+AUTHOR_EMAIL = u'rarylson@gmail.com'
 DEFAULT_CATEGORY = u'Geral'
 
 # Feed generation is usually not desired when developing
@@ -36,7 +38,7 @@ THEME = 'themes/notmyidea_gbzando'
 DEFAULT_PAGINATION = 10
 USE_FOLDER_AS_CATEGORY = False
 # Don't generate archieve pages
-DIRECT_TEMPLATES = ['index', 'tags', 'categories', ]
+DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', ]
 GITHUB_URL = 'https://github.com/rarylson/gbzando'
 DEFAULT_DATE_FORMAT = '%a, %d %b %Y'
 TYPOGRIFY = True
@@ -47,8 +49,9 @@ CREATIVE_COMMONS = True
 
 # Plugins
 PLUGIN_PATH = 'plugins'
-PLUGINS = ['gravatar', 'assets', ]
+PLUGINS = ['gravatar_plus', 'assets', 'author_plus']
 WEBASSETS = False
+AUTHOR_PLUS_DIR = 'author'
 
 # Static content
 #STATIC_PATHS = [

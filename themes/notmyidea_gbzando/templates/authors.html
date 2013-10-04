@@ -1,15 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}{{ SITENAME }} - Authors{% endblock %}
+{% block title %}{{ SITENAME }} - Autores{% endblock %}
 
 {% block content %}
 
 <section id="content" class="body">
-    <h1>Authors on {{ SITENAME }}</h1>
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="{{ SITEURL }}/{{ authors.url }}" rel="bookmark"
+           title="Link para {{ authors }}">Autores</a></h1>
+      {% include 'twitter.html' %}
+    </header>
 
-    {%- for author, articles in authors|sort %}
-        <li><a href="{{ SITEURL }}/{{ author.url }}">{{ author }}</a> ({{ articles|count }})</li>
-    {% endfor %}
+    <div class="entry-content">
+      <p>No momento, só temos um autor GB :(. Quem sabe, em breve, teremos mais: quanto mais GBs, melhor!</p>
+      <ul>
+      {%- for author, articles in authors|sort %}
+          <li><a href="{{ SITEURL }}/{{ author.url }}">{{ author }}</a> ({{ articles|count }})</li>
+      {% endfor %}
+      </ul>
+    </div><!-- /.entry-content -->
+  </article>
 </section>
 
 {% endblock %}

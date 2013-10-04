@@ -1,2 +1,23 @@
 {% extends "index.html" %}
 {% block title %}{{ SITENAME }} - {{ author }}{% endblock %}
+
+{% block content %}
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="{{ SITEURL }}/{{ author.url }}" rel="bookmark"
+           title="Link para {{ author }}">{{ author }}</a></h1>
+      {% include 'twitter.html' %}
+    </header>
+
+    <div class="entry-content author-content">
+    {% if articles %}
+        {% set article = articles_page.object_list[0] %}
+        <img src="{{ article.author_gravatar.thumbnailUrl }}" />
+        <p>{{ article.author_plus|replace('\n', '</p><p>') }}</p>
+    {% endif %}
+    </div><!-- /.entry-content -->
+  </article>
+</section>
+{% endblock %}

@@ -487,3 +487,14 @@ div#disqus_thread {
     padding: 20px;
     background: #EEEEEE;
 }
+a {
+	color: #C74350;
+}
+
+/* Author */
+.author-content img {
+    float: right;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+}
