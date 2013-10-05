@@ -37,7 +37,7 @@ Build static content and serve in a simple python webserver:
 
 You can use the dev server to do this:
 
-   ./develop_server.sh start 
+    ./develop_server.sh start 
 
 The fabfile contains a specific deploy method for GBzando. You can use the `prod_config.py.sample` to generate your `prod_config.py` file:
 
