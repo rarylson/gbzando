@@ -15,7 +15,7 @@
     {% if articles %}
         {% set article = articles_page.object_list[0] %}
         <img src="{{ article.author_gravatar.thumbnailUrl }}" />
-        <p>{{ article.author_plus|replace('\n', '</p><p>') }}</p>
+        {{ article.author_plus }}
     {% endif %}
     </div><!-- /.entry-content -->
   </article>
