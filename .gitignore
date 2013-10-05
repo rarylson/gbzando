@@ -5,3 +5,6 @@ deploy/*
 .virtualenv
 prod_config.py
 gbzando_rsa
+*.swp
+pelican.pid
+srv.pid
