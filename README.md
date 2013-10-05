@@ -22,9 +22,9 @@ Install
 In Ubuntu:
 
     apt-get install python python-pip
-    pip install pelican markdown
-    # optional module for deploy
+    pip install pelican
     pip install fabric
+    pip instamm markdown cssmin webassets requests six tipogrify
 
 
 How to
@@ -32,18 +32,19 @@ How to
 
 Build static content and serve in a simple python webserver:
 
-    pelican -s pelicanconf.py
+    pelican content -o output -s pelicanconf.py
     cd output && python -m SimpleHTTPServer
 
-To automate this task using `make`:
+You can use the dev server to do this:
 
-    # generate the first time
-    make html
-    # regenerate (using in the following times)
-    make regenerate
-    # serve
-    make serve
+   ./develop_server.sh start 
 
+The fabfile contains a specific deploy method for GBzando. You can use the `prod_config.py.sample` to generate your `prod_config.py` file:
+
+    # deploy in homolog
+    fab publish_homolog
+    # deploy
+    fab publish
 
 License
 -------
