@@ -119,7 +119,7 @@ Vamos simular agora o surgimento de um processo órfão. Para isso, vamos criar 
         pid_t pid;
     
         pid = fork();
-        if (pid >= 0) { // fork sucessful
+        if (pid >= 0) { // fork successful
             if (pid != 0) { // parent
                 printf("Parent process... Infinite loop\n");
             } else { // child
@@ -213,7 +213,7 @@ O terceiro programa será o **waiting.c**:
         FILE *f; // file descriptor
         
         pid = fork();
-        if (pid >= 0) { // fork sucessful
+        if (pid >= 0) { // fork successful
             if (pid != 0) { // parent
                 f = fopen(FILENAME, "w");
                 // See: http://stackoverflow.com/a/7573369
