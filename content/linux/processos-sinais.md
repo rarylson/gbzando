@@ -6,35 +6,48 @@ Category: Linux
 Author: Rarylson Freitas
 Summary: Entenda como funciona a comunicação por sinais (_signals_) em Linux e conheça os sinais mais comuns. Saiba como enviar e tratar o recebimento de sinais. Neste artigo, iremos implementar comunicação usando sinais em C e, ao fim,  fim, iremos desenvolver um programa que saberá tratar sinais para realizar as operações stop e reload.
 
-Em um artigo anterior, chamado [Tipos de processos no Linux]({filename}/processos-tipos.md), mostramos como funcionam os diversos tipos de processos e como funciona a hierarquia de processos no Linux.
+Em um artigo anterior, chamado [Tipos de processos no Linux]({filename}/linux/processos-tipos.md), mostramos como funcionam os diversos tipos de processos e a hierarquia de processos no Linux.
 
-Agora, iremos motrar um outro conceito: a comunição entre processos usando sinais (_signals_). Iremos realizar diversas experiências para mostrar como podemos enviar e tratar, na aplição, alguns tipos de sinais.
+Agora, iremos motrar um outro conceito: a comunição entre processos usando sinais (_signals_).
 
-Além disso, iremos desenvolver um programa que saberá realizar, através do uso de sinais, as operações stop e reload, comuns em _deamons_.
+Iremos realizar diversas experiências para mostrar como podemos enviar e tratar sinais na aplicação. Além disso, iremos desenvolver um programa que saberá realizar as operações _stop_ e _reload_ através do tratamento de sinais.
 
 Sinais no Linux
 ---------------
 
 Enviar sinais ([_signals_](http://en.wikipedia.org/wiki/Unix_signal)) é uma forma simples de comunicação entre processos utilizada no Linux (e outros sistemas _Unix like_). É um tipo de comunicação assíncrona e baseada em eventos.
 
-De forma simplificada, um processo envia um sinal para outro processo e este, ao receber o sinal, terá sua linha de execução interrompida e irá executar o _handler_ daquele sinal.
+De forma simplificada, um processo envia um sinal para outro processo e este, ao receber o sinal, terá sua linha de execução interrompida e irá executar o _handler_ daquele sinal. Logo após, o processo retornará ao ponto em que foi interrompido, continuando sua linha de execução.
 
-Existem sinais para muitos tipos de evento. No artigo passado, foram apresentados explicitamente o SIGHUP, o SIGSTOP e o SIGCONT. Implicitamente, apresentamos o SIGTERM (semelhante ao SIGHUP, é o sinal padrão enviado pelo `kill` e pelo `killall`) e o SIGTSTP (parecido com o SIGSTOP, ocorre ao pressionar `CTRL+Z` no terminal em um processo em _foreground_).
+Existem diversos tipos de sinais, cada um apropriado para um certo tipo de evento: no [artigo passado]({filename}/linux/processos-tipos.md), foram apresentados sinais para parar a execução, para pausar um processo, e para resumir um processo.
 
-Cada um desses sinais possui um comportamento _default_ definido pelo sistema operacional. A maioria destes comportamentos [podem ser sobrescrito](http://en.wikipedia.org/wiki/C_signal_handling), ao passo que alguns poucos outros não.
+Cada sinal possui um comportamento _default_ definido pelo sistema operacional. A maioria destes comportamentos [podem ser sobrescritos](http://en.wikipedia.org/wiki/C_signal_handling), ao passo que alguns outros poucos não.
 
-Por exemplo, uma [diferença entre o SIGSTOP e o SIGTSTP](http://stackoverflow.com/a/11888074) é que o primeiro não pode ser sobrescrito pelo programa que irá receber o sinal. Entretanto, poderia ser definido um _handler_ específico para o segundo sinal. Este _handler_ poderia, por exemplo, executar ações visando manter a consistência dos dados e, somente depois, suspender o programa.
+Como exemplos, podemos citar os seguintes sinais:
 
-Alguns outros sinais são:
+- **SIGHUP:** Utilizado quando um terminal de controle é fechado;
+    - O comportamento _default_ é parar a execução, embora muitos _deamons_ realizem operações de _reload_ ao receber este sinal;
+- **SIGTERM:** Informa que o programa deve terminar a execução;
+    - Possui o mesmo comportamento _default_ que o SIGHUP;
+    - É o sinal padrão enviado pelos comandos `kill` e `killall`;
+- **SIGINT:** Informa que o programa recebeu uma interrupção pelo terminal de controle;
+    - Muito semelhante ao SIGTERM;
+    - Ocorre ao pressionar `CTRL+C` no terminal onde o processo está executando em _foreground_;
+- **SIGKILL:** Finaliza forçadamente o programa;
+    - É parecido com o SIGINT e o SIGTERM, mas não pode ser sobrescrito;
+- **SIGTSTP:** Informa que o programa deve ser pausado (colocado em estado _suspended_);
+    - Ocorre ao pressionar `CTRL+Z` no terminal em um processo em _foreground_;
+- **SIGSTOP:** Pausa forçadamente um processo;
+    - É semelhante ao SIGTSTP, porém, ao [contrário do primeiro](http://stackoverflow.com/a/11888074), não pode ser sobrescrito;
+- **SIGCONT:** Retorna um processo pausado (_suspended_) para a fila de prontos (estado _running_);
+- **SIGCHLD:** Informa a um processo pai que algum filho terminou a execução, foi suspendido (_suspended_) ou resumido (voltando ao estado _running_).
 
-- **SIGINT:** Muito semelhante ao SIGTERM, ocorre ao pressionar `CTRL+C` no terminal em um processo em _foreground_;
-- **SIGKILL:** Parecido com o SIGINT e o SIGTERM, mas não pode ser sobrescrito;
-- **SIGCHLD:** Este sinal informa a um processo pai que algum filho terminou a execução, foi suspendido (_suspended_) ou resumido (operação _resume_, voltando ao estado _running_).
+O comando [`kill`](http://en.wikipedia.org/wiki/Kill_(command)) pode ser utilizado para enviar sinais a um processo;
 
 Sobrescrevendo sinais
 ---------------------
 
-Vamos agora apresentar um programa que irá sobrescrever o comportamento padrão de um _signal haldler_. Iremos chamá-lo de **i_will_survive.c**:
+Vamos agora apresentar um programa que irá sobrescrever o comportamento padrão de um sinal (_signal haldler_). Iremos chamá-lo de **i_will_survive.c**:
 
     #!c
     #include <signal.h>
@@ -71,20 +84,16 @@ Vamos executá-lo em _foreground_ e, logo após, pressionar algumas vezes `CTRL+
 
 Ao receber o sinal, a função `end_handler` é executada e é impresso "I will survive" na tela.
 
-Vamos agora abrir um outro terminal e obter o PID do processo:
+Vamos agora abrir um outro terminal e, após obter o PID do processo, enviar vários sinais usando o comando `kill`:
 
     :::bash
     ps aux | grep i_will_survive | grep -v grep
     > rarylson       55300  98.5  0.0  2432744    480 s003  R+   11:39PM   0:10.66 ./i_will_survive
-
-Agora, iremos enviar vários sinais usando o comando `kill`:
-
-    :::bash
     kill 55300
     kill -s SIGHUP 55300
     kill -s SIGINT 55300
 
-Perceba que o primeiro comando enviará um SIGTERM (o sinal padrão do `kill`). 
+Perceba que o primeiro comando `kill` enviará um SIGTERM (o sinal padrão deste comando). 
 
 No primeiro terminal, vemos que o processo continua executando. Pior ainda, após receber cada um dos sinais, ele imprimiu uma mensagem nada humilde na tela:
 
@@ -98,12 +107,12 @@ Agora, no segundo terminal, iremos enviar um sinal SIGKILL:
     :::bash
     kill -s SIGKILL 55300
 
-Convém observar que SIGKILL é o sinal de número 9. Assim, o comando `kill -9 55300`, comum nos fóruns sobre Linux, faz exatamente a mesma coisa que o comando acima.
-
-Desta vez, no primeiro terminal, verificamos que o processo finalmente morreu:
+Desta vez, no primeiro terminal, verificamos que o processo finalmente morreu (**i_will_survive**, sua hora chegou!):
 
     :::bash
     > Killed: 9
+
+**Obs:** SIGKILL é o sinal de número 9. Assim, `kill -9 55300` (`kill -9` é uma expressão comum nos fóruns sobre Linux) faria exatamente a mesma coisa que o último comando executado.
 
 ### Sinais que não podem ser sobrescritos
 
@@ -136,7 +145,7 @@ Agora, iremos implementar um programa em C que atende aos seguintes requisitos:
 - Após cada impressão, este programa deverá incrementar o contador;
 - A string será definida em arquivo de configuração.
 
-Para isso, vamos utilizar a biblioteca [**libconfig**](http://www.hyperrealm.com/libconfig/libconfig.html), que permite ler valores de arquivo de configuração.
+Para isso, vamos utilizar a biblioteca [**libconfig**](http://www.hyperrealm.com/libconfig/libconfig.html), que permite ler valores de arquivos de configuração.
 
 No Ubuntu, esta biblioteca pode ser instalada através do comando:
 
@@ -314,19 +323,19 @@ Agora, ao receber o sinal SIGINT ou SIGTERM, o programa irá persistir o valor d
     > root      3806  0.0  0.0   6380   560 pts/0    S+   17:06   0:00 ./gracefull_stop_reload
     kill -s SIGTERM 3806
 
-Agora, vontando ao primeiro terminal e executando novamente o processo, vemos que o contador foi corretamente persistido:
+Vontando ao primeiro terminal e executando novamente o processo, vemos que o contador foi corretamente persistido:
 
     :::bash
     ./gracefull_stop_reload
     > 1 execution(s)
     > [...]
     > 40 execution(s)
-    # script parou a execução
+    # script stopped here
     ./gracefull_stop_reload 
     > 41 execution(s)
     > [...]
     
-Além disso, ao alterarmos o valor do arquivo de configuração, poderemos recarregá-lo enviando um sinal SIGHUP para a aplicação. Para isso, iremos manter o processo executando e editar o arquivo de configuração no segundo terminal. Este será nosso novo arquivo de configuração (**gracefull_stop_reload.cfg**):
+Além disso, ao alterarmos o valor do arquivo de configuração, poderemos recarregá-lo enviando um sinal SIGHUP para a aplicação. Para isso, iremos editar o arquivo de configuração (**gracefull_stop_reload.cfg**) no segundo terminal:
 
     #!cfg
     # string to append in the 'gracefull_stop_reload' output
