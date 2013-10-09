@@ -12,7 +12,7 @@ from pelicanconf import *
 
 SITEURL = 'http://www.gbzando.com.br'
 RELATIVE_URLS = False
-
+DEBUG_DISQUS = False
 
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
 CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
@@ -31,9 +31,9 @@ WEBASSETS = True
 SITEMAP = {
     'format': 'xml',
     'priorities': {
-        'articles': 0.5,
-        'indexes': 0.5,
-        'pages': 0.5
+        'articles': 1,
+        'indexes': 0.4,
+        'pages': 0.4
     },
     'changefreqs': {
         'articles': 'monthly',

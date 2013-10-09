@@ -190,6 +190,7 @@ Esse programa é muito simples: apenas executa um loop infinito.
 O segundo programa será o **sleeping.c**:
 
     #!c
+    #include <unistd.h>
     #include <limits.h>
 
     int main(int argc, char *argv[]) {
@@ -202,8 +203,9 @@ Este programa dormirá pelo máximo de tempo possível, pois usamos o [máximo v
 O terceiro programa será o **waiting.c**:
 
     #!c
-    #include <sys/file.h>
+    #include <unistd.h>
     #include <stdio.h>
+    #include <sys/file.h>
     
     int main(int argc, char *argv[]) {
         pid_t pid = 0;

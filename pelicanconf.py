@@ -43,6 +43,7 @@ GITHUB_URL = 'https://github.com/rarylson/gbzando'
 DEFAULT_DATE_FORMAT = '%a, %d %b %Y'
 TYPOGRIFY = True
 DISQUS_SITENAME = "gbzando"
+DEBUG_DISQUS = True
 MENUITEMS = [('Sobre o autor', '/author/rarylson-freitas.html'), ]
  
 # Custom template vars
