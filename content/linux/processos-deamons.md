@@ -1,21 +1,22 @@
-Title: Sinais, processos zumbis e processos órfãos
-Date: 2013-09-29 15:00
+Title: Processos zumbis
+Date: 2013-10-20 01:00
 Tags: linux, shell, c
-Slug: processos-zumbi-orfaos
+Slug: processos-deamons
 Category: Linux
 Author: Rarylson Freitas
-Summary: Entenda melhor o que são processos órfão e zumbis. Neste artigo, mostraremos como reproduzí-los através de diversas experiências e programas em C, e você entenderá os motivos que podem levar a sua aparição em servidores.
+Summary: Entenda melhor o que são processos zumbis. Neste artigo, mostraremos como reproduzí-los através de experiências e programas em C, e você entenderá os motivos que podem levar a sua aparição em servidores. Mostraremos também como evitar que eles surjam.
 Status: draft
 
-Em um artigo anterior, chamado [Tipos de processos no Linux]({filename}/processos-tipos.md), mostramos como funcionam os diversos tipos de processos e como funciona a hierarquia de processos no Linux.
+Em um artigo anterior, chamado [Tipos de processos no Linux]({filename}/processos-tipos.md), mostramos quais são os diversos tipos de processos e como funciona a hierarquia de processos no Linux. Em outro, chamado [Enviando e tratando sinais em processos Linux]({filename}/processos-sinais.md), mostramos o que são sinais e como tratá-los adequadamente em um programa.
 
-Agora, iremos realizar diversas experiências para mostrar como podemos simular o aparecimento de processos zumbis e processos órfãos. Além disso, iremos mostrar como evitar que eles ocorram. Processos com estas características costumam surgir, muitas vezes, devido a falhas de programação ou operação incorreta do sistema operacional.
+Agora, iremos realizar diversas experiências para mostrar como podemos simular o aparecimento de processos zumbis. Além disso, iremos mostrar como evitar que eles ocorram.
 
-Para isso, iremos mostrar também um pouco de sinais (_signals_) no Linux.
+Processos com estas características costumam surgir, muitas vezes, devido a falhas de programação ou operação incorreta do sistema operacional.
 
-Sinais no Linux
----------------
+Processos zumbis
+----------------
 
+Um processo Zumbi 
 Enviar sinais ([_signals_](http://en.wikipedia.org/wiki/Unix_signal)) é uma forma simples de comunicação entre processos utilizada no Linux (e outros sistemas _Unix like_). É um tipo de comunicação assíncrona e baseada em eventos.
 
 De forma simplificada, um processo envia um sinal para outro processo e este, ao receber o sinal, terá sua linha de execução interrompida e irá executar o _handler_ daquele sinal.
