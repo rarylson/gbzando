@@ -15,6 +15,9 @@
       {{ article.content }}
     </div><!-- /.entry-content -->
     {% if (DISQUS_SITENAME and SITEURL and article.status != "draft") or (DISQUS_SITENAME and DEBUG_DISQUS) %}
+    {% if not DEBUG_DISQUS %} {# When debuging, SITEURL can be diferent of DISQUSURL (p.e. homolog) #}
+        {% set DISQUSURL = SITEURL %}
+    {% endif %}
     <div class="comments">
       <h2>Comentários!</h2>
       <p><small><strong>Dica:</strong> 
@@ -24,7 +27,7 @@
       <div id="disqus_thread"></div>
       <script type="text/javascript">
         var disqus_identifier = "{{ article.url }}";
-        var disqus_url = "{{ SITEURL }}/{{ article.url }}";
+        var disqus_url = "{{ DISQUSURL }}/{{ article.url }}";
         (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
         dsq.src = 'http://{{ DISQUS_SITENAME }}.disqus.com/embed.js';

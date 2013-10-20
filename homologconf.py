@@ -14,8 +14,8 @@ from pelicanconf import *
 from publishconf import *
 
 SITEURL = 'http://homolog.gbzando.com.br'
-
-WEBASSETS = False
+DISQUSURL = 'http://www.gbzando.com.br'
+DEBUG_DISQUS = True
 
 # Disqus must to have tested in a homolog server with a trusted domain
 # See: http://help.disqus.com/customer/portal/articles/472098
