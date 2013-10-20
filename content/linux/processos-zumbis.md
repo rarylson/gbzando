@@ -1,13 +1,12 @@
 Title: Processos zumbis
-Date: 2013-10-20 01:00
+Date: 2013-10-20 18:10
 Tags: linux, shell, c
 Slug: processos-zumbis
 Category: Linux
 Author: Rarylson Freitas
 Summary: Entenda melhor o que são processos zumbis. Neste artigo, mostraremos como reproduzí-los através de experiências e programas em C, e você entenderá os motivos que podem levar a sua aparição em servidores e os problemas que podem causar.
-Status: draft
 
-Em um artigo anterior, chamado [Tipos de processos no Linux]({filename}processos-tipos.md), mostramos quais são os diversos tipos de processos e como funciona a hierarquia de processos no Linux. Em outro, chamado [Enviando e tratando sinais em processos Linux]({filename}processos-sinais.md), mostramos o que são sinais e como tratá-los adequadamente em um programa.
+Em um artigo anterior, chamado [Tipos de processos no Linux]({filename}processos-tipos.md), mostramos quais são os diversos tipos de processos e como funciona a hierarquia de processos no Linux.
 
 Agora, iremos realizar diversas experiências para mostrar como podemos simular o aparecimento de processos zumbis, bem como os transtornos que podem causar.
 
@@ -16,7 +15,7 @@ Processos com estas características costumam surgir, muitas vezes, devido a fal
 Processos zumbis
 ----------------
 
-Um [processo zumbi](http://en.wikipedia.org/wiki/Zombie_process) (ou _zombie_, chamado também de _defunct_) é um processo que finalizou a execução mas que ainda possui uma entrada na tabela de processos, porque seu processo pai ainda não "tomou conhecimento" que ele terminou.
+Um [processo zumbi](http://en.wikipedia.org/wiki/Zombie_process) (ou _zombie_, chamado também de _defunct_) é um processo que finalizou a execução mas ainda possui uma entrada na tabela de processos, pois seu processo pai ainda não "tomou conhecimento" que ele terminou.
 
 Os processos zumbis são assim chamados porque eles morreram (finalizaram a execução), tiveram seus recursos desalocados (memória, descritores de arquivo, etc), mas ainda não foram "expurgados" do sistema (permanece sua entrada na tabela de processos do sistema). Estão mortos, mas ainda existem de alguma forma no sistema.
 
@@ -24,7 +23,7 @@ A tabela de processos do sistema é importante para o funcionamento de [sistemas
 
 O fato de um processo zumbi permanecer na tabela de processos faz com que:
 
-- Uma quantidade pequena de memória permaneça alocada para manter sua entrada na tabela de processos do sistema;
+- Uma quantidade pequena de memória permaneça alocada para manter esta entrada;
     - Como estas entradas ocupam pouca memória (considerando a capacidade dos computadores atuais), isto não costuma ser um problema;
 - A tabela de processos cresça;
     - Dada a capacidade computacional dos hardwares atuais, isto apenas implicaria em mais processos a serem gerenciados, não sendo um grave problema;
@@ -35,18 +34,18 @@ O fato de um processo zumbi permanecer na tabela de processos faz com que:
 
 Se processos zumbis ocupam PIDs, por que eles existem?
 
-A razão é que, muitas vezes, o processo pai precisa tomar conhecimento que o filho morreu, saber qual [código ele retornou](http://en.wikipedia.org/wiki/Exit_status), e executar alguma ação em função destas informações.
+A razão é que, muitas vezes, o processo pai precisa tomar conhecimento que o filho morreu, saber qual [código este retornou](http://en.wikipedia.org/wiki/Exit_status), e executar alguma ação em função destas informações.
 
-Por exemplo, um processo pai poderia ser configurado para controlar um certo número de processos filhos. Se um processo filho fosse encerrado abruptamente, o pai iria "tomar conhecimento" que o filho morreu, logar o código de erro que o filho retornou, verificar se é necessário iniciar um novo filho, e atualizar novamente seu contador.
+Por exemplo, um processo pai poderia ser configurado para controlar um certo número de processos filhos. Se um processo filho fosse encerrado abruptamente, o pai poderia "tomar conhecimento" que o filho morreu, armazenar em _log_ o código de erro retornado pelo filho, e iniciar um novo filho.
 
-Vários softwares reais possuem comportamento semelhante ao descrito acima. Podemos citar a Nginx, que utiliza uma arquitetura _master_/_workers_, com número de _workers_ definido pela configuração [_worker_processes_](http://nginx.org/en/docs/ngx_core_module.html#worker_processes). Quando um _worker_ morre, o processo _master_ (pai de todos os _workers_), após algum tempo, inicia um novo _worker_.
+Vários softwares reais possuem comportamento semelhante ao descrito acima. Podemos citar o Nginx, que utiliza uma arquitetura _master_/_workers_, com número de _workers_ definido pela configuração [_worker_processes_](http://nginx.org/en/docs/ngx_core_module.html#worker_processes). Quando um _worker_ morre, o processo _master_ (pai de todos os _workers_), após algum tempo, inicia um novo _worker_.
 
 Se você tem um Nginx instalado, teste você mesmo! Se for testar em um servidor em produção, recomendamos que [envie um SIGQUIT para que nenhum usuário seja prejudicado](http://wiki.nginx.org/CommandLine#Stopping_or_Restarting_Nginx). 
 
 Criando processos zumbis
 -----------------------
 
-Vamos agora apresentar um programa que gerará filhos indefinidamente. Estes filhos irão imprimir uma mensagem na tela e, logo em seguida, terminar sua execução. Chamaremos nosso programa de **the_walking_dead.c**:
+Vamos agora apresentar um programa que gerará filhos indefinidamente. Estes filhos irão imprimir uma mensagem na tela e, logo em seguida, terminar sua execução. Chamaremos este programa de **the_walking_dead.c**:
 
     #!c
     #include <unistd.h>
@@ -59,10 +58,10 @@ Vamos agora apresentar um programa que gerará filhos indefinidamente. Estes fil
         pid_t pid;
 
         while (1) { // indefinidely fork
-            sleep(SLEEP_TIME); // creating child SLEEP_TIME to SLEEP_TIME seconds
+            sleep(SLEEP_TIME); // creating childrens SLEEP_TIME to SLEEP_TIME seconds
             pid = fork();
-            if (pid >= 0) { // fork sucessful
-                if (pid == 0) { // child
+            if (pid >= 0) { // fork successful
+                if (pid == 0) { // child - print and exit
                     printf("Child created and ending... Bye!\n");
                     exit(EXIT_SUCCESS);
                 }
@@ -75,7 +74,7 @@ Vamos agora apresentar um programa que gerará filhos indefinidamente. Estes fil
 
 O programa acima irá gerar um novo filho de 5 em 5 segundos.
     
-Agora, iremos compilar e rodar o processo. Veremos que, de tempos em tempos, uma nova mensagem será impressa na tela.
+Agora, iremos compilar e rodar o processo. Veremos que, de tempos em tempos, uma nova mensagem será impressa na tela:
 
     :::bash
     gcc -o the_walking_dead the_walking_dead.c
@@ -93,11 +92,11 @@ Após alguns segundos, em outro terminal, iremos imprimir na tela os processos *
     > rarylson 22036  0.0  0.0      0     0 pts/0    Z+   04:28   0:00 [the_walking_dea] <defunct>
     > rarylson 22049  0.0  0.0      0     0 pts/0    Z+   04:28   0:00 [the_walking_dea] <defunct>
 
-Neste momento havia 3 processos zumbis no sistema (estado _defunct_, representado pela letra Z).
+Neste momento, tínhamos 3 processos zumbis no sistema (estado _defunct_, representado pela letra Z).
 
-É interessante observar que cada processo zumbi possui um PID único (ocupando uma entrada na tabela de processos), possui a informação de dono e terminal (como essas informações são salvas na tabela de processos, o comando `ps` consegue ainda obtê-las), e não consome CPU ou memória.
+É interessante observar que cada processo zumbi possui um PID único (ocupando uma entrada na tabela de processos), possui a informação de dono e terminal (como essas informações são salvas na tabela de processos, o comando `ps` tem acesso a elas), e não consome CPU ou memória.
 
-Após aguardar um tempo, iremos contar a quantidade de processos **the\_walking\_dead** no sistema. Com isso, eremos que eles estão aumentando indefinidamente:
+Após aguardar um tempo, iremos contar a quantidade de processos **the\_walking\_dead** no sistema. Observe que eles estão aumentando indefinidamente:
 
     :::bash
     ps aux | grep the_walking | grep -v grep | grep defunct | wc -l
@@ -107,11 +106,11 @@ Após aguardar um tempo, iremos contar a quantidade de processos **the\_walking\
 
 O processo **init**, raíz da árvore de processos, possui um [comportamento interessante](http://unix.stackexchange.com/questions/11172/how-can-i-kill-a-defunct-process-whose-parent-is-init#comment14863_11173): de tempos em tempos, este processo verifica se existem processos filhos zumbis e, se existirem, retira-os da tabela de processos do sistema.
 
-Além disso, conforme explicado no artigo [Tipos de processos no Linux]({filename}processos-tipos.md), o compartamento padrão de um processo órfão é ser adotado pelo **init**.
+Além disso, conforme explicado no artigo [Tipos de processos no Linux]({filename}processos-tipos.md), o comportamento padrão de um processo órfão é ser adotado pelo **init**.
 
-Assim, o que ocorre se eliminarmos um processo pai que possui vários processos zumbis como filhos? Neste caso, o processo **init** irá adotar todos os processos zumbis e, na sequência, irá eliminá-los na tabela de processos.
+Assim, o que ocorre se eliminarmos um processo pai que possui vários processos zumbis como filhos? Neste caso, o processo **init** irá adotar todos os processos zumbis e, na sequência, irá eliminá-los da tabela de processos.
 
-Podemos verificar este comportamento finalizando o processo pai **the\_walking\_dead** no primeiro terminal executando `CRTL+C` e, logo após, vendo que não existe mais nenhum processo zumbi no sistema:
+Podemos verificar este comportamento finalizando o processo pai **the\_walking\_dead** no primeiro terminal (executando `CRTL+C`) e, logo após, vendo que não existem mais processos zumbis no sistema:
 
     :::bash
     > Child created and ending... Bye!
@@ -124,18 +123,18 @@ Usando processos zumbis para esgotar o número máximo de processos
 
 Em sistemas Linux (e em vários outros _Unix like_), o número máximo de processos que um usuário poderá iniciar pode ser limitado através do mecanismo de segurança **ulimit**. Esta [página do manual do MondoDB](http://docs.mongodb.org/manual/reference/ulimit/) explica muito bem sobre este mecanismo.
 
-Por exemplo, eu estou executando processos utilizando o usuário de poucos privilégios **rarylson**. Para contar quantos processos este usuário está executando:
+Por exemplo, neste artigo estamos executando processos utilizando o usuário de poucos privilégios **rarylson**. Podemos contar quantos processos este usuário está executando através do comando abaixo:
 
     :::bash
     ps ax -o user | grep rarylson | wc -l
     > 7
 
-Iremos, agora, abrir dois terminais: um com um usuário de poucos privilégios, e outro como usuário **root**. No primeiro terminal, iremos utilizar o comando [`ulimit`](http://www.ss64.com/bash/ulimit.html) para limitar o número de processos que este usuário poderá iniciar:
+Iremos, agora, abrir dois terminais: um com um usuário de poucos privilégios, e outro com o usuário **root**. No primeiro terminal, iremos utilizar o comando [`ulimit`](http://www.ss64.com/bash/ulimit.html) para limitar o número de processos que o usuário **rarylson** poderá iniciar:
 
     :::bash
     ulimit -u 17
 
-Você pode executar o comando `ulimit -a` para verificar que a política foi, de fato, aplicada. O valor acima foi escolhido, no meu caso partilar, por ser 10 unidades acima do número de processos que este usuário já está executando. 
+Você pode executar o comando `ulimit -a` para verificar que a política foi, de fato, aplicada. O valor acima foi escolhido, neste caso particular, como sendo 10 unidades acima do número de processos que este usuário já está executando. 
 
 Agora, iremos novamente executar nosso processo **the\_walking\_dead**:
 
@@ -150,30 +149,26 @@ Agora, iremos novamente executar nosso processo **the\_walking\_dead**:
 
 Vemos que, após algum tempo, o nosso programa não consegue mais criar novos zumbis.
 
-Neste momento não será mais possível criar nenhum novo processo como usuário **rarylson**, visto que o número máximo de processos para este usuário foi atingido. Por este motivo é que, previamente, deixamos um terminal aberto como usuário **root**.
-
-Neste segundo terminal, iremos contar o número de processos do usuário rarylson:
+No segundo terminal, iremos contar o número de processos do usuário **rarylson**:
 
     :::bash
     ps ax -o user | grep rarylson | wc -l
     > 16
 
-Caso você esteja intrigado com o fato do número de processos do usuário pouco privilegiado ser uma unidade menor que o número máximo, saiba que eu também estou :(! Se souber da resposta, compartilhe!!!
+**Obs:** Se você esteja intrigado com o fato do número de processos do usuário pouco privilegiado ser uma unidade menor que o número máximo configurado, saiba que eu também estou :(! Se souber da resposta, compartilhe!!!
 
 Mesmo com a dúvida remanescente, o exemplo acima nos mostra que o tratamento inadequado de processos zumbis pode impossibilitar que novos processos sejam criados.
 
-Neste exemplo, foi esgotado o número máximo de processos que um usuário pode criar. Entretanto, bastaria deixar nosso usuário sem limites (comando `ulimit -u unlimited`) e comentar a linha 11 do nosso programa (que realiza a operação _sleep_) para rapidamente esgotarmos o número de PIDs do nosso sistema.
+Neste exemplo, foi esgotado o número máximo de processos que um usuário pode criar. Entretanto, bastaria deixar nosso usuário sem limites (comando `ulimit -u unlimited`), comentar a linha 11 do nosso programa (que realiza a operação _sleep_), compilá-lo e executá-lo novamente para rapidamente esgotarmos o número de PIDs do sistema.
 
 Por razões óbvias, se for realizar esta experiência, recomendamos o uso de uma máquina virtual :).
 
 O que ainda falta?
 ------------------
 
-Simulamos a aparição de processos zumbis e mostramos como eles podem esgotar o número de processos de um usuário.
+Simulamos a aparição de processos zumbis e mostramos como eles podem esgotar o número de processos de um usuário. Mostramos também um fluxo de execução desejado, que não geraria processos zumbis, e apresentamos o exemplo do Nginx.
 
-Mostramos um fluxo de execução desejado, que não geraria processos zumbis, apresentamos o exemplo do Nginx, mas não mostramos como implementar esse fluxo.
-
-Este será assunto para outro post!
+Entretanto, não mostramos como implementar um fluxo correto. Deixaremos este assunto para um próximo artigo.
 
 Referências
 -----------
