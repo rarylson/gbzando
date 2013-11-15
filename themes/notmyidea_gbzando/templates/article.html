@@ -26,7 +26,9 @@
       </small></p>
       <div id="disqus_thread"></div>
       <script type="text/javascript">
+        {# See: http://help.disqus.com/customer/portal/articles/472098-javascript-configuration-variables #}
         var disqus_identifier = "{{ article.url }}";
+        var disqus_title = "{{ article.title }}";
         var disqus_url = "{{ DISQUSURL }}/{{ article.url }}";
         (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
