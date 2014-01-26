@@ -29,6 +29,13 @@ PLUGINS.extend(['sitemap', 'gzip_cache', ])
 # Plugin configurations
 WEBASSETS = True
 WEBASSETS_VERSION_IN_FILENAME = True
+# See: http://docs.getpelican.com/en/3.3.0/settings.html#path-metadata
+STATIC_PATHS.extend([
+    'extra/robots.txt',
+])
+EXTRA_PATH_METADATA.update({
+    'extra/robots.txt': {'path': 'robots.txt'},
+})
 SITEMAP = {
     'format': 'xml',
     'priorities': {

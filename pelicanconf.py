@@ -45,6 +45,8 @@ TYPOGRIFY = True
 DISQUS_SITENAME = "gbzando"
 DEBUG_DISQUS = True
 MENUITEMS = [('Sobre o autor', '/author/rarylson-freitas.html'), ]
+STATIC_PATHS = ['images']
+EXTRA_PATH_METADATA = {}
  
 # Custom template vars
 CREATIVE_COMMONS = True
