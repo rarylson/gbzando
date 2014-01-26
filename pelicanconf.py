@@ -33,20 +33,40 @@ SOCIAL = (
             ('Facebook', 'https://facebook.com/rarylson'),
          )
 
+# URLs - Using permlinks without html
+# It takes advantage of the follow Nginx behavior
+#     try_files = $url $url/;
+#     index_files = index.html;
+ARTICLE_URL = "{slug}/"
+ARTICLE_SAVE_AS = "{slug}/index.html"
+PAGE_URL = "pages/{slug}/"
+PAGE_SAVE_AS = "pages/{slug}/index.html"
+CATEGORY_URL = "category/{slug}/"
+CATEGORY_SAVE_AS = "category/{slug}/index.html"
+TAG_URL = "tag/{slug}/"
+TAG_SAVE_AS = "tag/{slug}/index.html"
+AUTHOR_URL = "author/{slug}/"
+AUTHOR_SAVE_AS = "author/{slug}/index.html"
+# With those new configs, pay attention in your article slugs. They can't
+# be 'tags', for example
+TAGS_URL = "tags/"
+TAGS_SAVE_AS =  "tags/index.html"
+AUTHORS_URL = "authors/"
+AUTHORS_SAVE_AS = "authors/index.html"
+# Don't generate archieve pages
+DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', ]
+# Custom menu item URL
+MENUITEMS = [('Sobre o autor', '/author/rarylson-freitas/'), ]
+
 # Vars to template
 THEME = 'themes/notmyidea_gbzando'
 DEFAULT_PAGINATION = 10
 USE_FOLDER_AS_CATEGORY = False
-# Don't generate archieve pages
-DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', ]
 GITHUB_URL = 'https://github.com/rarylson/gbzando'
 DEFAULT_DATE_FORMAT = '%a, %d %b %Y'
 TYPOGRIFY = True
 DISQUS_SITENAME = "gbzando"
 DEBUG_DISQUS = True
-MENUITEMS = [('Sobre o autor', '/author/rarylson-freitas.html'), ]
-STATIC_PATHS = ['images']
-EXTRA_PATH_METADATA = {}
  
 # Custom template vars
 CREATIVE_COMMONS = True
@@ -58,10 +78,5 @@ WEBASSETS = False
 AUTHOR_PLUS_DIR = 'author'
 
 # Static content
-#STATIC_PATHS = [
-#    'extra/robots.txt',
-#]
-#EXTRA_PATH_METADATA = {
-#    'extra/robots.txt': {'path': 'robots.txt'},
-#}
-
+STATIC_PATHS = ['images', ]
+EXTRA_PATH_METADATA = {}

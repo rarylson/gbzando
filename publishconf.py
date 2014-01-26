@@ -10,32 +10,22 @@ import sys
 sys.path.append(os.curdir)
 from pelicanconf import *
 
+# Production changes
 SITEURL = 'http://www.gbzando.com.br'
 RELATIVE_URLS = False
 DEBUG_DISQUS = False
-
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
 CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
-
 DELETE_OUTPUT_DIRECTORY = True 
-# Don't publish future date articles
-WITH_FUTURE_DATES = False
-# Don't process vim swap files
-IGNORE_FILES = ['.*.swp', ]
+WITH_FUTURE_DATES = False   # Don't publish future date articles
+IGNORE_FILES = ['.*.swp', ] # Don't process vim swap files
 
 # Adding production plugins
 PLUGINS.extend(['sitemap', 'gzip_cache', ])
 
 # Plugin configurations
 WEBASSETS = True
-WEBASSETS_VERSION_IN_FILENAME = True
-# See: http://docs.getpelican.com/en/3.3.0/settings.html#path-metadata
-STATIC_PATHS.extend([
-    'extra/robots.txt',
-])
-EXTRA_PATH_METADATA.update({
-    'extra/robots.txt': {'path': 'robots.txt'},
-})
+WEBASSETS_VERSION_IN_FILENAME = True    # Custom template var
 SITEMAP = {
     'format': 'xml',
     'priorities': {
@@ -51,5 +41,14 @@ SITEMAP = {
 }
 
 # Google Analytics
+# Custom template var
 GOOGLE_ANALYTICS_UNIVERSAL = "UA-44485503-1"
+
+# Static files
+STATIC_PATHS.extend([
+    'extra/robots.txt',
+])
+EXTRA_PATH_METADATA.update({
+    'extra/robots.txt': {'path': 'robots.txt'},
+})
 
