@@ -28,6 +28,7 @@ PLUGINS.extend(['sitemap', 'gzip_cache', ])
 
 # Plugin configurations
 WEBASSETS = True
+WEBASSETS_VERSION_IN_FILENAME = True
 SITEMAP = {
     'format': 'xml',
     'priorities': {
