@@ -34,9 +34,6 @@ SOCIAL = (
          )
 
 # URLs - Using permlinks without html
-# It takes advantage of the follow Nginx behavior
-#     try_files = $url $url/;
-#     index_files = index.html;
 ARTICLE_URL = "{slug}/"
 ARTICLE_SAVE_AS = "{slug}/index.html"
 PAGE_URL = "pages/{slug}/"
