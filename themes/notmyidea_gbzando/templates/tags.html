@@ -5,11 +5,20 @@
 {% block content %}
 
 <section id="content" class="body">
-    <h1>Tags for {{ SITENAME }}</h1>
+    <h1>Tags</h1>
 
+    {# See: http://docs.getpelican.com/en/3.1.1/settings.html#tag-cloud #}
+    <ul class="tagcloud">
+        {% for tag in tag_cloud %}
+            <li class="tag-{{ tag.1 }}"><a href="/tag/{{ tag.0 }}/">{{ tag.0 }}</a></li>
+        {% endfor %}
+    </ul>
+
+    {#
     {%- for tag, articles in tags|sort %}
         <li><a href="{{ SITEURL }}/{{ tag.url }}">{{ tag }}</a> ({{ articles|count }})</li>
     {% endfor %}
+    #}
 </section>
 
 {% endblock %}
