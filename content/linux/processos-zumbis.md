@@ -1,4 +1,4 @@
-Title: Processos zumbis
+Title: Processos zumbis: Introdução (parte 1)
 Date: 2013-10-20 18:10
 Tags: linux, shell, c
 Slug: processos-zumbis
@@ -12,7 +12,7 @@ Agora, iremos realizar diversas experiências para mostrar como podemos simular 
 
 Processos com estas características costumam surgir, muitas vezes, devido a falhas de programação ou operação incorreta do sistema operacional.
 
-Processos zumbis
+Processos zumbis 
 ----------------
 
 Um [processo zumbi](http://en.wikipedia.org/wiki/Zombie_process) (ou _zombie_, chamado também de _defunct_) é um processo que finalizou a execução mas ainda possui uma entrada na tabela de processos, pois seu processo pai ainda não "tomou conhecimento" que ele terminou.

@@ -4,7 +4,7 @@ Tags: linux, c
 Slug: processos-sinais
 Category: Linux
 Author: Rarylson Freitas
-Summary: Entenda como funciona a comunicação por sinais (_signals_) em Linux e conheça os sinais mais comuns. Saiba como enviar e tratar o recebimento de sinais. Neste artigo, iremos implementar comunicação usando sinais em C e, ao fim,  fim, iremos desenvolver um programa que saberá tratar sinais para realizar as operações stop e reload.
+Summary: Entenda como funciona a comunicação por sinais (_signals_) em Linux e conheça os sinais mais comuns. Saiba como enviar e tratar o recebimento de sinais. Neste artigo, iremos implementar comunicação usando sinais em C e, ao fim, iremos desenvolver um programa que saberá tratar sinais para realizar as operações stop e reload.
 
 Em um artigo anterior, chamado [Tipos de processos no Linux]({filename}/linux/processos-tipos.md), mostramos como funcionam os diversos tipos de processos e a hierarquia de processos no Linux.
 
