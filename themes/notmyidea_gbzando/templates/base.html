@@ -2,9 +2,10 @@
 <html lang="{{ DEFAULT_LANG }}">
 <head>
         <meta charset="utf-8" />
-        <title>{% block title %}{{ SITENAME }}{%endblock%}</title>
-        <meta name="description" content="{{ SITE_DESCRIPTION }}">
-        <meta name="keywords" content="{{ SITE_KEYWORDS }}">
+        <title>{% block title %}{{ SITENAME }}{% endblock %}</title>
+        {# articles can override this with your own description/keywords #}
+        <meta name="description" content="{% block description %}{{ SITE_DESCRIPTION }}{% endblock %}">
+        <meta name="keywords" content="{% block keywords %}{{ SITE_KEYWORDS }}{% endblock %}">
         {% if not WEBASSETS %}
             <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/{{ CSS_FILE }}" />
         {% else %}
