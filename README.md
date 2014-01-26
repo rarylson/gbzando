@@ -60,4 +60,4 @@ TODO
 
 - Author plus: Getting author email from authors page metadata (not from article metadata)
 - Author plus: Page rendered using the pelican readers (not only a markeddown reader)
-- Permlinks: Omit the .html (like: author/rarylson-freitas.html -> author/rarylson-freitas/). Add the proper SEO 301 redirects.
+- Tag better all articles: Improving tag cloud
