@@ -1,6 +1,6 @@
 Title: Processos zumbis: Tratando corretamente (parte 2)
-Date: 2013-11-8 18:10
-Tags: linux, shell, c, real
+Date: 2014-01-26 18:10
+Tags: linux, shell, c, exemplo real
 Slug: processos-zumbis-2
 Category: Linux
 Author: Rarylson Freitas
@@ -22,16 +22,45 @@ Dentre os conceitos mais importantes do [artigo passado]({filename}processos-zum
 
 - [Processo zumbis](http://en.wikipedia.org/wiki/Zombie_process), também chamados de _zombies_ ou _defuncts_, são processos que terminaram a execução, tiveram seus recursos desalocados, mas ainda possuem uma entrada na tabela de processos;
 - Em grande número, podem esgotar o número de PIDs do sistema;
-- Processos, ao finalizar sua execução, permanecem na tabela de processos para que seu processo pai possa ser notificado do fim de sua execução, analisar o código que o filho retornou, e executar ações necessárias para manter o correto funcionamento da aplicação;
-  - Assim, _deamons_ deveriam tratar corretamente seus processos filhos, retirando adequadamente suas entradas da tabela de processos a medida que estes vão morrendo.
+- Os processos, ao finalizarem sua execução, permanecem na tabela de processos para que seu processo pai possa ser notificado do fim de sua execução, analisar o código que o filho retornou, e executar ações necessárias para manter o correto funcionamento da aplicação;
+  - Assim, _deamons_ deveriam tratar corretamente seus processos filhos, retirando adequadamente suas entradas da tabela de processos a medida que estes vão finalizando sua execução.
+
+Porque manter uma entrada na tabela de processos?
+-------------------------------------------------
+
+Poderia salvar em um arquivo ou em algum outro lugar que não ocupasse entrada na tabela de processos do sistema? **Não**, pois não haveria como identificar unicamente aquele processo. Ao liberar a entrada, o PID torna-se disponível para uso por outro processo, e deixaria de haver uma forma de identificar unicamente o processo que encerrou a execução.
+
+Ver: http://stackoverflow.com/questions/8665642/why-do-i-have-to-wait-for-child-processes
 
 Tratando corretamente
 ---------------------
 
+Ver: http://stackoverflow.com/questions/8665642/why-do-i-have-to-wait-for-child-processes
+modelo 1: wait (e explicar o equivalente usando waitpid)
+modelo 2: waitpid( -1, &status, WNOHANG ) dentro de um loop (lança um processo, pergunta se algum filho morreu, lança outro, pergunta novamente)
+modelo 3: waitpid( -1, &status, WNOHANG ) usando sinais (apenas lança processos. tratar filhos mortos é feito por sinais)
 
+Exemplo para o programa filho: Ele retorna falha com probabilidade de 25%. Testar usando: `echo $?`
+
+maybe_it_works.c, oxente.c, work_hard_play_hard.c, improved_work_hard_play_hard.c
+
+Como alguns programas reais tratam processos zumbis
+---------------------------------------------------
+
+1) Execução não demora muito. Não há necessidade de tratar
+2) Fork and die (deamons) => Não precisa se preocupar com o que ocorre com o filho
+3) Trata de tempo em tempo
+4) Trata quase que instantaneamente
+
+Exemplo real: Backup Exec e o aparecimento de processos zumbis
+--------------------------------------------------------------
+
+Ver email: Considerações sobre o Servidor Oracle
 
 Referências
 -----------
 
-- [Signals (and Zombie and SIGCHLD)](http://www.win.tue.nl/~aeb/linux/lk/lk-5.html)
 - [Wikipedia - Zombie Process](http://en.wikipedia.org/wiki/Zombie_process)
+- [Signals (and Zombie and SIGCHLD)](http://www.win.tue.nl/~aeb/linux/lk/lk-5.html)
+- [Wait system calls - Linux man page](http://linux.die.net/man/2/wait)
+- [Linux Processes – Process IDs, fork, execv, wait, waitpid C Functions](http://www.thegeekstuff.com/2012/03/c-process-control-functions/)

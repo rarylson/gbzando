@@ -173,6 +173,6 @@ Entretanto, não mostramos como implementar um fluxo correto. Deixaremos este as
 Referências
 -----------
 
-- [Signals (and Zombie and SIGCHLD)](http://www.win.tue.nl/~aeb/linux/lk/lk-5.html)
 - [Wikipedia - Zombie Process](http://en.wikipedia.org/wiki/Zombie_process)
+- [Signals (and Zombie and SIGCHLD)](http://www.win.tue.nl/~aeb/linux/lk/lk-5.html)
 - [Defunct, zombie and immortal processes](http://www-cdf.fnal.gov/offline/UNIX_Concepts/concepts.zombies.txt)
