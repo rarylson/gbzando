@@ -8,7 +8,7 @@
     <header>
       <h1 class="entry-title">
         <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark"
-           title="Link para {{ article.title|striptags }}">{{ article.title}}</a></h1>
+           title="Link para {{ article.title|striptags }}">{{ article.title|striptags}}</a></h1>
       {% include 'twitter.html' %}
     </header>
 
@@ -30,7 +30,7 @@
       <script type="text/javascript">
         {# See: http://help.disqus.com/customer/portal/articles/472098-javascript-configuration-variables #}
         var disqus_identifier = "{{ article.url }}";
-        var disqus_title = "{{ article.title }}";
+        var disqus_title = "{{ article.title|striptags }}";
         var disqus_url = "{{ DISQUSURL }}/{{ article.url }}";
         (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
