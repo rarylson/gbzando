@@ -450,6 +450,7 @@ article h2 {
     margin-bottom: 0.333em;
     margin-top: 0.5em;
 }
+
 /* blogroll */
 #extras div.blogroll a {
     background-position: 3px 6px;
@@ -473,6 +474,13 @@ table.highlighttable pre {
 }
 table.highlighttable .na {
     color: #06287E;
+}
+/* fixing typografy css conficting with pygments */
+pre .amp {
+    font-family: inherit;
+    color: inherit;
+    font-size: inherit;
+    font-style: inherit;
 }
 
 /* creative commons */
@@ -517,6 +525,7 @@ small {
     padding: 4px 5px 6px 25px;
     display: block;
 }
+
 /* Icons */
 .entry-content.author-content ul a[href*='about.me'] {background-image: url('../images/icons/aboutme.png');}
 .entry-content.author-content ul a[href*='bitbucket.org'] {background-image: url('../images/icons/bitbucket.png');}
