@@ -28,12 +28,26 @@ Dentre os conceitos mais importantes do [artigo passado]({filename}processos-zum
 Porque manter uma entrada na tabela de processos?
 -------------------------------------------------
 
-Poderia salvar em um arquivo ou em algum outro lugar que não ocupasse entrada na tabela de processos do sistema? **Não**, pois não haveria como identificar unicamente aquele processo. Ao liberar a entrada, o PID torna-se disponível para uso por outro processo, e deixaria de haver uma forma de identificar unicamente o processo que encerrou a execução.
+No [primeiro artigo]({filename}processos-zumbis.md) (assim como reapresentado na sessão **Recapitulando**), mostrou-se que processos zumbis existem com o objetivo de permitir que um processo pai verifique o código retornado por seu processo filho.
 
-Ver: http://stackoverflow.com/questions/8665642/why-do-i-have-to-wait-for-child-processes
+Entretanto, verificando na internet, encontramos algumas dúvidas interessantes sobre o porque que estes processos devem permanecer na tabela de processos, como [esta aqui](http://stackoverflow.com/questions/8665642/why-do-i-have-to-wait-for-child-processes), encontrada no Stack Overflow. 
 
-Tratando corretamente
----------------------
+Dentre os tantos questionamentos do autor da pergunta, um deles é: É realmente necessário manter estes processos na tabela do sistema?
+
+O autor questiona se não poderia ser utilizado algum outro método para armazenar este status de execução fora da tabela de processos, liberando novos espaços nessa tabela e, assim, evitando o esgotamento ou do número máximo de processos permitidos para um usuário, ou do número máximo de PIDs do sistema. Os status poderiam ser salvos em arquivos ou outra região da memória, e processos zumbis deixariam de existir.
+
+Entretanto, existe uma [razão bastante simples](http://stackoverflow.com/a/8669160/2530295) para que um processo continue na tabela de processos como um zumbi: caso isso não fosse feito, não haveria como identificar unicamente este processo. Ao liberar a entrada, o PID tornaria-se disponível para uso por outro processo, e deixaria de haver uma forma de identificar unicamente o processo que terminou a execução.
+
+Tratando corretamente processos zumbis
+--------------------------------------
+
+Vamos considerar um exemplo genérico de um programa que rodará indefinidamente no sistema gerando filhos e verificando o retorno da execução destes, contando quantas operações com foram executadas com sucesso ou falha.
+
+Para isto, iremos inicialmente desenvolver um programa em C chamado **maybe_it_works.c**. Cada execução deste programa poderá retornar um código diferente, com probabilidade maior para sucesso e menor para falha. 
+
+O código deste programa é simples, e será apresentado abaixo:
+
+
 
 Ver: http://stackoverflow.com/questions/8665642/why-do-i-have-to-wait-for-child-processes
 modelo 1: wait (e explicar o equivalente usando waitpid)
@@ -42,7 +56,7 @@ modelo 3: waitpid( -1, &status, WNOHANG ) usando sinais (apenas lança processos
 
 Exemplo para o programa filho: Ele retorna falha com probabilidade de 25%. Testar usando: `echo $?`
 
-maybe_it_works.c, oxente.c, work_hard_play_hard.c, improved_work_hard_play_hard.c
+maybe_it_works.c, keep_calm.c, work_hard_play_hard.c, improved_work_hard_play_hard.c
 
 Como alguns programas reais tratam processos zumbis
 ---------------------------------------------------

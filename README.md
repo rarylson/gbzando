@@ -61,3 +61,4 @@ TODO
 - Author plus: Getting author email from authors page metadata (not from article metadata)
 - Author plus: Page rendered using the pelican readers (not only a markeddown reader)
 - Tag better all articles: Improving tag cloud
+- Use i18n in template (http://docs.python.org/2/library/i18n.html)
