@@ -1,6 +1,6 @@
 Title: Processos zumbis: Introdução (parte 1)
 Date: 2013-10-20 18:10
-Tags: linux, shell, c
+Tags: linux, shell, c, processos, zumbi
 Slug: processos-zumbis
 Category: Linux
 Author: Rarylson Freitas
@@ -174,5 +174,4 @@ Referências
 -----------
 
 - [Wikipedia - Zombie Process](http://en.wikipedia.org/wiki/Zombie_process)
-- [Signals (and Zombie and SIGCHLD)](http://www.win.tue.nl/~aeb/linux/lk/lk-5.html)
 - [Defunct, zombie and immortal processes](http://www-cdf.fnal.gov/offline/UNIX_Concepts/concepts.zombies.txt)
