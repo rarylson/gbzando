@@ -1,6 +1,6 @@
 Title: Enviando e tratando sinais em processos Linux
 Date: 2013-10-08 19:00
-Tags: linux, c
+Tags: linux, c, processos, sinais
 Slug: processos-sinais
 Category: Linux
 Author: Rarylson Freitas
@@ -47,7 +47,7 @@ O comando [`kill`](http://en.wikipedia.org/wiki/Kill_(command)) pode ser utiliza
 Sobrescrevendo sinais
 ---------------------
 
-Vamos agora apresentar um programa que irá sobrescrever o comportamento padrão de um sinal (_signal haldler_). Iremos chamá-lo de **i_will_survive.c**:
+Vamos agora apresentar um programa que irá sobrescrever o comportamento padrão de um sinal (_signal handler_). Iremos chamá-lo de **i_will_survive.c**:
 
     #!c
     #include <signal.h>
@@ -169,10 +169,10 @@ Agora, vamos criar o arquivo **gracefull_stop_reload.c**:
     #define CONFIG_FILE "gracefull_stop_reload.cfg"
 
     int main(int argc, char *argv[]) {
-        FILE *f;
-        config_t config;
-        char *add_string;
-        int counter;
+        FILE *f = NULL;
+        config_t config = NULL;
+        char *add_string = NULL;
+        int counter = 0;
 
         // init and read config
         config_init(&config);
