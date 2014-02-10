@@ -1,6 +1,6 @@
 Title: Tipos de processos no Linux
 Date: 2013-09-28 10:00
-Tags: linux, shell, c
+Tags: linux, shell, c, processos
 Slug: processos-tipos
 Category: Linux
 Author: Rarylson Freitas
@@ -116,7 +116,7 @@ Vamos simular agora o surgimento de um processo órfão. Para isso, vamos criar 
     #include <stdio.h>
 
     int main(int argc, char *argv[]) {
-        pid_t pid;
+        pid_t pid = 0;
     
         pid = fork();
         if (pid >= 0) { // fork successful
@@ -210,7 +210,7 @@ O terceiro programa será o **waiting.c**:
     int main(int argc, char *argv[]) {
         pid_t pid = 0;
         const char* FILENAME = "waiting_file.txt";
-        FILE *f; // file descriptor
+        FILE *f = NULL; // file descriptor
         
         pid = fork();
         if (pid >= 0) { // fork successful
@@ -297,6 +297,7 @@ O segundo método é mais genérico, e consiste no envio de sinais (através do 
 
 Vamos rodar, mais uma vez, o programa **running** em _background_:
 
+    :::bash
     ./running &
     > [1] 11440
 
