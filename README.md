@@ -25,7 +25,7 @@ In Ubuntu:
     pip install pelican
     pip install fabric
     pip instamm markdown cssmin webassets requests six tipogrify
-
+    apt-get install optipng libjpeg8
 
 How to
 ------
@@ -60,5 +60,9 @@ TODO
 
 - Author plus: Getting author email from authors page metadata (not from article metadata)
 - Author plus: Page rendered using the pelican readers (not only a markeddown reader)
-- Tag better all articles: Improving tag cloud
 - Use i18n in template (http://docs.python.org/2/library/i18n.html)
+- Neighbors: https://github.com/getpelican/pelican-plugins/tree/master/neighbors
+- Summary: https://github.com/getpelican/pelican-plugins/blob/master/summary/summary.py
+- http://blog.leonardfactory.com/2013/05/05/code-fenced-blocks-pygments-and-line-numbers-with-jekyll/
+- http://pythonhosted.org/Markdown/extensions/tables.html
+- http://packages.python.org/Markdown/extensions/admonition.html
