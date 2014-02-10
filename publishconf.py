@@ -21,7 +21,7 @@ WITH_FUTURE_DATES = False   # Don't publish future date articles
 IGNORE_FILES = ['.*.swp', ] # Don't process vim swap files
 
 # Adding production plugins
-PLUGINS.extend(['sitemap', 'gzip_cache', ])
+PLUGINS.extend(['sitemap', 'gzip_cache', 'optimize_images', ])
 
 # Plugin configurations
 WEBASSETS = True
