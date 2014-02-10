@@ -19,7 +19,7 @@
                 {% endassets %}
             {% else %}
                 {% assets filters="cssmin", output="css/style.%(version)s.min.css", "css/reset.css", "css/pygment.css", 
-                        "css/typogrify.css", "css/style.css" %}
+                        "css/typogrify.css", "css/style.css", "css/style_gbzando.css" %}
                     <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
                 {% endassets %}
             {% endif %}
