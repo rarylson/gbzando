@@ -64,6 +64,12 @@ DEFAULT_DATE_FORMAT = '%a, %d %b %Y'
 TYPOGRIFY = True
 DISQUS_SITENAME = "gbzando"
 DEBUG_DISQUS = True
+
+# Markdown extensions
+# See: http://pythonhosted.org/Markdown/extensions/code_hilite.html#usage
+#      http://pythonhosted.org/Markdown/extensions/toc.html#usage
+MD_EXTENSIONS = ['codehilite(css_class=highlight,guess_lang=False)', 
+        'extra', 'toc(anchorlink=True)', ]
  
 # Custom template vars
 CREATIVE_COMMONS = True
