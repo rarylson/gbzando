@@ -1,7 +1,9 @@
 {% extends "base.html" %}
-{% block title %}{{ article.title|striptags }}{% endblock %}
+{% block title %}{{ SITENAME }} - {{ article.title|striptags }}{% endblock %}
 {% block description %}{{ article.summary|striptags }}{% endblock %}
-{% block keywords %}{{ article.tags|join(', ')|striptags }}{% endblock %}
+{# keywords -> tags + keywords 
+   see: https://github.com/talha131/pelican-elegant/blob/master/templates/article.html#L16 #}
+{% block keywords %}{{ [article.tags|join(', '), article.keywords]|join(', ') }}{% endblock %}
 {% block content %}
 <section id="content" class="body">
   <article>
