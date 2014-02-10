@@ -135,3 +135,37 @@ li.tag-2 {
 li.tag-3 {
     font-size: 80%;
 }
+
+/* TOC */
+a.toclink {
+    text-decoration: none;
+}
+a.toclink:hover {
+    background-color: transparent;
+    text-shadow: none;
+    color: #C74350;
+}
+a.toclink:hover:after {
+    content: " $";
+    font-size: 0.8em;
+    color: #FFCCCC;
+}
+div.toc {
+    background-color: #EEEEEE;
+    font-size: 0.8em;
+    padding: 4px 6px 6px 2px;
+    float: left;
+    margin-bottom: 10px;
+}
+div.toc + h2 {
+    clear: both;
+}
+div.toc ul {
+    list-style: none;
+    margin-left: 0.6em;
+}
+div.toc ul li:before {
+    content: "> ";
+    width: 0.8em;
+    color: #C74350;
+}
