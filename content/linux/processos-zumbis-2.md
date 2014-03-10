@@ -11,48 +11,45 @@ No primeiro artigo [Processos zumbis: Introdução (parte 1)]({filename}processo
 
 Neste artigo, iremos mostrar como evitá-los: mostraremos como desenvolver uma aplicação que execute continuamente criando vários filhos, porém sem gerar um número crescente de processos zumbis.
 
-Iremos também apresentar como alguns softwares reais tratam processos zumbis.
+Por fim, iremos mostrar um exemplo real no qual o software **Symantec Backup Exec**, em uma versão mais antiga, não tratava corretamente o fim de seus processos filhos, gerando vários processos zumbis no sistema. Iremos mostrar também o _workarround_ utilizado para contornar a situação.
 
-Por fim, iremos mostrar um exemplo real no qual o software **Symantec Backup Exec**, em uma versão mais antiga, não trata corretamente o fim de seus processos filhos, gerando vários processos zumbis no sistema. Iremos mostrar também o _workarround_ utilizado para contornar a situação.
-
-[TOC]
-
-Recaptulando
-------------
+Recapitulando
+-------------
 
 Dentre os conceitos mais importantes do [artigo passado]({filename}processos-zumbis.md), podemos citar:
 
 - Processo zumbis, também chamados de _zombies_ ou _defuncts_, são processos que terminaram a execução, tiveram seus recursos desalocados, mas ainda possuem uma entrada na tabela de processos;
-- Em grande número, podem esgotar o número de PIDs do sistema, ou mesmo esgotar o número máximo de processos que um usuário pode executar;
-- Os processos, ao finalizarem sua execução, permanecem na tabela de processos para que seu processo pai possa ser notificado do fim de sua execução, analisar o código que o filho retornou, e executar ações necessárias para manter o correto funcionamento da aplicação;
-    - Assim, _deamons_ deveriam tratar corretamente seus processos filhos, retirando adequadamente suas entradas da tabela de processos a medida que estes vão finalizando sua execução.
+- Em grande número, podem esgotar o número de PIDs do sistema ou o número máximo de processos que um usuário pode executar;
+- Os processos, ao finalizarem sua execução, permanecem na tabela de processos para que seu processo pai possa ser notificado do fim de sua execução, analisar o código que o filho retornou, e executar ações necessárias para manter o correto funcionamento da aplicação.
 
-Porque manter uma entrada na tabela de processos?
--------------------------------------------------
+Por que manter uma entrada na tabela de processos?
+--------------------------------------------------
 
-Sabe-se que os processos zumbis existem para que seu processo pai possa verificar o código retornado por seu processo filho. Mas, é realmente necessário manter estes processos na tabela do sistema? Não seria possível armazenar estas informações em outro lugar, liberando uma entrada da tabela de processos e evitando o esgotamento do PIDs?
+Sabemos que os processos zumbis existem para que um processo pai possa verificar o código retornado por seu processo filho. Mas, é realmente necessário manter estes processos na tabela do sistema? Não seria possível armazenar estas informações em outro lugar, liberando uma entrada da tabela de processos e evitando o esgotamento do PIDs?
 
-**Obs:** Esta dúvida pode ser encontrada em alguns fóruns na internet, como [nesta pergunta aqui](http://stackoverflow.com/questions/8665642/why-do-i-have-to-wait-for-child-processes), encontrada no Stack Overflow.
+**Obs:** Esta dúvida pode ser encontrada em alguns fóruns na internet, como [nesta pergunta encontrada no Stack Overflow](http://stackoverflow.com/questions/8665642/why-do-i-have-to-wait-for-child-processes).
 
 Entretanto, existe uma [razão simples](http://stackoverflow.com/a/8669160/2530295) para que o processo finalizado continue na tabela de processos como um zumbi: caso isso não fosse feito, não haveria como identificar unicamente este processo. Ao liberar a entrada, o PID tornaria-se disponível para uso por outro processo, e deixaria de haver uma forma de identificar unicamente o processo que terminou a execução.
 
 Tratando corretamente processos zumbis
 --------------------------------------
 
-Vamos considerar um exemplo genérico de um programa que rodará indefinidamente no sistema gerando filhos e verificando o retorno da execução destes, contando quantas operações foram executadas com sucesso ou falha.
+Para mostrar diversas formas de tratar processos zumbis, iremos desenvolver um programa que rodará indefinidamente no sistema, gerando de tempos em tempos novos filhos. Após a execução de cada filho, este programa irá verificar o retorno da execução destes, contando quantas operações foram executadas com sucesso e quantas com falha.
 
-Para isto, vamos fazer uso do programa em C **maybe\_it\_works.c**, apresentado no artigo [Programas com Comportamento Aleatório]({filename}./../programacao/programas-comportamento-aleatorio.md).
+Para implementar este exemplo, iremos utilizar dois programas: o pai, que lancará filhos e analisará os códigos de retorno, e os filhos, que terão comportamento probabilístico, podendo retornar valores diferentes em cada execução.
 
-Foram apresentadas várias versões deste programa, mas iremos utilizar a [primeira delas](/programas-comportamento-aleatorio/#simulando-um-comportamento-aleatorio-em-c) neste artigo. Assim, vamos inicialmente criar este arquivo com o mesmo código da versão do link anterior. 
+### Processo filho com comportamento aleatório
 
-**Obs:** Você não precisa entender os detalhes de implementação deste programa para compreender os exemplos posteriores. Entretanto, caso queira compreender mais sobre ele, fique à vontade para ler o artigo citado.
+Iremos utilizar o programa **maybe\_it\_works.c** (apresentado no artigo [Programas com Comportamento Aleatório]({filename}./../programacao/programas-comportamento-aleatorio.md)) como processo filho. Foram apresentadas várias versões deste programa, mas iremos utilizar a [primeira delas](/programas-comportamento-aleatorio/#simulando-um-comportamento-aleatorio-em-c) neste artigo.
+
+**Obs:** Você não precisa entender os detalhes de implementação deste programa para entender este artigo. Entretanto, caso queira compreender mais sobre ele, fique à vontade para ler o artigo citado :).
 
 O programa **maybe\_it\_works.c** utiliza funções aleatórias para simular dois comportamentos típicos de um programa real: tempo de processamento e ocorrência de erros. Em resumo, o programa:
 
-- Utiliza a operação **sleep** para simular o tempo de execução do programa. No caso, nosso programa demorará 1s, 2s, 3s ou 4s executando, cada tempo de execução possuindo igual probabilidade de ocorrer;
-- Nosso programa retorna falha (código de retorno, ou _exit status_, diferente de zero) com probabilidade de 25%.
+- Utiliza a função `sleep` para simular seu tempo de execução. No caso, nosso programa poderá demorar 1, 2, 3 ou 4 segundos executando, cada tempo de execução com igual probabilidade de ocorrência;
+- Retorna falha (código de retorno, ou _exit status_, diferente de zero) com probabilidade de 25%.
 
-Agora, iremos compilar e testar este programa:
+Agora, vamos compilar e testar este programa:
 
     :::bash
     gcc -o maybe_it_works maybe_it_works.c
@@ -63,11 +60,13 @@ Agora, iremos compilar e testar este programa:
     echo $?
     > 0
 
-A instrução `echo $?` imprime o código de retorno do último comando executado. No teste realizado, **maybe\_it\_works** retornou sucesso. Entretanto, convém lembrar que ele poderia ter retornado um valor diferente de zero com 25% de probabilidade.
+**Obs:** A instrução `echo $?` imprime o [código de retorno do último comando executado](http://linuxcommando.blogspot.com.br/2008/03/how-to-check-exit-status-code.html).
+
+No teste realizado, **maybe\_it\_works** demorou 2 segundos para executar e retornou sucesso. Entretanto, ele poderia ter tido um tempo de execução diferente, ou mesmo ter retornado um valor diferente de zero.
 
 ### Tratando processos zumbis de forma síncrona
 
-Inicialmente, vamos considerar o programa **keep\_calm.c**:
+Vamos considerar o programa **keep\_calm.c**:
 
     #!c
     #include <unistd.h>
@@ -83,11 +82,12 @@ Inicialmente, vamos considerar o programa **keep\_calm.c**:
         int status = 0;
         int errors = 0; // children that finished with errors
         int total = 0; // total of children that finished
+        float percent = 0;        
          
         while (1) { // indefinidely fork and exec children
             sleep(PAUSE_BETWEEN_LAUNCHES);
             pid = fork();
-            if (pid >= 0) { // fork sucessful
+            if (pid >= 0) { // fork successful
                 if (pid != 0) { // parent
                     wait(&status); // wait until child die
                     // update counters
@@ -96,10 +96,14 @@ Inicialmente, vamos considerar o programa **keep\_calm.c**:
                     }   
                     total++;
                     // print statistics
+                    percent = (float)(errors) / total * 100;
                     printf("Errors: %d, Total: %d, Percent: %.2f%%\n", errors, total, 
-                            (float)(errors) / total * 100);
+                            percent);
                 } else { // child
-                    execl(CHILD_PATH, CHILD_PATH, (char *)(NULL)); // exec child program
+                    if (! execl(CHILD_PATH, CHILD_PATH, (char *)(NULL))) { // exec child program
+                        printf("Error on exec\n");
+                        exit(EXIT_FAILURE);
+                    }
                 }   
             } else {
                 printf("Error on fork\n");
@@ -109,84 +113,163 @@ Inicialmente, vamos considerar o programa **keep\_calm.c**:
         return 0;
     }
 
-Explicar!
+Este programa roda indefinidamente no sistema através da execução de um loop, executando a seguinte lógica a cada iteração:
 
-Explicar que status representa várias coisas, e que as funções WIFEXITED e WEXITSTATUS facilitam sua interpretação.
+- Inicialmente, ele fica em estado _sleep_ durante o intervalo de tempo `PAUSE_BETWEEN_LAUNCHES`;
+- Em seguida, executa um _fork_, gerando um processo filho;
+- O processo filho carrega e executa (operação _exec_) o programa **maybe_it_works**;
+- O processo pai, por sua vez, realiza uma operação _wait_, aguardando a execução do processo filho e obtendo o status de sua execução;
+- Após o retorno da operação _wait_, o processo pai verifica o status do processo filho e atualiza seus contadores (número total de processos filhos executados e número de filhos que retornaram erro);
+- Por fim, o pai imprime na tela seus contadores, retornando ao início do loop.
 
-Testar o número de processos zumbis. Mostrar que sempre temos 2 processos executando.
+A geração do processo filho é realizada através da técnica [fork-exec](http://en.wikipedia.org/wiki/Fork-exec) e consiste em duas partes.
+
+A primeira etapa é o `fork` (linha 18), que gera um processo filho clone do processo pai. Depois da operação, ambos os processos continuam a execução do mesmo ponto, [existindo apenas poucas diferenças entre eles](http://linux.die.net/man/2/fork) (por exemplo, o PID e o valor retornado pela função `fork`).
+
+Já a segunda é a operação _exec_, no nosso caso implementada através de uma chamada à função `execl` (linha 32), cujo protótipo é apresentado abaixo:
+
+    :::c
+    int execl(const char *path, const char *arg, ...);
+
+Esta função substitue a imagem do processo em execução (código, variáveis, etc) por uma nova imagem de processo. Seu primeiro argumento é a localização do código a ser executado, que pode ser um arquivo binário com instruções executáveis (nosso caso) ou um script interpretável. 
+
+Já os demais parâmetros são passados ao "novo processo" como uma lista de parâmetros de linha de comando. Por convenção, o primeiro parâmetro a ser passado deve ser o nome do arquivo que contém o código a ser executado/interpretado. O último parâmetro a ser parado para `execl` precisa ser um ponteiro nulo (_null pointer_).
+
+**Obs:** A função `execl` é apenas uma das que compõem a [família de funções exec](http://man7.org/linux/man-pages/man3/exec.3.html). Elas diferem entre si em alguns detalhes, mas todas são utilizadas para carregar um novo código.
+
+Outro detalhe a ser observado no nosso programa é a chamada a [função `wait`](http://linux.die.net/man/2/wait), onde o pai aguarda de forma síncrona mudanças no estado do processo filho (como o fim de sua execução) armazenando na variável `status` várias informações relacionadas ao evento ocorrido.
+
+O valor armazenado na variável `status` possui várias informações. Entretanto, existem várias macros que podem ser utilizadas para facilitar a interpretação correta desta variável. No nosso caso, testamos se a mudança de estado ocorrida foi o fim da execução do processo filho (macro `WIFEXITED`) e verificamos o código de retorno do processo filho (macro `WEXITSTATUS`).
+
+Vamos, agora, compilar e testar o nosso programa. Devemos executa-lo no mesmo diretório que reside o programa **maybe\_it\_works**.
+
+    :::bash
+    gcc -o keep_calm keep_calm.c
+    ./keep_calm 
+    > Errors: 1, Total: 1, Percent: 100.00%
+    > Errors: 1, Total: 2, Percent: 50.00%
+    > Errors: 2, Total: 3, Percent: 66.67%
+    > [...]
+    > Errors: 5, Total: 21, Percent: 23.81%
+    > Errors: 5, Total: 22, Percent: 22.73%
+    > Errors: 6, Total: 23, Percent: 26.09%
+
+Vemos que, após inúmeras execuções, o número de execuções com erro tende a ficar próximo a 25%, conforme esperado.
+
+Vamos agora abrir outro terminal e verificar o status dos nossos processos:
+
+    :::bash
+    ps aux | grep -e keep_calm -e maybe_it_works | grep -v grep
+    > root     20480  0.0  0.0   4204   520 pts/3    S+   13:44   0:00 ./keep_calm
+    > root     22428  0.0  0.0   4200   364 pts/3    S+   14:24   0:00 ./maybe_it_works
+
+Aguardando mais alguns instantes e repetindo a experiência:
+
+    :::bash
+    ps aux | grep -e keep_calm -e maybe_it_works | grep -v grep
+    > root     20480  0.0  0.0   4204   520 pts/3    S+   13:44   0:00 ./keep_calm
+    > root     22456  0.0  0.0   4200   364 pts/3    S+   14:26   0:00 ./maybe_it_works 
+
+Vemos o mesmo processo pai em ambos os testes (PID 20480), porém processos filhos diferentes (PIDs 22428 e 22456). Além disso, sempre temos 2 processos executando, não existindo nenhum processo zumbi.
 
 ### Tratando processos zumbis sem esperas
 
-**modelo 2:** waitpid( -1, &status, WNOHANG ) dentro de um loop (lança um processo, pergunta se algum filho morreu, lança outro, pergunta novamente)
+O programa **keep\_calm.c** tem algumas limitações: ele executa somente um processo filho por vez e fica ocioso enquanto aguarda este processo filho terminar. Este modelo desperdiça recursos computacionais.
 
-**work\_hard\_play\_hard.c**:
+Para solucionar esta limitação, vamos apresentar uma versão otimizada do nosso programa anterior, que chamaremos de **dont\_keep\_calm.c**. 
+Para isso, iremos utilizar o programa anterior como base e alterar algumas linhas de código.
 
-    #!c
-    #include <unistd.h>
-    #include <stdlib.h>
-    #include <stdio.h>
-    #include <sys/wait.h>
-    
-    #define PAUSE_BETWEEN_LAUNCHES 1
-    #define CHILD_PATH "./maybe_it_works"
-    
-    int main(int argc, char *argv[]) {
-        pid_t pid = 0;
-        int status = 0;
-        int errors = 0; // children that finished with errors
-        int total = 0; // total of children that finished
-        float percent = 0;
-    
-        while (1) { // indefinidely fork and exec children
-            sleep(PAUSE_BETWEEN_LAUNCHES);
-            pid = fork();
-            if (pid >= 0) { // fork sucessful
-                if (pid != 0) { // parent
-                    // loop into all died children
-                    while(waitpid(-1, &status, WNOHANG) > 0) {
-                        // update counters
-                        if (WIFEXITED(status) && WEXITSTATUS(status) != EXIT_SUCCESS) {
-                            errors++;
-                        }   
-                        total++;
-                    }   
-                    // print statistics
-                    percent = (total != 0) ? (float)(errors) / total * 100 : 0;
-                    printf("Errors: %d, Total: %d, Percent: %.2f%%\n", errors, total, 
-                            percent);
-                } else { // child
-                    execl(CHILD_PATH, CHILD_PATH, (char *)(NULL)); // exec child program
-                }   
-            } else {
-                printf("Error on fork\n");
-            }   
+Vamos, então, substituir as linhas de 21 a 26 do nosso programa original pelo trecho abaixo:
+
+    :::c
+    while(waitpid(-1, &status, WNOHANG) > 0) { // loop into all died children
+        // update counters
+        if (WIFEXITED(status) && WEXITSTATUS(status) != EXIT_SUCCESS) {
+            errors++;
         }   
-        
-        return 0;
+        total++;
     }
 
-Primeiramente, iremos apresentar uma função semelhante a função `wait`: a função `waipid` (também apresentada [no artigo do The Geek Stuff](http://www.thegeekstuff.com/2012/03/c-process-control-functions/)). Ela provê novas funcionalidades, permitindo, dentre outras coisas, aguardar um processo que possui um PID específico. Seu protótipo é apresentado abaixo:
+Também devemos substituir a linha onde calculamos a porcentagem (linha 28):
+
+    :::c
+    percent = (total != 0) ? (float)(errors) / total * 100 : 0;
+
+Estamos agora utilizando a função `waipid`, que provê novas funcionalidades quando comparada à função `wait`. Seu protótipo é apresentado abaixo:
 
     :::c
     pid_t waitpid(pid_t pid, int *status, int options);
 
-As principais novidades são:
+Algumas características desta função são:
 
-- O primeiro argumento, se maior que zero, representa o PID do processo aguardado, isto é, a função (em seu comportamento padrão) apenas irá retornar quando o processo com este PID mudar de estado. Entretanto, se for passado o valor -1 como argumento, `waitpid` aguardará por qualquer filho, semelhante a `wait`;
-- O terceiro argumento aceita algumas opções que mudam o comportamento da função. Dentre eles, o mais interessante é o inteiro representado pela constante `WNOHANG`, que faz com que a função retorne imediatamente caso nenhum filho tenha finalizado;
-    - As opções devem ser passados através de um **or** _bitwise_, como em `WNOHANG | WCONTINUED`.
+- O primeiro argumento, se maior que zero, fará com que esta função aguarde um processo que possui um PID específico. Entretanto, se for passado o valor -1 como argumento, `waitpid` aguardará por qualquer filho, exatamente como faz a função `wait`;
+- O terceiro argumento aceita opções que mudam o comportamento da função. Dentre elas, podemos citar a constante `WNOHANG`, que faz com que a função retorne imediatamente caso nenhum filho tenha finalizado;
+    - As opções devem ser passados através de um operador _or bitwise_, como em `WNOHANG | WCONTINUED`;
+- Em caso de sucesso, a função retorna o PID do processo que mudou o estado;
+    - Se a opção `WNOHANG` for passada e não existirem processos filhos a serem tratados, `waitpid` retornará zero.
 
 **Obs:** `wait(&status)` e `waitpid(-1, &status, 0)` são comandos equivalentes.
 
-Explicar o programa! Mostrar que podemos ter vários processos executando, que eles crescem indefinidamente (lancamos mais rápido do que eles acabam), mas explicar que muitas aplicações reais limitam o número máximo destes processos. Falar que, enquanto processos zumbis esgotam o número de PIDs, em situações reais, infinitos processos costumam esgotar a memória.
+Em cada interação do loop principal, `waitpid` será executada enquanto houver processos zumbis a serem tratados. Por exemplo, se houver 2 processos zumbis na tabela de processos do sistema, `waitpid` executará 3 vezes, atualizando seus contadores nas duas primeiras execuções, e saindo do loop na terceira execução.
 
-Exemplo: php-fpm e o max_clients.
+Já a mudança do cálculo da porcentagem foi necessária para evitarmos um erro de divisão por zero: durante as primeiras execuções do programa, podem ainda não existir processos finalizados (`total` igual a zero).
+
+Vamos agora compilar e testar o nosso programa:
+
+    :::bash
+    gcc -o dont_keep_calm dont_keep_calm.c
+    ./dont_keep_calm 
+    > Errors: 0, Total: 0, Percent: 0.00%
+    > Errors: 0, Total: 0, Percent: 0.00%
+    > Errors: 0, Total: 0, Percent: 0.00%
+    > Errors: 1, Total: 1, Percent: 100.00%
+    > Errors: 2, Total: 2, Percent: 100.00%
+    > [...]
+    > Errors: 5, Total: 17, Percent: 29.41%
+    > Errors: 5, Total: 17, Percent: 29.41%
+    > Errors: 5, Total: 19, Percent: 26.32%
+    > Errors: 5, Total: 20, Percent: 25.00%
+
+Neste teste, podemos ver que:
+
+- Nas duas primeiras execuções, ainda não havia nenhum processo filho finalizado;
+- Em um dado momento, o número total de processos finalizados permaneceu constante (17) entre duas iterações;
+    - O programa não aguarda por processos filhos de forma bloqueante. Assim, se nenhum processo filho finalizou, o processo pai irá imprimir os mesmos valores e continuar com a execução;
+- No instante seguinte, este número subiu de 17 para 19;
+    - Nosso programa pode lançar vários processos filhos em paralelo, e apenas tratar os processos zumbis de tempos em tempos. Assim, uma vez que existam 2 processos filhos executando em paralelo e que eles terminem sua execução quase ao mesmo tempo, o processo pai irá analisar ambos na mesma iteração. 
+
+Assim como no exemplo anterior, vamos abrir outro terminal e verificar o status dos processos:
+
+    :::bash
+    ps aux | grep -e dont_keep_calm -e maybe_it_works | grep -v grep
+    > root     24565  0.0  0.0   4204   516 pts/3    S+   17:15   0:00 ./dont_keep_calm
+    > root     24592  0.0  0.0   4200   368 pts/3    S+   17:15   0:00 ./maybe_it_works
+    > root     24593  0.0  0.0   4200   368 pts/3    S+   17:15   0:00 ./maybe_it_works
+
+Após aguardar alguns instantes, vamos repetir novamente o comando anterior:
+
+    :::bash
+    ps aux | grep -e dont_keep_calm -e maybe_it_works | grep -v grep
+    > root     24565  0.0  0.0   4204   516 pts/3    S+   17:15   0:00 ./dont_keep_calm
+    > root     24708  0.0  0.0   4200   368 pts/3    S+   17:17   0:00 ./maybe_it_works
+    > root     24709  0.0  0.0      0     0 pts/3    Z+   17:17   0:00 [maybe_it_works] <defunct>
+    > root     24713  0.0  0.0   4200   368 pts/3    S+   17:17   0:00 ./maybe_it_works
+    > root     24723  0.0  0.0   4200   368 pts/3    S+   17:17   0:00 ./maybe_it_works
+
+Vemos que:
+
+- Em ambos os testes, existiam processos filhos executando em paralelo;
+- No último teste, tivemos um processo zumbi listado;
+    - Como o nosso processo pai verifica processos zumbis apenas de 1 em 1 segundo (`PAUSE_BETWEEN_LAUNCHES`), sempre é possível que existam processos zumbis a serem tratados.
 
 ### Tratando processos zumbis usando sinais
 
-**modelo 3:** waitpid( -1, &status, WNOHANG ) usando sinais (apenas lança processos. tratar filhos mortos é feito por sinais)
+O programa apresentado anteriormente trouxe avanços ao não realizar chamadas _wait_ bloqueantes. Ainda assim, ele poderia ser melhor em alguns pontos:
 
-**improved\_work\_hard\_play\_hard.c**:
+- Em alguns casos, o loop que executa `waitpid` é executado inutilmente, mesmo que não hajam processos zumbis a serem tratados;
+- Um processo zumbis pode existir no sistema durante até 1 segundo (`PAUSE_BETWEEN_LAUNCHES`).
+
+Visando implementar estas melhorias, iremos desenvolver um novo programa chamado de **work\_hard\_play\_hard.c**:
 
     #!c
     #include <unistd.h>
@@ -194,14 +277,14 @@ Exemplo: php-fpm e o max_clients.
     #include <stdio.h>
     #include <sys/wait.h>
     
-    #define PAUSE_BETWEEN_LAUNCHES 1
+    #define PAUSE_BETWEEN_LAUNCHES 2
     #define CHILD_PATH "./maybe_it_works"
     
     // process SIGCHLD signal
     static void sigchld_handler(int signum) {
         static int errors = 0; // children that finished with errors
         static int total = 0; // total of children that finished
-        static float percent = 0;
+        float percent = 0;
         int status = 0;
         
         // loop into all died children
@@ -219,6 +302,7 @@ Exemplo: php-fpm e o max_clients.
     
     int main(int argc, char *argv[]) {
         pid_t pid = 0;
+        int sleep_remaining = 0; // remaining time to sleep
     
         // set handler to SIGCHLD
         if (signal(SIGCHLD, sigchld_handler) == SIG_ERR) {
@@ -227,11 +311,16 @@ Exemplo: php-fpm e o max_clients.
         }   
     
         while (1) { // indefinidely fork and exec children
-            sleep(PAUSE_BETWEEN_LAUNCHES);
+            // sleep the expected time, even if an interruption occurs
+            sleep_remaining = PAUSE_BETWEEN_LAUNCHES;
+            while ((sleep_remaining = sleep(sleep_remaining)) > 0) { }
             pid = fork();
-            if (pid >= 0) { // fork sucessful
+            if (pid >= 0) { // fork successful
                 if (pid == 0) { // child
-                    execl(CHILD_PATH, CHILD_PATH, (char *)(NULL)); // exec child program
+                    if (! execl(CHILD_PATH, CHILD_PATH, (char *)(NULL))) { // exec child program
+                        printf("Error on exec\n");
+                        exit(EXIT_FAILURE);
+                    }
                 }
             } else {
                 printf("Error on fork\n");
@@ -241,23 +330,114 @@ Exemplo: php-fpm e o max_clients.
         return 0;
     }
 
+A utilização de sinais é uma forma de comunicação entre processos assíncrona e baseada em eventos. Quando um processo filho termina sua execução, [ele envia ao pai um sinal (ou _signal_) **SIGCHLD**](http://docs.oracle.com/cd/E19455-01/806-4750/signals-7/index.html). Por este motivo, definimos a função `sigchld_handler` como _handler_ do sinal **SIGCHLD**. É nesta função que faremos o tratamento dos processo zumbis.
 
-Falar do SIGCHLD.
+**Obs:** O artigo [Enviando e tratando sinais em processos Linux]({filename}processos-sinais.md) explica vários aspectos relacionados ao envio de sinais e ao uso de _signal handlers_.
 
-http://superuser.com/questions/359599/why-is-my-dev-random-so-slow-when-using-dd
+Com este novo modelo, conseguimos as seguintes melhorias:
 
-Como alguns programas reais tratam processos zumbis
----------------------------------------------------
+- Otimizamos o tempo de processamento de nossa aplicação, pois `waitpid` apenas é chamada quando é necessário;
+- Tratamos processos zumbis de forma mais rápida pois, assim que o filho termina (e o sinal SIGCHLD é recebido), realizamos rapidamente seu processamento.  
 
-1) Execução não demora muito. Não há necessidade de tratar
-2) Fork and die (deamons) => Não precisa se preocupar com o que ocorre com o filho
-3) Trata de tempo em tempo
-4) Trata quase que instantaneamente
+As variáveis `errors` e `total`, agora, são definidas como variáveis estáticas. Em C, [variáveis estáticas](http://en.wikipedia.org/wiki/Static_variable) são variáveis cujo tempo de vida é igual ao tempo de execução do programa (assim como ocorrem com variáveis globais), mas possuem escopo local.
+
+Também houve uma mudança na implementação da funcionalidade _sleep_. Esta mudança leva em conta que [a função `sleep` retorna ou após o tempo especificado ou após ser interrompida por um tratamento de sinal (_signal handler_)](http://stackoverflow.com/questions/14266485/understanding-sigchld-when-the-child-process-terminates/14266622#14266622). Ao ser interrompida por um sinal, a função retornará quantos segundos ainda restam para completar o tempo especificado. Nós utilizamos este valor retornado em um loop para garantir que tornaremos a executar `sleep` até que todo o tempo `PAUSE_BETWEEN_LAUNCHES` (alterado para 2 segundos nesta experiência) seja alcançado.
+
+**Obs:** A função `sleep` recebe e retorna números inteiros. Caso seja necessário uma precisão maior, fazendo com que o loop de operações `sleep` execute um valor muito próximo do tempo especificado, pode-se utilizar a função `nanosleep`. Este [artigo no _cc.byexamples.com_](http://cc.byexamples.com/2007/05/25/nanosleep-is-better-than-sleep-and-usleep/) apresenta um interessante exemplo de uso desta função.
+
+Vamos, agora, compilar e testar nosso programa:
+
+    :::bash
+    gcc -o work_hard_play_hard work_hard_play_hard.c
+    ./work_hard_play_hard
+    > Errors: 0, Total: 1, Percent: 0.00%
+    > Errors: 1, Total: 2, Percent: 50.00%
+    > Errors: 2, Total: 3, Percent: 66.67%
+    > Errors: 2, Total: 4, Percent: 50.00%
+    > [...]
+    > Errors: 9, Total: 23, Percent: 39.13%
+    > Errors: 11, Total: 25, Percent: 44.00%
+    > [...]
+    > Errors: 16, Total: 65, Percent: 24.62%
+
+Analisando o resultado, vemos que:
+
+- Em nenhum momento entre duas execuções o número total de processos finalizados se manteve constante;
+    - Isso mostra que temos um melhor aproveitamento de CPU ao chamar `waitpid`;
+- O nosso processo trata processos zumbis tão logo recebe o sinal SIGCHLD. Assim, um incremento maior que 1 no número total de processos passou a ser um evento raro;
+    - No exemplo, isso apenas ocorreu uma vez (quando o número total passou de 23 para 25).
+
+Vamos, agora, em um novo terminal, verificar o status dos processos em execução:
+
+    :::bash
+    ps aux | grep -e work_hard_play_hard -e maybe_it_works | grep -v grep
+    > root     12200  0.0  0.0   4204   520 pts/3    S+   22:53   0:00 ./work_hard_play_hard
+    > root     12450  0.0  0.0   4200   368 pts/3    S+   22:54   0:00 ./maybe_it_works
+    > root     12451  0.0  0.0   4200   364 pts/3    S+   22:54   0:00 ./maybe_it_works
+
+Mesmo repetindo este comando inúmeras vezes, vemos que é muito difícil a ocorrência de um processo zumbi, visto que nosso programa os trata quase que imediatamente após aparecerem.
 
 Exemplo real: Backup Exec e o aparecimento de processos zumbis
 --------------------------------------------------------------
 
-Ver email: Considerações sobre o Servidor Oracle
+Certa vez, eu e outros membros da [Vialink](http://www.vialink.com.br) deparamos uma situação onde existia um _deamon_ que gerava um número razoável de processos zumbis com o tempo.
+
+Um servidor de um cliente possuia instalado o software **Oracle Database**, um conhecido banco de dados. Dentre as ferramentas utilizadas para realizar o backup deste banco de dados, era utilizado o software **Symantec Backup Exec 2010**. O Backup Exec, por sua vez, utilizava uma arquitetura servidor/agente. Assim, cada servidor que precisava ter um backup realizado possuia instalado um agente de backup. Como o servidor Oracle utilizava um sistema operacional Linux, era utilizado o agente **Symantec Backup Exec RALUS (Remote Agent for Linux & Unix Servers)**. Mais especificamente, era utilizado o RALUS 4.
+
+Após algum tempo com a solução em produção, percebemos que o Backup por vezes falhava. Verificamos então que existia um número muito grande de processos no sistema. 
+
+    :::bash
+    ps aux | grep oracle | grep -v grep | wc -l
+    > 18451
+
+Vimos que os processos em excesso eram processos zumbis:
+
+    :::bash
+    ps aux | grep oracle | grep -v defunc | grep -v grep | wc -l 
+    > 357
+    ps aux | grep oracle | grep defunc | grep -v grep | wc -l
+    > 18094
+
+Verificamos que estes processos possuiam um processo pai em comum:
+
+    :::bash
+    ps -xal | grep defunct | grep -v grep
+    > F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
+    > [...]
+    > 4   500 32719  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
+    > 4   500 32720  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
+    > 4   500 32721  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
+    > [...]
+
+O UID 500 é o usuário _oracle_. Ou seja, existiam muitos processos zumbis para um mesmo usuário.
+
+Executamos alguns comandos e confirmamos que o problema que ocorria era que o usuário _oracle_ havia atingido seu número limite de usuários, semelhante ao ocorrido na [experiência realizada em artigo anterior](/processos-zumbis/#usando-processos-zumbis-para-esgotar-o-numero-maximo-de-processos):
+
+    :::bash
+    ps ax -o oracle | wc -l
+    > 16383
+    # temporary using 'oracle' user
+    su oracle
+    ulimit -a | grep "max user processes"
+    > max user processes              (-u) 16384
+    # exiting from 'oracle' user's shell
+    exit
+
+Por fim, verificamos quem era o processo de PID 8102:
+
+    :::bash
+    ps ax | grep 8102 | grep -v grep
+    > 8102 ?        Sl   973:06 /opt/VRTSralus/bin/beremote
+
+Ou seja, o _deamon_ do RALUS não estava tratando adequadamente seus processos zumbis.
+
+Para solucionar este problema, nos baseamos no seguinte fato (já apresentado no artigo [Tipos de processo no Linux]({filename}processos-tipos.md)): Ao finalizarmos um processo pai, todos os seus processos filhos serão herdados pelo processo **init** e este último, após algum tempo, executará uma rotina de tratamento de processos zumbis. Assim, adicionamos uma entrada no _crontab_ do sistema (comando `crontab -u root -e`) para reiniciar o _deamon_ em períodos adequados:
+
+    :::bash
+    # Restart RALUS every saturday due to a bug that causes zumbie process
+    0 14 * * 6 /etc/init.d/VRTSralus.init restart
+
+Após esta mudança, tivemos nossas rotinas de backup novamente operacionais, sem nenhum problema.
 
 Referências
 -----------

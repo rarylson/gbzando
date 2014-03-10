@@ -170,6 +170,8 @@ Ver: http://www.makelinux.net/ldd3/chp-7-sect-1
     fclose(file);
     srand(seed_int); // init rand with seed
 
+http://superuser.com/questions/359599/why-is-my-dev-random-so-slow-when-using-dd
+
 Simulando um comportamento aleatório em Python
 ----------------------------------------------
 
