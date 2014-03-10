@@ -49,12 +49,14 @@ table.highlighttable pre {
 table.highlighttable .na {
     color: #06287E;
 }
-/* Fix typografy css conficting with pygments */
+/* Fix typografy css confict with pygments */
 pre .amp {
     font-family: inherit;
-    color: inherit;
     font-size: inherit;
     font-style: inherit;
+}
+.amp {
+    color: inherit;
 }
 
 /* Creative commons */

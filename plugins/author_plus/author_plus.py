@@ -28,7 +28,9 @@ def add_author_plus(generator, metadata):
         author_plus = AUTHOR_PLUS.get(author_plus_short, None)
         # Not in cache
         if not author_plus:
-            author_plus_url = "{}/{}.html".format(generator.settings['AUTHOR_PLUS_DIR'], author_plus_short)
+            author_plus_url = "{}/{}/{}.md".format(
+                    generator.settings['PATH'], generator.settings['AUTHOR_PLUS_DIR'], 
+                    author_plus_short)
             author_plus_url = os.path.abspath(os.path.expanduser(author_plus_url))
             debug("AUTHOR_PLUS: trying to get content from " + author_plus_url)
             # Get content parsing the MarkDown file

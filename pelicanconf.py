@@ -33,6 +33,9 @@ SOCIAL = (
             ('Facebook', 'https://facebook.com/rarylson'),
          )
 
+# Input / output
+PATH = 'content/'
+OUTPUT_PATH = 'output/'
 # URLs - Using permlinks without html
 ARTICLE_URL = "{slug}/"
 ARTICLE_SAVE_AS = "{slug}/index.html"
@@ -47,11 +50,13 @@ AUTHOR_SAVE_AS = "author/{slug}/index.html"
 # With those new configs, pay attention in your article slugs. They can't
 # be 'tags', for example
 TAGS_URL = "tags/"
-TAGS_SAVE_AS =  "tags/index.html"
+TAGS_SAVE_AS = "tags/index.html"
 AUTHORS_URL = "authors/"
 AUTHORS_SAVE_AS = "authors/index.html"
 # Don't generate archieve pages
 DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', ]
+# Don't process 'pages' and 'authors' as articles
+ARTICLE_EXCLUDES = ['pages', 'authors', ]
 # Custom menu item URL
 MENUITEMS = [('Sobre o autor', '/author/rarylson-freitas/'), ]
 
@@ -78,7 +83,7 @@ CREATIVE_COMMONS = True
 PLUGIN_PATH = 'plugins'
 PLUGINS = ['gravatar_plus', 'assets', 'author_plus']
 WEBASSETS = False
-AUTHOR_PLUS_DIR = 'author'
+AUTHOR_PLUS_DIR = 'authors'
 
 # Static content
 STATIC_PATHS = ['images', ]
