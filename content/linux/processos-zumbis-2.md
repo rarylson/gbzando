@@ -1,17 +1,15 @@
 Title: Processos zumbis: Tratando corretamente (parte 2)
-Date: 2014-01-26 18:10
-Tags: linux, shell, c, processos, zumbis, real
+Date: 2014-03-10 1:26
+Tags: linux, shell, c, processos, zumbis
 Slug: processos-zumbis-2
 Category: Linux
 Author: Rarylson Freitas
-Summary: Saiba como evitar que seu software gere processos zumbis. Neste artigo, iremos desenvolver corretamente programas em C que não geram processos zumbis. Iremos também analisar como alguns softwares do mundo real tratam este tipo de processo. Por fim, iremos apresentar um exemplo real de software onde uma falha permitia criar infindandamente processos zumbis no sistema.
+Summary: Saiba como evitar que seu software gere processos zumbis. Neste artigo, iremos desenvolver corretamente programas em C que não geram processos zumbis. Iremos apresentar alguns exemplos, em nível crescente de complexidade, visando a implementação eficiente do tratamento de processos zumbis.
 Status: draft
 
 No primeiro artigo [Processos zumbis: Introdução (parte 1)]({filename}processos-zumbis.md), mostramos o que são processos zumbis e quais são os problemas que eles podem causar.
 
-Neste artigo, iremos mostrar como evitá-los: mostraremos como desenvolver uma aplicação que execute continuamente criando vários filhos, porém sem gerar um número crescente de processos zumbis.
-
-Por fim, iremos mostrar um exemplo real no qual o software **Symantec Backup Exec**, em uma versão mais antiga, não tratava corretamente o fim de seus processos filhos, gerando vários processos zumbis no sistema. Iremos mostrar também o _workarround_ utilizado para contornar a situação.
+Neste artigo, iremos mostrar como evitá-los: mostraremos como desenvolver uma aplicação que execute continuamente criando vários filhos, porém sem gerar um número crescente de processos zumbis, tratando-os de forma eficiente.
 
 Recapitulando
 -------------
@@ -377,67 +375,14 @@ Vamos, agora, em um novo terminal, verificar o status dos processos em execuçã
 
 Mesmo repetindo este comando inúmeras vezes, vemos que é muito difícil a ocorrência de um processo zumbi, visto que nosso programa os trata quase que imediatamente após aparecerem.
 
-Exemplo real: Backup Exec e o aparecimento de processos zumbis
---------------------------------------------------------------
+O que ainda falta?
+------------------
 
-Certa vez, eu e outros membros da [Vialink](http://www.vialink.com.br) deparamos uma situação onde existia um _deamon_ que gerava um número razoável de processos zumbis com o tempo.
+No [primeiro artigo]({filename}processos-zumbis.md) sobre processos zumbis, mostramos que tipos de problemas eles podem causar: como eles podem esgotar o número máximo de processos de um usuário ou mesmo o número de PIDs do sistema.
 
-Um servidor de um cliente possuia instalado o software **Oracle Database**, um conhecido banco de dados. Dentre as ferramentas utilizadas para realizar o backup deste banco de dados, era utilizado o software **Symantec Backup Exec 2010**. O Backup Exec, por sua vez, utilizava uma arquitetura servidor/agente. Assim, cada servidor que precisava ter um backup realizado possuia instalado um agente de backup. Como o servidor Oracle utilizava um sistema operacional Linux, era utilizado o agente **Symantec Backup Exec RALUS (Remote Agent for Linux & Unix Servers)**. Mais especificamente, era utilizado o RALUS 4.
+Neste artigo, mostramos como implementar corretamente softwares que tratam processos seus processos filhos finalizados, evitando o acúmulo de processos zumbis no sistema.
 
-Após algum tempo com a solução em produção, percebemos que o Backup por vezes falhava. Verificamos então que existia um número muito grande de processos no sistema. 
-
-    :::bash
-    ps aux | grep oracle | grep -v grep | wc -l
-    > 18451
-
-Vimos que os processos em excesso eram processos zumbis:
-
-    :::bash
-    ps aux | grep oracle | grep -v defunc | grep -v grep | wc -l 
-    > 357
-    ps aux | grep oracle | grep defunc | grep -v grep | wc -l
-    > 18094
-
-Verificamos que estes processos possuiam um processo pai em comum:
-
-    :::bash
-    ps -xal | grep defunct | grep -v grep
-    > F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
-    > [...]
-    > 4   500 32719  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
-    > 4   500 32720  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
-    > 4   500 32721  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
-    > [...]
-
-O UID 500 é o usuário _oracle_. Ou seja, existiam muitos processos zumbis para um mesmo usuário.
-
-Executamos alguns comandos e confirmamos que o problema que ocorria era que o usuário _oracle_ havia atingido seu número limite de usuários, semelhante ao ocorrido na [experiência realizada em artigo anterior](/processos-zumbis/#usando-processos-zumbis-para-esgotar-o-numero-maximo-de-processos):
-
-    :::bash
-    ps ax -o oracle | wc -l
-    > 16383
-    # temporary using 'oracle' user
-    su oracle
-    ulimit -a | grep "max user processes"
-    > max user processes              (-u) 16384
-    # exiting from 'oracle' user's shell
-    exit
-
-Por fim, verificamos quem era o processo de PID 8102:
-
-    :::bash
-    ps ax | grep 8102 | grep -v grep
-    > 8102 ?        Sl   973:06 /opt/VRTSralus/bin/beremote
-
-Ou seja, o _deamon_ do RALUS não estava tratando adequadamente seus processos zumbis.
-
-Para solucionar este problema, nos baseamos no seguinte fato (já apresentado no artigo [Tipos de processo no Linux]({filename}processos-tipos.md)): Ao finalizarmos um processo pai, todos os seus processos filhos serão herdados pelo processo **init** e este último, após algum tempo, executará uma rotina de tratamento de processos zumbis. Assim, adicionamos uma entrada no _crontab_ do sistema (comando `crontab -u root -e`) para reiniciar o _deamon_ em períodos adequados:
-
-    :::bash
-    # Restart RALUS every saturday due to a bug that causes zumbie process
-    0 14 * * 6 /etc/init.d/VRTSralus.init restart
-
-Após esta mudança, tivemos nossas rotinas de backup novamente operacionais, sem nenhum problema.
+Em um outro artigo, iremos apresentar uma experiência real. Iremos mostrar uma situação onde um software que não tratava corretamente seus processos zumbis, bem como as ações realizadas para diagnosticar e solucionar o problema.
 
 Referências
 -----------

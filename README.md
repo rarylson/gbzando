@@ -66,3 +66,4 @@ TODO
 - http://blog.leonardfactory.com/2013/05/05/code-fenced-blocks-pygments-and-line-numbers-with-jekyll/
 - http://pythonhosted.org/Markdown/extensions/tables.html
 - http://packages.python.org/Markdown/extensions/admonition.html
+- Add all the source code and tests in a .tar.gz version for download. Make a plugin for this too.
