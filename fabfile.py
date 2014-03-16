@@ -57,7 +57,8 @@ def publish():
     project.rsync_project(
         remote_dir=dest_path,
         ssh_opts="-i {key_filename}".format(**env),
-        exclude=".DS_Store",
+        # Don't put drafts in production
+        exclude=[".DS_Store", "drafts*"],
         local_dir=DEPLOY_PATH.rstrip('/') + '/',
         delete=True
     )
@@ -68,7 +69,6 @@ def publish_homolog():
     project.rsync_project(
         remote_dir=homolog_path,
         ssh_opts="-i {key_filename}".format(**env),
-        exclude=".DS_Store",
         local_dir=DEPLOY_PATH.rstrip('/') + '/',
         delete=True
     )
