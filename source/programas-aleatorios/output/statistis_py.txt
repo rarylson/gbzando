@@ -1,0 +1,35 @@
+Exec 1: with 40
+
+python statistcs.py 
+> Execution time:
+> 
+> Time        Percent
+> 1.0s        20.0%
+> 2.0s        32.5%
+> 3.0s        22.5%
+> 4.0s        25.0%
+> 
+> Return code:
+> 
+> Code        Percent
+> 0           82.5%
+> 1           17.5%
+
+
+Exec 2: with 500
+
+python statistics.py 
+> Execution time:
+> 
+> Time        Percent
+> 1.0s        24.2%
+> 2.0s        26.2%
+> 3.0s        23.0%
+> 4.0s        26.6%
+> 
+> Return code:
+> 
+> Code        Percent
+> 0       78.6%
+> 1       21.4%
+
