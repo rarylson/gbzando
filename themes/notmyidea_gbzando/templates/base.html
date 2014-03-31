@@ -31,6 +31,15 @@
         <link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate" title="{{ SITENAME }} RSS Feed" />
         {% endif %}
 
+        {# external scripts #}
+        {# as they aren't inner scripts, there is no need to use webassets #}
+        <!-- MathJax library - Parsing TeX, LaTex, MathML and AsciiMath
+             see: http://docs.mathjax.org/en/latest/start.html 
+                  http://www1.chapman.edu/~jipsen/mathml/asciimath.html
+                  http://www1.chapman.edu/~jipsen/mathml/asciimathsyntax.html
+             -->
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+
         <!--[if IE]>
             <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->

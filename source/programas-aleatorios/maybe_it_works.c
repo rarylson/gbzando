@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
             MIN_EXECUTION_TIME;
     // generate return status
     probability = (float)(PROBABILITY_FAILURE) / PROBABILITY_RUNS;
-    rand_float = (float)(rand()) / RAND_MAX; // random number in [0,1)
+    rand_float = (float)(rand()) / RAND_MAX; // random number in [0,1]
     if (rand_float < probability) {
         return_status = EXIT_FAILURE;
     } else {

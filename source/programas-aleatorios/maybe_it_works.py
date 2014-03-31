@@ -10,7 +10,7 @@ PROBABILITY = 1.0 / 4.0
 SUCCESS = 0 
 FAILURE = 1
 
-def run():
+def run_randomly():
     # Generate execution time: MIN_EXECUTION_TIME <= execution_time <= MAX_EXECUTION_TIME
     execution_time = random.randint(MIN_EXECUTION_TIME, MAX_EXECUTION_TIME)
     # Generate return status: random[0,1) < PROBABILITY => FAILURE
@@ -24,4 +24,4 @@ def run():
     sys.exit(return_status)
 
 if __name__ == "__main__":
-    run()
+    run_randomly()

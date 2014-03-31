@@ -66,7 +66,7 @@ DEFAULT_PAGINATION = 10
 USE_FOLDER_AS_CATEGORY = False
 GITHUB_URL = 'https://github.com/rarylson/gbzando'
 DEFAULT_DATE_FORMAT = '%a, %d %b %Y'
-TYPOGRIFY = True
+TYPOGRIFY = False   # It was confliting with others libraries
 DISQUS_SITENAME = "gbzando"
 DEBUG_DISQUS = True
 

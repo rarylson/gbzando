@@ -10,7 +10,7 @@ PROBABILITY = 1.0 / 4.0
 SUCCESS = 0
 FAILURE = 1
 
-def run():
+def run_randomly():
     
     # There is no need to init seed, because "current system time is used"
     # And "If randomness sources are provided by the operating system, they 
@@ -32,4 +32,4 @@ def run():
 # Called from command line
 # See: http://stackoverflow.com/a/419986/2530295
 if __name__ == "__main__":
-    run()
+    run_randomly()

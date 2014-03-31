@@ -1,28 +1,16 @@
-Title: Programas com comportamento aleatório: Introdução (parte 1)
+Title: Programas com comportamento aleatório
 Date: 2014-01-26 18:10
-Tags: c, python, programação, aleatoriedade
-Slug: programas-comportamento-aleatorio
+Tags: c, python, programação, random
+Slug: programas-comportamento-aleatorio-2
 Category: Programação
 Author: Rarylson Freitas
-Summary: Neste artigo, iremos mostrar como implementar programas probabilísticos simples nas linguagens C e Python. Além disso, iremos implementar um programa que levanta estatísticas de execução, permitindo, assim, testar nossos programas aleatórios. 
+Summary: Bla bla
 Status: draft
-
-Softwares com comportamento aleatório são usados em simuladores, jogos, algoritmos criptográficos, algoritmos de rede, dentre outras aplicações. Devido a importância destes (em especial em segurança da informação), várias bibliotecas foram desenvolvidas e vários algoritmos de geração de números aleatórios surgiram.
-
-Neste artigo, faremos uma introdução ao uso da aleatoriedade no desenvolvimento de programas.
-
-Inicialmente, iremos apresentar um programa em C que utiliza conceitos básicos de probabilidade para simular o comportamento de um sistema real. Depois, iremos reescrever este programa em Python.
-
-Por fim, iremos desenvolver um programa para levantar estatísticas de execução. O objetivo é testar os nossos programas aleatórios desenvolvidos.
 
 Simulando um comportamento aleatório em C
 -----------------------------------------
 
-Iremos implementar um programa para simular alguns comportamentos comuns de programas reais: tempo de execução e probabilidade de falha. Em outras palavras, iremos desenvolver um programa que ora executa mais rápido, ora mais lento, ora funciona, e ora retorna erro.
-
-Embora simples, nosso programa representa uma aplicação muito útil do uso da aleatoriedade: realizar simulações.
-
-Iremos chamar nosso programa de **maybe\_it\_works.c:**
+**maybe\_it\_works.c:**
 
     #!c
     #include <stdio.h>
@@ -40,8 +28,7 @@ Iremos chamar nosso programa de **maybe\_it\_works.c:**
         int execution_time = 0;
         int return_status = 0;
 
-        float probability = 0;
-        float rand_float = 0;
+        int return_status_temp = 0;
 
         srand(time(NULL)); // init rand with a pseudorandom seed
 
@@ -49,9 +36,10 @@ Iremos chamar nosso programa de **maybe\_it\_works.c:**
         execution_time = (rand() % (MAX_EXECUTION_TIME - MIN_EXECUTION_TIME + 1)) +
                 MIN_EXECUTION_TIME;
         // generate return status
-        probability = (float)(PROBABILITY_FAILURE) / PROBABILITY_RUNS;
-        rand_float = (float)(rand()) / RAND_MAX; // random number in [0,1)
-        if (rand_float <= probability) {
+        // 0 <= return_status_temp <= PROBABILITY_RUNS - 1
+        return_status_temp = rand() % PROBABILITY_RUNS;
+        // return_status_temp < PROBABILITY_FAILURE => failure
+        if (return_status_temp < PROBABILITY_FAILURE) {
             return_status = EXIT_FAILURE;
         } else {
             return_status = EXIT_SUCCESS;
@@ -63,25 +51,13 @@ Iremos chamar nosso programa de **maybe\_it\_works.c:**
         return return_status;
     }
 
-O programa acima utiliza a função [**rand**](http://www.cplusplus.com/reference/cstdlib/rand/) para gerar números aleatórios, tornando o comportamento do programa probabilístico. Esta função retorna um inteiro no intervalo entre 0 e `RAND_MAX`, e a sua ideia é sempre devolver valores com igual probabilidade de ocorrência.
+O programa acima utiliza a função [**rand**](http://www.cplusplus.com/reference/cstdlib/rand/) para gerar números aleatórios, tornando o comportamento do programa probabilístico. Esses números são utilizados para simular dois comportamentos típicos de um programa real: tempo de processamento e ocorrência de erros.
 
-Utilizamos a função **sleep** para simular o tempo de execução do programa. Uma execução do programa demorará, aproximadamente, um valor inteiro contido no intervalo fechado entre `MIN_EXECUTION_TIME` e `MAX_EXECUTION_TIME`. No nosso caso, entre 1 e 4 segundos.
-
-Para implementamos isso, usamos um pouquinho de matemática e raciocínio lógico:
-
-- Sejam \`e_min =\` `MIN_EXECUTION_TIME` e \`e_max =\` `MAX_EXECUTION_TIME`. O objetivo do nosso programa é dormir \`s in ZZ^+, s in [e_min, e_max]\`. Obviamente, neste intervalo existem \`e_max - e_min + 1\` números inteiros diferentes;
-- A linguagem C possui o operador `%`, que retorna o resto da divisão de um número por outro. A operação `a % b`, em linguagem matemática, pode ser escrita como \`a mod b\`;
-- Seja \`r\` o retorno da função `rand()`. Sabemos que \`0 <= r mod (e_max - e_min + 1) <= e_max - e_min\`;
-- Somando \`e_min\` na nossa desigualdade: \`e_min <= ( r mod (e_max - e_min + 1) ) + e_min <= e_max\`;
-- Isto é, se fizermos \`s = (r mod (e_max − e_min + 1)) + e_min\`, teremos \`e_min <= s <= e_max\`.
+Nosso programa utiliza a função **sleep** para simular o tempo de execução do programa. Uma execução do programa demorará, aproximadamente, um valor inteiro contido no intervalo fechado entre `MIN_EXECUTION_TIME` e `MAX_EXECUTION_TIME`. No nosso caso, entre 1 e 4 segundos.
 
 De forma semelhante, para simular a probabilidade de falha do programa, retornamos falha (`EXIT_FAILURE`) com probabilidade `PROBABILITY_FAILURE / PROBABILITY_RUNS`. No nosso caso, 25% (1/4).
 
-A explicação dessa parte é bem simples:
-
-- Seja \`r\` o retorno de `rand()` e \`p_fa\` a probabilidade de falha (`PROBABILITY_FAILURE / PROBABILITY_RUNS`);
-- Se \`R = \` `RAND_MAX` é o máximo valor de \`r\`, então: \`0 <= r <= R => 0 <= r / R <= 1\`;
-- Como \`r / R\` assumirá valores igualmente prováveis no intervalo \`[0, 1]\`, podemos dizer que \`r / R <= p_fa\` com probabilidade \`p_fa\`.
+Para implementar essa funcionalidade, na linha 25, armazenou-se o valor `rand() % PROBABILITY_RUNS` em uma variável auxiliar. Este valor é um inteiro entre 0 e `PROBABILITY_RUNS - 1`. Assim, cada um dos valores que esta variável pode assumir possui probabilidade `1 / PROBABILITY_RUNS` de ocorrer. Isso implica que esta variável assumirá um valor no intervalo entre 0 e `PROBABILITY_FAILURE - 1` com probabilidade `PROBABILITY_FAILURE / PROBABILITY_RUNS`. O bloco _if/else_ que se inicia na linha 27 utiliza-se deste fato para assossiar `EXIT_FAILURE` a variável `return_status` com probabilidade `PROBABILITY_FAILURE / PROBABILITY_RUNS`.
 
 Agora, vamos compilar e testar nosso programa:
 
@@ -95,7 +71,7 @@ A instrução `echo $?` imprime o código de retorno do último comando executad
 
 Vamos, agora, utilizar o comando **time** para testar melhor nosso programa.
 
-**Obs:** Alguns _shells_ possuem incorporado (_buitin_) uma versão simplificada do comando _time_ (um exemplo é o _shell_ **bash**, padrão em muitas distribuições Linux e no MacOS). Neste caso, para executar o programa _time_ que desejamos apresentar (e não a versão _builtin_), é necessário passar o path completo do programa (conforme explicado em [Why /usr/bin/time? (Instead of just time)](http://www.thegeekstuff.com/2012/01/time-command-examples/)).
+**Obs:** Alguns _shells_ possuem, incorporado neles (_buitin_), uma versão simplificada do comando _time_ (um exemplo é o _shell_ **bash**, padrão em muitas distribuições Linux e no MacOS). Neste caso, para executar o programa _time_ desejado (e não a versão _builtin_) é necessário passar o path completo do programa (conforme explicado em [Why /usr/bin/time? (Instead of just time)](http://www.thegeekstuff.com/2012/01/time-command-examples/)).
 
     :::bash
     /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works
@@ -105,15 +81,96 @@ Vamos, agora, utilizar o comando **time** para testar melhor nosso programa.
     > time: 0:03.00
     > exit: 1
 
-Nestes testes, vemos claramente que nosso programa possui um comportamento aleatório.
-
-### Um pouco sobre sementes
-
-A função `rand()`, na realidade, 
-
 Nosso programa possui uma limitação: ele utiliza o tempo atual, em segundos, para alimentar a semente (_seed_) utilizada para aleatorizar a função _rand_. Com isso, caso dois processos sejam executados no mesmo instante (mesmo segundo), ambos apresentarão o mesmo comportamento (mesmo tempo de execução e mesmo retorno). Isso não será um problema nos nossos exemplos.
 
 **Obs:** Em casos onde isto seja um problema, pode-se utilizar outros métodos de iniciar a semente do _rand_, como o uso da função [_clock\_gettime_](http://linux.die.net/man/3/clock_gettime), ou o uso de um valor aleatório gerado pelo sistema (como o _device file_ [`/dev/random` do Linux](http://en.wikipedia.org/wiki//dev/random), que [pode ser lido para obter uma semente](http://stackoverflow.com/a/11990066/2530295)). 
+
+### Um novo algoritmo
+
+    :::c    
+    float probability = 0;
+    float rand_float = 0;
+
+a
+
+    :::c
+    // generate return status
+    probability = (float)PROBABILITY_FAILURE / PROBABILITY_RUNS;
+    rand_float = (float)rand() / RAND_MAX; // random number in [0,1)
+    if (rand_float < probability) {
+        return_status = EXIT_FAILURE;
+    } else {
+        return_status = EXIT_SUCCESS;
+    }
+
+Sobre sementes (_seeds_)
+------------------------
+
+-> Porque usar sementes? Qual a vantagem de uma função pseudo-aleatória retornar os mesmos valores?
+
+### Obtendo via linha de comando
+
+    :::c
+    // init rand with a seed
+    unsigned int seed_int = (unsigned int)time(NULL); // default value
+    if (argc > 1) {
+        seed_int = (unsigned int)atol(argv[1]); // reading from command line args
+    }   
+    srand(seed_int);
+
+
+### Usando o clock do processador
+
+Remover `#include <time.h>`.
+
+    :::c
+    // get Time Stamp Counter (TSC) in Pentium (x86 and x64). this may not work 
+    // with multiple processors, because there is many TSC (one for each processor)
+    unsigned long long int rdtsc(void)
+    {
+        unsigned long long int x;
+        unsigned a, d;
+    
+        __asm__ volatile("rdtsc" : "=a" (a), "=d" (d)); // exec assemble instruction
+        return ((unsigned long long)a) | (((unsigned long long)d) << 32);;
+    }
+
+bla
+
+    :::c
+    // init rand with the number of cpu clocks
+    unsigned long long int clock_ticks = 0;
+    clock_ticks = rdtsc();
+    srand((unsigned int)clock_ticks);
+
+#### Usando _jiffies_ no Linux
+
+    :::c
+    #include <linux/jiffies.h>
+
+bla
+
+    :::c
+    srand((unsigned int)jiffies);
+
+Ver: http://www.makelinux.net/ldd3/chp-7-sect-1
+
+### Usando o device `/dev/urandom`
+
+    :::c
+    // init rand with the random device (/dev/urandom)
+    // not using /dev/random because reading it can be slow
+    // based in this code: http://stackoverflow.com/a/11990066/2530295
+    unsigned int seed_int = 0;
+    FILE *file = NULL;
+    if (! (file = fopen("/dev/urandom", "r"))) { // open /dev/urandom
+        printf("Error while opening /dev/urandom\n");
+    }   
+    fread((char*)(&seed_int), sizeof(seed_int), 1, file); // read a random seed
+    fclose(file);
+    srand(seed_int); // init rand with seed
+
+http://superuser.com/questions/359599/why-is-my-dev-random-so-slow-when-using-dd
 
 Simulando um comportamento aleatório em Python
 ----------------------------------------------

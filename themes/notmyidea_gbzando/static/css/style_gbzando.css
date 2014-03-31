@@ -202,3 +202,7 @@ h3 a.toclink:hover:after, h4 a.toclink:hover:after, h5 a.toclink:hover:after,
     color: #CCCCCC;
 }
 
+/* MathJax */
+.MathJax {
+    
+}
