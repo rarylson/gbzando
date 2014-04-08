@@ -13,14 +13,14 @@ Neste artigo, faremos uma introdução ao uso da aleatoriedade no desenvolviment
 
 Inicialmente, iremos apresentar um programa em C que utiliza conceitos básicos de probabilidade para simular o comportamento de um sistema real. Depois, iremos reescrever este programa em Python.
 
-Por fim, iremos desenvolver um programa para levantar estatísticas de execução. O objetivo é testar os nossos programas aleatórios desenvolvidos.
+Por fim, iremos desenvolver um programa para levantar estatísticas de execução. O objetivo é testar se os nossos programas aleatórios funcionam conforme esperado.
 
 Simulando um comportamento aleatório em C
 -----------------------------------------
 
 Iremos implementar um programa para simular alguns comportamentos comuns de programas reais: tempo de execução e probabilidade de falha. Em outras palavras, iremos desenvolver um programa que ora executa mais rápido, ora mais lento, ora funciona, e ora retorna erro.
 
-Embora simples, nosso programa representa uma aplicação muito útil do uso da aleatoriedade: realizar simulações.
+Embora simples, nosso programa representa uma aplicação muito útil do uso da aleatoriedade em programação: a realização de simulações.
 
 Iremos chamar nosso programa de **maybe\_it\_works.c:**
 
@@ -50,7 +50,7 @@ Iremos chamar nosso programa de **maybe\_it\_works.c:**
                 MIN_EXECUTION_TIME;
         // generate return status
         probability = (float)(PROBABILITY_FAILURE) / PROBABILITY_RUNS;
-        rand_float = (float)(rand()) / RAND_MAX; // random number in [0,1)
+        rand_float = (float)(rand()) / RAND_MAX; // random number in [0,1]
         if (rand_float <= probability) {
             return_status = EXIT_FAILURE;
         } else {
@@ -63,25 +63,21 @@ Iremos chamar nosso programa de **maybe\_it\_works.c:**
         return return_status;
     }
 
-O programa acima utiliza a função [**rand**](http://www.cplusplus.com/reference/cstdlib/rand/) para gerar números aleatórios, tornando o comportamento do programa probabilístico. Esta função retorna um inteiro no intervalo entre 0 e `RAND_MAX`, e a sua ideia é sempre devolver valores com igual probabilidade de ocorrência.
+O programa acima utiliza a função [`rand`](http://www.cplusplus.com/reference/cstdlib/rand/) para gerar números aleatórios. Esta função retorna um inteiro no intervalo entre 0 e `RAND_MAX` e, de forma geral, sempre retorna valores com igual probabilidade de ocorrência.
 
-Utilizamos a função **sleep** para simular o tempo de execução do programa. Uma execução do programa demorará, aproximadamente, um valor inteiro contido no intervalo fechado entre `MIN_EXECUTION_TIME` e `MAX_EXECUTION_TIME`. No nosso caso, entre 1 e 4 segundos.
+Utilizamos a função `sleep` para simular o tempo de execução do programa. Uma execução do programa demorará, aproximadamente, um valor inteiro contido no intervalo fechado entre `MIN_EXECUTION_TIME` e `MAX_EXECUTION_TIME`. No nosso caso, entre 1 e 4 segundos.
 
-Para implementamos isso, usamos um pouquinho de matemática e raciocínio lógico:
+Para implementar essa lógica, usamos um pouquinho de matemática:
 
-- Sejam \`e_min =\` `MIN_EXECUTION_TIME` e \`e_max =\` `MAX_EXECUTION_TIME`. O objetivo do nosso programa é dormir \`s in ZZ^+, s in [e_min, e_max]\`. Obviamente, neste intervalo existem \`e_max - e_min + 1\` números inteiros diferentes;
-- A linguagem C possui o operador `%`, que retorna o resto da divisão de um número por outro. A operação `a % b`, em linguagem matemática, pode ser escrita como \`a mod b\`;
-- Seja \`r\` o retorno da função `rand()`. Sabemos que \`0 <= r mod (e_max - e_min + 1) <= e_max - e_min\`;
+- Sejam \`e_min =\` `MIN_EXECUTION_TIME` e \`e_max =\` `MAX_EXECUTION_TIME`. O objetivo do nosso programa é dormir \`s\` segundos, com \`s in ZZ^+, s in [e_min, e_max]\`;
+    - Neste intervalo existem \`e_max - e_min + 1\` números inteiros diferentes;
+- Seja \`r\` o retorno da operação `rand()`. Sabemos que \`0 <= r mod (e_max - e_min + 1) <= e_max - e_min\`;
 - Somando \`e_min\` na nossa desigualdade: \`e_min <= ( r mod (e_max - e_min + 1) ) + e_min <= e_max\`;
-- Isto é, se fizermos \`s = (r mod (e_max − e_min + 1)) + e_min\`, teremos \`e_min <= s <= e_max\`.
+- Se fizermos \`s = (r mod (e_max − e_min + 1)) + e_min\`, teremos \`e_min <= s <= e_max\`.
 
 De forma semelhante, para simular a probabilidade de falha do programa, retornamos falha (`EXIT_FAILURE`) com probabilidade `PROBABILITY_FAILURE / PROBABILITY_RUNS`. No nosso caso, 25% (1/4).
 
-A explicação dessa parte é bem simples:
-
-- Seja \`r\` o retorno de `rand()` e \`p_fa\` a probabilidade de falha (`PROBABILITY_FAILURE / PROBABILITY_RUNS`);
-- Se \`R = \` `RAND_MAX` é o máximo valor de \`r\`, então: \`0 <= r <= R => 0 <= r / R <= 1\`;
-- Como \`r / R\` assumirá valores igualmente prováveis no intervalo \`[0, 1]\`, podemos dizer que \`r / R <= p_fa\` com probabilidade \`p_fa\`.
+Para isso, calculamos a razão `rand() / RAND_MAX`, que será um número ponto flutuante no intervalo [0, 1]. Como esta razão assumirá valores igualmente prováveis, podemos compara-la com a razão `PROBABILITY_FAILURE / PROBABILITY_RUNS` para decidir se o programa falhará ou não.
 
 Agora, vamos compilar e testar nosso programa:
 
@@ -93,9 +89,9 @@ Agora, vamos compilar e testar nosso programa:
 
 A instrução `echo $?` imprime o código de retorno do último comando executado. No teste realizado, **maybe_it_works** retornou 0. Porém, é importante lembrar que ele poderia ter retornado um valor diferente de zero com probabilidade 25%.
 
-Vamos, agora, utilizar o comando **time** para testar melhor nosso programa.
+Vamos, agora, utilizar o comando **`time`** para testar melhor nosso programa.
 
-**Obs:** Alguns _shells_ possuem incorporado (_buitin_) uma versão simplificada do comando _time_ (um exemplo é o _shell_ **bash**, padrão em muitas distribuições Linux e no MacOS). Neste caso, para executar o programa _time_ que desejamos apresentar (e não a versão _builtin_), é necessário passar o path completo do programa (conforme explicado em [Why /usr/bin/time? (Instead of just time)](http://www.thegeekstuff.com/2012/01/time-command-examples/)).
+**Obs:** Alguns _shells_ possuem incorporado (_buitin_) uma versão simplificada do comando _time_ (um exemplo é o _shell_ **bash**, padrão em muitas distribuições Linux e no MacOS). Neste caso, para executar o programa _time_ que desejamos apresentar (e não a versão _builtin_), é necessário passar o path completo do programa (conforme explicado em [Why `/usr/bin/time`? (Instead of just `time`)](http://www.thegeekstuff.com/2012/01/time-command-examples/)).
 
     :::bash
     /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works
@@ -105,28 +101,52 @@ Vamos, agora, utilizar o comando **time** para testar melhor nosso programa.
     > time: 0:03.00
     > exit: 1
 
-Nestes testes, vemos claramente que nosso programa possui um comportamento aleatório.
+### Um pouco sobre sementes (_seeds_)
 
-### Um pouco sobre sementes
+A função `rand`, na realidade, não retorna um número realmente aleatório. Esta função (e muitas outras semelhantes) retorna um número pseudo-aleatório. Em outras palavras, `rand` é um [gerador de números pseudo-aleatórios](http://en.wikipedia.org/wiki/Pseudorandom_number_generator). 
 
-A função `rand()`, na realidade, 
+Este tipo de função gera uma sequência de números que possui propriedades semelhantes às de uma distribuição realmente aleatória. Nestas funções, um conjunto de valores iniciais (chamado de semente, ou _seed_) é utilizado como base para a geração dos novos valores.
 
-Nosso programa possui uma limitação: ele utiliza o tempo atual, em segundos, para alimentar a semente (_seed_) utilizada para aleatorizar a função _rand_. Com isso, caso dois processos sejam executados no mesmo instante (mesmo segundo), ambos apresentarão o mesmo comportamento (mesmo tempo de execução e mesmo retorno). Isso não será um problema nos nossos exemplos.
+**Obs:** A título de curiosidade, esta [resposta no Stack Overflow](http://stackoverflow.com/a/4768189/2530295) apresenta uma implementação de exemplo da função `rand`. Embora útil para compreender como estas funções funcionam, na prática, implementações mais complexas são utilizadas.
 
-**Obs:** Em casos onde isto seja um problema, pode-se utilizar outros métodos de iniciar a semente do _rand_, como o uso da função [_clock\_gettime_](http://linux.die.net/man/3/clock_gettime), ou o uso de um valor aleatório gerado pelo sistema (como o _device file_ [`/dev/random` do Linux](http://en.wikipedia.org/wiki//dev/random), que [pode ser lido para obter uma semente](http://stackoverflow.com/a/11990066/2530295)). 
+Observe que a semente utilizada determina unicamente toda a sequência gerada pelo algoritmo. Isto tem um lado bom e um ruim:
+
+- **Vantagem:** É mais fácil gerar casos de testes para estes programas, ou mesmo documentar falhas que possam ser reproduzidas, pois podemos limitar o conjunto de sementes utilizadas nestes casos. 
+- **Desvantagem:** Em aplicações em produção, devemos ter cuidados especiais com o valor da semente adotada;
+    - Descobrir o valor da semente equivale a saber como o programa irá se comportar daquele ponto em diante (imagine se você descobre o valor da semente utilizada em uma máquina em Las Vegas :O );
+    - Pode ser chato escolher valores apropriados de semente que não atrapalhem a segurança (a semente não pode ser descoberta) ou a funcionalidade (se as sementes se repetirem, execuções de um programa terão comportamentos previsíveis).
+
+Observe que, se iniciássemos `rand` sempre com o mesmo valor de semente, o nosso programa sempre iria ter o mesmo comportamento. Assim, percebemos que o nosso programa possui uma limitação: como ele utiliza o tempo atual, em segundos, para alimentar a semente (_seed_), dois processos executados no mesmo instante (mesmo segundo) apresentarão o mesmo comportamento (mesmo tempo de execução e mesmo retorno).
+
+O exemplo abaixo mostra este caso:
+
+    :::bash
+    # exec 20 times, redirecting each output to a separeted file
+    for i in {1..20}; do
+        ( /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works & ) \
+        2>$i.log; done
+    # print all logs
+    cat *.log
+    > time: 0:01.01
+    > exit: 1
+    > time: 0:01.00
+    > exit: 1
+    > time: 0:01.03
+    > exit: 1
+    > [...]
+
+Neste exemplo, todas as execuções possuíram o mesmo comportamento (tempos de processamento e retornos sempre iguais).
+
+Com certeza, existem implementações melhores que a nossa :(.
 
 Simulando um comportamento aleatório em Python
 ----------------------------------------------
 
-See: http://docs.python.org/2/library/random.html
-There is no need to init seed, because "current system time is used"
-And "If randomness sources are provided by the operating system, they 
-are used instead of the system time"
-See: http://docs.python.org/2/library/random.html#random.seed
-        
-See: http://stackoverflow.com/a/419986/2530295
+Vamos, agora, reimplementar o nosso programa em Python.
 
-**maybe\_it\_works.py**:
+Python é uma linguagem de alto nível, relativamente moderna, procedural (mas que permite o uso de orientação de objetos), madura, com vários recursos interessantes, porém muito simples.  
+
+O programa **maybe\_it\_works.py** possuirá o nosso código:
 
     #!python
     #!/usr/bin/env python
@@ -156,7 +176,18 @@ See: http://stackoverflow.com/a/419986/2530295
      
     if __name__ == "__main__":
         run_randomly()
- 
+
+Primeiramente, em Python, nosso programa não precisou ser compilado e possuiu menos linhas de código.
+
+Entretanto, o mais interessante é o [módulo `random`](https://docs.python.org/2/library/random.html), que possui algumas características e recursos muito úteis que simplificaram a programação do nosso algoritmo aleatório:
+
+- Não é necessário definir uma semente. O módulo `random` [faz isso automaticamente para a gente, no momento que é carregado](https://docs.python.org/2/library/random.html#random.seed). Além disso, este módulo busca uma fonte de aleatoriedade no sistema operacional, visando gerar sementes de forma mais inteligente. Somente se o sistema operacional não possuir este mecanismo, o módulo usará o tempo atual do sistema (assim como nosso programa em C);
+    - Nosso programa não possuirá, portanto, a limitação do nosso programa em C, de retornar sempre os mesmos resultados quando vários programas são executados no mesmo segundo;
+    - Caso o programador deseje explicitar uma semente a ser utilizada, não há problemas: basta utilizar a função `random.seed`;
+- É fácil gerar números aleatórios nos intervalos que queremos;
+    - Para gerar o tempo de execução, utilizamos a função `random.randint`, que gera números aleatórios inteiros no intervalo que queremos;
+    - Para gerar números aleatórios ponto flutuantes, utilizamos a função `random.random`, que gera números on intervalo [0, 1);
+        - Caso desejássemos gerar números ponto flutuantes em um intervalo qualquer, a função `random.uniform` poderia ser utilizada.
 
 Testanto comportamentos aleatórios em Python
 --------------------------------------------
