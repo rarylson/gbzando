@@ -189,6 +189,14 @@ Entretanto, o mais interessante é o [módulo `random`](https://docs.python.org/
     - Para gerar números aleatórios ponto flutuantes, utilizamos a função `random.random`, que gera números on intervalo [0, 1);
         - Caso desejássemos gerar números ponto flutuantes em um intervalo qualquer, a função `random.uniform` poderia ser utilizada.
 
+Para testar o nosso programa em Python, podemos ou executá-lo com o interpretador do Python (`python maybe_it_works.py`), ou simplesmente dar permição de execução ao nosso programa e executá-lo (a primeira linha do nosso programa indica que interpretador queremos que seja utilizado). Vamos utilizar a segunda opção:
+
+    :::bash
+    chmod +x maybe_it_works.py
+    /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works.py
+    > time: 0:03.05
+    > exit: 0
+
 Testanto comportamentos aleatórios em Python
 --------------------------------------------
 
