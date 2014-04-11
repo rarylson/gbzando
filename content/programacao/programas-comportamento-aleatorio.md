@@ -1,11 +1,10 @@
 Title: Programas com comportamento aleatório: Introdução (parte 1)
-Date: 2014-01-26 18:10
+Date: 2014-04-11 00:55
 Tags: c, python, programação, aleatoriedade
 Slug: programas-comportamento-aleatorio
 Category: Programação
 Author: Rarylson Freitas
 Summary: Neste artigo, iremos mostrar como implementar programas probabilísticos simples nas linguagens C e Python. Além disso, iremos implementar um programa que levanta estatísticas de execução, permitindo, assim, testar nossos programas aleatórios. 
-Status: draft
 
 Softwares com comportamento aleatório são usados em simuladores, jogos, algoritmos criptográficos, algoritmos de rede, dentre outras aplicações. Devido a importância destes (em especial em segurança da informação), várias bibliotecas foram desenvolvidas e vários algoritmos de geração de números aleatórios surgiram.
 
@@ -67,19 +66,9 @@ O programa acima utiliza a função [`rand`](http://www.cplusplus.com/reference/
 
 Utilizamos a função `sleep` para simular o tempo de execução do programa. Uma execução do programa demorará, aproximadamente, um valor inteiro contido no intervalo fechado entre `MIN_EXECUTION_TIME` e `MAX_EXECUTION_TIME`. No nosso caso, entre 1 e 4 segundos.
 
-Para implementar essa lógica, usamos um pouquinho de matemática:
-
-- Sejam \`e_min =\` `MIN_EXECUTION_TIME` e \`e_max =\` `MAX_EXECUTION_TIME`. O objetivo do nosso programa é dormir \`s\` segundos, com \`s in ZZ^+, s in [e_min, e_max]\`;
-    - Neste intervalo existem \`e_max - e_min + 1\` números inteiros diferentes;
-- Seja \`r\` o retorno da operação `rand()`. Sabemos que \`0 <= r mod (e_max - e_min + 1) <= e_max - e_min\`;
-- Somando \`e_min\` na nossa desigualdade: \`e_min <= ( r mod (e_max - e_min + 1) ) + e_min <= e_max\`;
-- Se fizermos \`s = (r mod (e_max − e_min + 1)) + e_min\`, teremos \`e_min <= s <= e_max\`.
-
 De forma semelhante, para simular a probabilidade de falha do programa, retornamos falha (`EXIT_FAILURE`) com probabilidade `PROBABILITY_FAILURE / PROBABILITY_RUNS`. No nosso caso, 25% (1/4).
 
-Para isso, calculamos a razão `rand() / RAND_MAX`, que será um número ponto flutuante no intervalo [0, 1]. Como esta razão assumirá valores igualmente prováveis, podemos compara-la com a razão `PROBABILITY_FAILURE / PROBABILITY_RUNS` para decidir se o programa falhará ou não.
-
-Agora, vamos compilar e testar nosso programa:
+Vamos, agora, compilar e testar nosso programa:
 
     :::bash
     gcc -o maybe_it_works maybe_it_works.c
@@ -107,18 +96,21 @@ A função `rand`, na realidade, não retorna um número realmente aleatório. E
 
 Este tipo de função gera uma sequência de números que possui propriedades semelhantes às de uma distribuição realmente aleatória. Nestas funções, um conjunto de valores iniciais (chamado de semente, ou _seed_) é utilizado como base para a geração dos novos valores.
 
-**Obs:** A título de curiosidade, esta [resposta no Stack Overflow](http://stackoverflow.com/a/4768189/2530295) apresenta uma implementação de exemplo da função `rand`. Embora útil para compreender como estas funções funcionam, na prática, implementações mais complexas são utilizadas.
+**Observações:**
+
+- Embora a explicação acima seja bastante subjetiva, existe uma [definição matemática](http://en.wikipedia.org/wiki/Pseudorandom_number_generator#Mathematical_definition) por trás destas funções;
+- A título de curiosidade, esta [resposta no Stack Overflow](http://stackoverflow.com/a/4768189/2530295) apresenta uma implementação de exemplo da função `rand`. Embora útil para compreender como estas funções funcionam, na prática, implementações mais complexas são utilizadas.
 
 Observe que a semente utilizada determina unicamente toda a sequência gerada pelo algoritmo. Isto tem um lado bom e um ruim:
 
 - **Vantagem:** É mais fácil gerar casos de testes para estes programas, ou mesmo documentar falhas que possam ser reproduzidas, pois podemos limitar o conjunto de sementes utilizadas nestes casos. 
 - **Desvantagem:** Em aplicações em produção, devemos ter cuidados especiais com o valor da semente adotada;
-    - Descobrir o valor da semente equivale a saber como o programa irá se comportar daquele ponto em diante (imagine se você descobre o valor da semente utilizada em uma máquina em Las Vegas :O );
-    - Pode ser chato escolher valores apropriados de semente que não atrapalhem a segurança (a semente não pode ser descoberta) ou a funcionalidade (se as sementes se repetirem, execuções de um programa terão comportamentos previsíveis).
+    - Descobrir o valor da semente equivale a saber como o programa irá se comportar daquele ponto em diante (algumas pessoas adorariam descobrir as sementes utilizadas nas máquinas existentes nos cassinos de Las Vegas :O );
+    - Também não podemos repetir sementes. Mesmo que seu valor seja desconhecido, as próximas execuções de um programa teriam comportamento previsível.
 
 Observe que, se iniciássemos `rand` sempre com o mesmo valor de semente, o nosso programa sempre iria ter o mesmo comportamento. Assim, percebemos que o nosso programa possui uma limitação: como ele utiliza o tempo atual, em segundos, para alimentar a semente (_seed_), dois processos executados no mesmo instante (mesmo segundo) apresentarão o mesmo comportamento (mesmo tempo de execução e mesmo retorno).
 
-O exemplo abaixo mostra este caso:
+O exemplo abaixo mostra essa limitação:
 
     :::bash
     # exec 20 times, redirecting each output to a separeted file
@@ -200,7 +192,11 @@ Para testar o nosso programa em Python, podemos ou executá-lo com o interpretad
 Testanto comportamentos aleatórios em Python
 --------------------------------------------
 
-**statistics.py**:
+Algoritmos aleatórios não um pouco difíceis de testar. Para tornar esta tarefa possível, pode-se criar casos de testes usando sementes previamente definidas, conforme apresentado na sessão anterior.
+
+Entretanto, isso não mostra se, estatisticamente, o comportamento do nosso programa segue a distribuição de probabilidade que escolhemos. Um forma simples de verificar isso é rodar o nosso programa inúmeras vezes, gerando uma estatística de execução e verificando se ela corresponde ao esperado.
+
+Para este fim, criamos o programa **statistics.py**:
 
     #!python
     #!/usr/bin/env python
@@ -245,10 +241,27 @@ Testanto comportamentos aleatórios em Python
     if __name__ == "__main__":
         statistics()
 
-Testando:
+O programa acima irá executar 500 testes em sequência. Em cada teste, ele irá executar **maybe_it_works.py**, calculando o seu tempo de execução e obtendo o retorno do programa.
+
+Para calcular o tempo de execução, utilizados duas vezes a função `time.time` (uma antes e outra depois da execução do teste). A diferença  é aproximadamente o tempo de execução. De posse desse valor, ainda fazemos um arredondamento para poder agrupar tempos de execução próximos.
+
+Já o retorno da execução de um teste é obtido através do módulo `subprocess`, um módulo muito útil para execução de comandos no sistema operacional. Sua [função `subprocess.call`](https://docs.python.org/2/library/subprocess.html#subprocess.call) recebe como argumentos uma lista de argumentos a serem passados à interface de comandos do sistema operacional. Ao receber esta lista de arguentos, a função irá realizar as operações necessárias de _escape_ e _quoting_ antes de passá-los ao _shell_ sistema operacional. Essa função irá esperar sincronamente pela execução do comando e, em seguida, irá retornar o código de retorno do programa.
+
+**Obs:** É possível passar todos os parâmetros através de uma única _string_ (utilizando o parâmetro `shell=True`). Entretanto, [essa utilização é desencorajada, visto que pode deixar o programa vulnerável a ataques de _shell injection_](https://docs.python.org/2/library/subprocess.html#frequently-used-arguments).
+
+Depois de obter nossas métricas (tempo de execução e retorno), nós as inserimos em listas apropriadas. No momento seguinte, contamos quanto cada valor aparece na lista, dividindo esta contagem pelo número total de elementos.
+
+Logo depois, geramos um dicionário ou _dict_ (em outras linguagens chamado de _map_ ou _hashtable_). Este dicionário irá possuir como chave os valores das nossas listas (o número de segundos, ou o código de retorno), e como valor a frequência relativa com que um dado valor aparece na nossa lista original.
+
+A linha 24 do nosso programa possui um exemplo esclarecedor: o nosso código transformaria a lista `[1, 2, 2]` no dicionário `{'1': 0.33, '2': 0.66}`.
+
+Por fim, imprimimos as estatisticas coletadas na tela. Para isso, iteramos sobre os pares ordenados (chave, valor) contidos nos nossos dicionários.
+
+Vamos, agora, testar o nosso programa:
 
     :::bash
-    python statistics.py 
+    chmod +x statistics.py
+    ./ statistics.py
     > Execution time:
     > Time        Percent
     > 1.0s        24.2%
@@ -259,11 +272,14 @@ Testando:
     > Return code:
     > Code        Percent
     > 0           78.6%
-    > 1           21.4%
+    > 1           21.4%2
+
+No teste acima, obvervamos que os valores retornados estão próximos do esperado: próximo a 25% para os tempos de execução, e próximo a 25% para o número de falhas.
 
 Referências
 -----------
 
-TODO Update here
-
-- [Wikipedia - Zombie Process](http://en.wikipedia.org/wiki/Zombie_process)
+- [Wikipedia - Pseudorandom number generator](http://en.wikipedia.org/wiki/Pseudorandom_number_generator)
+- [rand - C++ Reference](http://www.cplusplus.com/reference/cstdlib/rand/)
+- [srand - C++ Reference](http://www.cplusplus.com/reference/cstdlib/srand/)
+- [Python - Tutorial](https://docs.python.org/2/tutorial/index.html)

@@ -49,7 +49,11 @@ table.highlighttable pre {
 table.highlighttable .na {
     color: #06287E;
 }
+pre, code {
+    font-size: 1.1em;
+}
 /* Fix typografy css confict with pygments */
+/* XXX Typografy temporary disabled
 pre .amp {
     font-family: inherit;
     font-size: inherit;
@@ -58,6 +62,7 @@ pre .amp {
 .amp {
     color: inherit;
 }
+*/
 
 /* Creative commons */
 #about a.img {
