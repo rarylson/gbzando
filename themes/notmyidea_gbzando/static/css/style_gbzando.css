@@ -199,7 +199,10 @@ h3 a.toclink, h4 a.toclink, h5 a.toclink, h6 a.toclink {
     color: #000000;
 }
 h3 a.toclink:hover, h4 a.toclink:hover, h5 a.toclink:hover, h6 a.toclink:hover,
-h3 a.toclink:visited, h4 a.toclink:visited, h5 a.toclink:visited, h6 a.toclink:visited {
+h3 a.toclink:visited, h4 a.toclink:visited, h5 a.toclink:visited, h6 a.toclink:visited,
+#featured h3 a.toclink:hover, #featured h4 a.toclink:hover, #featured h5 a.toclink:hover, 
+#featured h6 a.toclink:hover, #featured h3 a.toclink:visited, #featured h4 a.toclink:visited, 
+#featured h5 a.toclink:visited, #featured h6 a.toclink:visited {
     color: #000000;
 }
 h3 a.toclink:hover:after, h4 a.toclink:hover:after, h5 a.toclink:hover:after, 
@@ -207,7 +210,3 @@ h3 a.toclink:hover:after, h4 a.toclink:hover:after, h5 a.toclink:hover:after,
     color: #CCCCCC;
 }
 
-/* MathJax */
-.MathJax {
-    
-}
