@@ -58,7 +58,7 @@ Iremos chamar nosso programa de **maybe\_it\_works.c:**
 
         // simulate the program execution time 
         sleep(execution_time);
-        // simulate a program which sometimes fail
+        // simulate a program which sometimes fails
         return return_status;
     }
 
@@ -163,7 +163,7 @@ O programa **maybe\_it\_works.py** possuirá o nosso código:
             return_status = SUCCESS
         # Simulate the program execution time
         time.sleep(execution_time)
-        # Simulate a program which sometimes fail
+        # Simulate a program which sometimes fails
         sys.exit(return_status)
      
     if __name__ == "__main__":
@@ -173,15 +173,15 @@ Primeiramente, em Python, nosso programa não precisou ser compilado e possuiu m
 
 Entretanto, o mais interessante é o [módulo `random`](https://docs.python.org/2/library/random.html), que possui algumas características e recursos muito úteis que simplificaram a programação do nosso algoritmo aleatório:
 
-- Não é necessário definir uma semente. O módulo `random` [faz isso automaticamente para a gente, no momento que é carregado](https://docs.python.org/2/library/random.html#random.seed). Além disso, este módulo busca uma fonte de aleatoriedade no sistema operacional, visando gerar sementes de forma mais inteligente. Somente se o sistema operacional não possuir este mecanismo, o módulo usará o tempo atual do sistema (assim como nosso programa em C);
-    - Nosso programa não possuirá, portanto, a limitação do nosso programa em C, de retornar sempre os mesmos resultados quando vários programas são executados no mesmo segundo;
-    - Caso o programador deseje explicitar uma semente a ser utilizada, não há problemas: basta utilizar a função `random.seed`;
+- Não é necessário definir uma semente. O módulo `random` [faz isso automaticamente para a gente no momento em que é carregado](https://docs.python.org/2/library/random.html#random.seed). Além disso, este módulo busca uma fonte de aleatoriedade no sistema operacional visando gerar sementes de forma mais inteligente. Somente se o sistema operacional não possuir este mecanismo é que este módulo usará o tempo atual do sistema;
+    - Como o sistema operacional em que executamos a experiência possui esta fonte de aleatoriedade, o nosso programa não possuirá a limitação do nosso programa em C, que retornava sempre os mesmos resultados quando vários programas eram executados no mesmo segundo;
+    - Caso o programador deseje explicitar a semente a ser utilizada (por exemplo, para facilitar testes e depurar erros), não há problemas: basta utilizar a função `random.seed`;
 - É fácil gerar números aleatórios nos intervalos que queremos;
     - Para gerar o tempo de execução, utilizamos a função `random.randint`, que gera números aleatórios inteiros no intervalo que queremos;
-    - Para gerar números aleatórios ponto flutuantes, utilizamos a função `random.random`, que gera números on intervalo [0, 1);
+    - Para gerar números aleatórios ponto flutuantes, utilizamos a função `random.random`, que gera números no intervalo [0, 1);
         - Caso desejássemos gerar números ponto flutuantes em um intervalo qualquer, a função `random.uniform` poderia ser utilizada.
 
-Para testar o nosso programa em Python, podemos ou executá-lo com o interpretador do Python (`python maybe_it_works.py`), ou simplesmente dar permição de execução ao nosso programa e executá-lo (a primeira linha do nosso programa indica que interpretador queremos que seja utilizado). Vamos utilizar a segunda opção:
+Para testar o nosso programa em Python, podemos ou executá-lo com o interpretador do Python (`python maybe_it_works.py`) ou simplesmente dar permição de execução ao nosso programa e executá-lo normalmente (a primeira linha do nosso programa indica qual interpretador queremos que seja utilizado). Vamos utilizar a segunda opção:
 
     :::bash
     chmod +x maybe_it_works.py
@@ -192,9 +192,9 @@ Para testar o nosso programa em Python, podemos ou executá-lo com o interpretad
 Testanto comportamentos aleatórios em Python
 --------------------------------------------
 
-Algoritmos aleatórios não um pouco difíceis de testar. Para tornar esta tarefa possível, pode-se criar casos de testes usando sementes previamente definidas, conforme apresentado na sessão anterior.
+Algoritmos aleatórios são um pouco difíceis de testar. Para tornar esta tarefa possível, pode-se criar casos de testes usando sementes previamente definidas, conforme apresentado na sessão anterior.
 
-Entretanto, isso não mostra se, estatisticamente, o comportamento do nosso programa segue a distribuição de probabilidade que escolhemos. Um forma simples de verificar isso é rodar o nosso programa inúmeras vezes, gerando uma estatística de execução e verificando se ela corresponde ao esperado.
+Entretanto, isso não mostra se, estatisticamente, o comportamento do nosso programa segue a distribuição de probabilidade que escolhemos. Um forma simples de realizar esta verificação seria rodar o nosso programa inúmeras vezes, gerando uma estatística de execução e verificando se ela corresponde ao resultado esperado.
 
 Para este fim, criamos o programa **statistics.py**:
 
@@ -208,7 +208,7 @@ Para este fim, criamos o programa **statistics.py**:
     NUMBER_OF_TESTS = 500 
     
     def statistics():
-        # Arrays with execution history
+        # Lists with execution history
         time_history = []
         return_history = []
     
@@ -218,10 +218,10 @@ Para este fim, criamos o programa **statistics.py**:
             return_code = subprocess.call(CHILD_COMMAND.split(" "))
             execution_time = time.time() - start_time
             # Update history
-            # Round execution_time after update. Example: 1.03s to 1s
+            # Round execution_time before update the list. Example: 1.03s to 1s
             time_history.append( round(execution_time) )
             return_history.append(return_code)
-        # Count items, dividing by the total
+        # Count items, dividing them by the total
         # Example: [1, 2, 2] -> {'1': 0.33, '2': 0.66}
         # Based in this code: http://stackoverflow.com/a/9604768/2530295
         counter_time = dict([(i, float(time_history.count(i)) / len(time_history)) 
@@ -243,9 +243,9 @@ Para este fim, criamos o programa **statistics.py**:
 
 O programa acima irá executar 500 testes em sequência. Em cada teste, ele irá executar **maybe_it_works.py**, calculando o seu tempo de execução e obtendo o retorno do programa.
 
-Para calcular o tempo de execução, utilizados duas vezes a função `time.time` (uma antes e outra depois da execução do teste). A diferença  é aproximadamente o tempo de execução. De posse desse valor, ainda fazemos um arredondamento para poder agrupar tempos de execução próximos.
+Para calcular o tempo de execução, utilizamos duas vezes a função `time.time` (uma antes e outra depois da execução do teste) e calculamos a diferença entre os valores obtidos. De posse desse valor, fazemos um arredondamento para poder agrupar tempos de execução próximos.
 
-Já o retorno da execução de um teste é obtido através do módulo `subprocess`, um módulo muito útil para execução de comandos no sistema operacional. Sua [função `subprocess.call`](https://docs.python.org/2/library/subprocess.html#subprocess.call) recebe como argumentos uma lista de argumentos a serem passados à interface de comandos do sistema operacional. Ao receber esta lista de arguentos, a função irá realizar as operações necessárias de _escape_ e _quoting_ antes de passá-los ao _shell_ sistema operacional. Essa função irá esperar sincronamente pela execução do comando e, em seguida, irá retornar o código de retorno do programa.
+Já o retorno da execução de um teste é obtido através do módulo `subprocess`, muito útil para execução de comandos no sistema operacional. Sua [função `subprocess.call`](https://docs.python.org/2/library/subprocess.html#subprocess.call) recebe como parâmetro uma lista de argumentos a serem passados à interface de comandos do sistema operacional. Ao receber esta lista de argumentos, a função irá realizar as operações necessárias de _escape_ e _quoting_ antes de passá-los ao _shell_ sistema operacional. Essa função irá esperar sincronamente pela execução do comando e, em seguida, irá retornar o código de retorno deste.
 
 **Obs:** É possível passar todos os parâmetros através de uma única _string_ (utilizando o parâmetro `shell=True`). Entretanto, [essa utilização é desencorajada, visto que pode deixar o programa vulnerável a ataques de _shell injection_](https://docs.python.org/2/library/subprocess.html#frequently-used-arguments).
 
@@ -255,7 +255,7 @@ Logo depois, geramos um dicionário ou _dict_ (em outras linguagens chamado de _
 
 A linha 24 do nosso programa possui um exemplo esclarecedor: o nosso código transformaria a lista `[1, 2, 2]` no dicionário `{'1': 0.33, '2': 0.66}`.
 
-Por fim, imprimimos as estatisticas coletadas na tela. Para isso, iteramos sobre os pares ordenados (chave, valor) contidos nos nossos dicionários.
+Por fim, iteramos sobre os nossos dicionários e imprimimos as estatisticas coletadas na tela.
 
 Vamos, agora, testar o nosso programa:
 
@@ -272,7 +272,7 @@ Vamos, agora, testar o nosso programa:
     > Return code:
     > Code        Percent
     > 0           78.6%
-    > 1           21.4%2
+    > 1           21.4%
 
 No teste acima, obvervamos que os valores retornados estão próximos do esperado: próximo a 25% para os tempos de execução, e próximo a 25% para o número de falhas.
 

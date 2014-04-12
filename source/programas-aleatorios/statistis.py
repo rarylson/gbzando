@@ -7,7 +7,7 @@ CHILD_COMMAND = "/usr/bin/env python maybe_it_works.py"
 NUMBER_OF_TESTS = 500
 
 def statistics():
-    # Arrays with execution history
+    # Lists with execution history
     time_history = []
     return_history = []
 
@@ -17,10 +17,10 @@ def statistics():
         return_code = subprocess.call(CHILD_COMMAND.split(" "))
         execution_time = time.time() - start_time
         # Update history
-        # Round execution_time after update. Example: 1.03s to 1s
+        # Round execution_time before update the list. Example: 1.03s to 1s
         time_history.append( round(execution_time) )
         return_history.append(return_code)
-    # Count items, dividing by the total
+    # Count items, dividing them by the total
     # Example: [1, 2, 2] -> {'1': 0.33, '2': 0.66}
     # See: http://stackoverflow.com/a/9604768/2530295
     counter_time = dict([(i, float(time_history.count(i)) / len(time_history)) 
