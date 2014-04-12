@@ -41,8 +41,10 @@ SITEMAP = {
 }
 
 # Google Analytics
-# Custom template var
-GOOGLE_ANALYTICS_UNIVERSAL = "UA-44485503-1"
+GOOGLE_ANALYTICS = "UA-44485503-1"
+# Custom template vars
+GOOGLE_ANALYTICS_UNIVERSAL = True
+GOOGLE_ANALYTICS_DISPLAYFEATURES = True
 
 # Static files
 STATIC_PATHS.extend([
