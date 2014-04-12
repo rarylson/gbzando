@@ -32,6 +32,6 @@ int main(int argc, char *argv[]) {
     
     // simulate the program execution time 
     sleep(execution_time);
-    // simulate a program which sometimes fail
+    // simulate a program which sometimes fails
     return return_status;
 }

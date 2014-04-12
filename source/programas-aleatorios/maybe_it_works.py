@@ -20,7 +20,7 @@ def run_randomly():
         return_status = SUCCESS
     # Simulate the program execution time
     time.sleep(execution_time)
-    # Simulate a program which sometimes fail
+    # Simulate a program which sometimes fails
     sys.exit(return_status)
 
 if __name__ == "__main__":
