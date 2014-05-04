@@ -6,14 +6,14 @@
 #define PAUSE_BETWEEN_LAUNCHES 2
 #define CHILD_PATH "./maybe_it_works"
 
-// process SIGCHLD signal
+// process SIGCHLD signals
 static void sigchld_handler(int signum) {
     static int errors = 0; // children that finished with errors
     static int total = 0; // total of children that finished
     float percent = 0;
     int status = 0;
 
-    // loop into all died children
+    // loop through all died children
     while(waitpid(-1, &status, WNOHANG) > 0) {
         // update counters
         if (WIFEXITED(status) && WEXITSTATUS(status) != EXIT_SUCCESS) {

@@ -1,11 +1,10 @@
 Title: Processos zumbis: Tratando corretamente (parte 2)
-Date: 2014-03-10 1:26
+Date: 2014-05-04 16:00
 Tags: linux, shell, c, processos, zumbis
 Slug: processos-zumbis-2
 Category: Linux
 Author: Rarylson Freitas
 Summary: Saiba como evitar que seu software gere processos zumbis. Neste artigo, iremos desenvolver corretamente programas em C que não geram processos zumbis. Iremos apresentar alguns exemplos, em nível crescente de complexidade, visando a implementação eficiente do tratamento de processos zumbis.
-Status: draft
 
 No primeiro artigo [Processos zumbis: Introdução (parte 1)]({filename}processos-zumbis.md), mostramos o que são processos zumbis e quais são os problemas que eles podem causar.
 
@@ -38,9 +37,7 @@ Para implementar este exemplo, iremos utilizar dois programas: o pai, que lancar
 
 ### Processo filho com comportamento aleatório
 
-Iremos utilizar o programa **maybe\_it\_works.c** (apresentado no artigo [Programas com Comportamento Aleatório]({filename}./../programacao/programas-comportamento-aleatorio.md)) como processo filho. Foram apresentadas várias versões deste programa, mas iremos utilizar a [primeira delas](/programas-comportamento-aleatorio/#simulando-um-comportamento-aleatorio-em-c) neste artigo.
-
-**Obs:** Você não precisa entender os detalhes de implementação deste programa para entender este artigo. Entretanto, caso queira compreender mais sobre ele, fique à vontade para ler o artigo citado :).
+Iremos utilizar o [programa **maybe\_it\_works.c**](/programas-comportamento-aleatorio/#simulando-um-comportamento-aleatorio-em-c) (apresentado no artigo [Programas com Comportamento Aleatório: Introdução (parte 1)]({filename}./../programacao/programas-comportamento-aleatorio.md)) como processo filho.
 
 O programa **maybe\_it\_works.c** utiliza funções aleatórias para simular dois comportamentos típicos de um programa real: tempo de processamento e ocorrência de erros. Em resumo, o programa:
 
@@ -57,8 +54,6 @@ Agora, vamos compilar e testar este programa:
     > sys	0m0.000s
     echo $?
     > 0
-
-**Obs:** A instrução `echo $?` imprime o [código de retorno do último comando executado](http://linuxcommando.blogspot.com.br/2008/03/how-to-check-exit-status-code.html).
 
 No teste realizado, **maybe\_it\_works** demorou 2 segundos para executar e retornou sucesso. Entretanto, ele poderia ter tido um tempo de execução diferente, ou mesmo ter retornado um valor diferente de zero.
 
@@ -133,13 +128,13 @@ Esta função substitue a imagem do processo em execução (código, variáveis,
 
 Já os demais parâmetros são passados ao "novo processo" como uma lista de parâmetros de linha de comando. Por convenção, o primeiro parâmetro a ser passado deve ser o nome do arquivo que contém o código a ser executado/interpretado. O último parâmetro a ser parado para `execl` precisa ser um ponteiro nulo (_null pointer_).
 
-**Obs:** A função `execl` é apenas uma das que compõem a [família de funções exec](http://man7.org/linux/man-pages/man3/exec.3.html). Elas diferem entre si em alguns detalhes, mas todas são utilizadas para carregar um novo código.
+**Obs:** A função `execl` é apenas uma das que compõem a [família de funções exec](http://man7.org/linux/man-pages/man3/exec.3.html). Embora elas difiram entre si em alguns detalhes, todas são utilizadas para carregar um novo código.
 
 Outro detalhe a ser observado no nosso programa é a chamada a [função `wait`](http://linux.die.net/man/2/wait), onde o pai aguarda de forma síncrona mudanças no estado do processo filho (como o fim de sua execução) armazenando na variável `status` várias informações relacionadas ao evento ocorrido.
 
-O valor armazenado na variável `status` possui várias informações. Entretanto, existem várias macros que podem ser utilizadas para facilitar a interpretação correta desta variável. No nosso caso, testamos se a mudança de estado ocorrida foi o fim da execução do processo filho (macro `WIFEXITED`) e verificamos o código de retorno do processo filho (macro `WEXITSTATUS`).
+O valor armazenado na variável `status` possui várias informações. Entretanto, existem várias macros que podem ser utilizadas para facilitar a interpretação desta variável. No nosso caso, testamos se a mudança de estado ocorrida foi o fim da execução do processo filho (macro `WIFEXITED`) e verificamos o código de retorno do processo filho (macro `WEXITSTATUS`).
 
-Vamos, agora, compilar e testar o nosso programa. Devemos executa-lo no mesmo diretório que reside o programa **maybe\_it\_works**.
+Vamos, agora, compilar e testar o nosso programa. Devemos executá-lo no mesmo diretório que reside o programa **maybe\_it\_works**.
 
     :::bash
     gcc -o keep_calm keep_calm.c
@@ -168,7 +163,7 @@ Aguardando mais alguns instantes e repetindo a experiência:
     > root     20480  0.0  0.0   4204   520 pts/3    S+   13:44   0:00 ./keep_calm
     > root     22456  0.0  0.0   4200   364 pts/3    S+   14:26   0:00 ./maybe_it_works 
 
-Vemos o mesmo processo pai em ambos os testes (PID 20480), porém processos filhos diferentes (PIDs 22428 e 22456). Além disso, sempre temos 2 processos executando, não existindo nenhum processo zumbi.
+Vemos o mesmo processo pai em ambos os testes (PID 20480), porém processos filhos diferentes (PIDs 22428 e 22456). Além disso, vemos que sempre há 2 processos executando, não havendo nenhum processo zumbi.
 
 ### Tratando processos zumbis sem esperas
 
@@ -180,7 +175,7 @@ Para isso, iremos utilizar o programa anterior como base e alterar algumas linha
 Vamos, então, substituir as linhas de 21 a 26 do nosso programa original pelo trecho abaixo:
 
     :::c
-    while(waitpid(-1, &status, WNOHANG) > 0) { // loop into all died children
+    while(waitpid(-1, &status, WNOHANG) > 0) { // loop through all died children
         // update counters
         if (WIFEXITED(status) && WEXITSTATUS(status) != EXIT_SUCCESS) {
             errors++;
@@ -193,7 +188,7 @@ Também devemos substituir a linha onde calculamos a porcentagem (linha 28):
     :::c
     percent = (total != 0) ? (float)(errors) / total * 100 : 0;
 
-Estamos agora utilizando a função `waipid`, que provê novas funcionalidades quando comparada à função `wait`. Seu protótipo é apresentado abaixo:
+Estamos agora utilizando a [função `waitpid`](http://linux.die.net/man/2/wait), que provê novas funcionalidades quando comparada à função `wait`. Seu protótipo é apresentado abaixo:
 
     :::c
     pid_t waitpid(pid_t pid, int *status, int options);
@@ -210,7 +205,7 @@ Algumas características desta função são:
 
 Em cada interação do loop principal, `waitpid` será executada enquanto houver processos zumbis a serem tratados. Por exemplo, se houver 2 processos zumbis na tabela de processos do sistema, `waitpid` executará 3 vezes, atualizando seus contadores nas duas primeiras execuções, e saindo do loop na terceira execução.
 
-Já a mudança do cálculo da porcentagem foi necessária para evitarmos um erro de divisão por zero: durante as primeiras execuções do programa, podem ainda não existir processos finalizados (`total` igual a zero).
+Já a mudança do cálculo da porcentagem foi necessária para evitarmos um erro de divisão por zero: durante as primeiras execuções do programa, pode ainda não existirem processos finalizados (`total` igual a zero).
 
 Vamos agora compilar e testar o nosso programa:
 
@@ -232,9 +227,9 @@ Neste teste, podemos ver que:
 
 - Nas duas primeiras execuções, ainda não havia nenhum processo filho finalizado;
 - Em um dado momento, o número total de processos finalizados permaneceu constante (17) entre duas iterações;
-    - O programa não aguarda por processos filhos de forma bloqueante. Assim, se nenhum processo filho finalizou, o processo pai irá imprimir os mesmos valores e continuar com a execução;
+    - O programa não aguarda por processos filhos de forma bloqueante. Assim, se nenhum processo filho finalizou, o processo pai irá imprimir os mesmos valores da iteração anterior e continuar com a execução;
 - No instante seguinte, este número subiu de 17 para 19;
-    - Nosso programa pode lançar vários processos filhos em paralelo, e apenas tratar os processos zumbis de tempos em tempos. Assim, uma vez que existam 2 processos filhos executando em paralelo e que eles terminem sua execução quase ao mesmo tempo, o processo pai irá analisar ambos na mesma iteração. 
+    - Nosso programa pode lançar vários processos filhos em paralelo. Além disso, ele apenas trata os processos zumbis de tempos em tempos. Assim, caso tenhamos, em um dado momento, 2 processos filhos executando em paralelo e caso eles terminem sua execução quase ao mesmo tempo, o processo pai irá analisar ambos na mesma iteração. 
 
 Assim como no exemplo anterior, vamos abrir outro terminal e verificar o status dos processos:
 
@@ -257,15 +252,15 @@ Após aguardar alguns instantes, vamos repetir novamente o comando anterior:
 Vemos que:
 
 - Em ambos os testes, existiam processos filhos executando em paralelo;
-- No último teste, tivemos um processo zumbi listado;
-    - Como o nosso processo pai verifica processos zumbis apenas de 1 em 1 segundo (`PAUSE_BETWEEN_LAUNCHES`), sempre é possível que existam processos zumbis a serem tratados.
+- No último teste, um processo zumbi foi listado;
+    - Como o nosso processo pai verifica processos zumbis apenas de 1 em 1 segundo (`PAUSE_BETWEEN_LAUNCHES`), sempre é possível que existam processos zumbis no sistema neste intervalo de tempo.
 
 ### Tratando processos zumbis usando sinais
 
-O programa apresentado anteriormente trouxe avanços ao não realizar chamadas _wait_ bloqueantes. Ainda assim, ele poderia ser melhor em alguns pontos:
+O programa apresentado anteriormente trouxe avanços ao não realizar chamadas _wait_ bloqueantes. Ainda assim, existem pontos que podem ser melhorados, deixando nosso programa mais eficiente:
 
-- Em alguns casos, o loop que executa `waitpid` é executado inutilmente, mesmo que não hajam processos zumbis a serem tratados;
-- Um processo zumbis pode existir no sistema durante até 1 segundo (`PAUSE_BETWEEN_LAUNCHES`).
+- Em alguns casos, `waitpid` é executada inutilmente, mesmo que não haja processos zumbis a serem tratados;
+- Um processo zumbi pode existir no sistema durante até 1 segundo (`PAUSE_BETWEEN_LAUNCHES`).
 
 Visando implementar estas melhorias, iremos desenvolver um novo programa chamado de **work\_hard\_play\_hard.c**:
 
@@ -278,14 +273,14 @@ Visando implementar estas melhorias, iremos desenvolver um novo programa chamado
     #define PAUSE_BETWEEN_LAUNCHES 2
     #define CHILD_PATH "./maybe_it_works"
     
-    // process SIGCHLD signal
+    // process SIGCHLD signals
     static void sigchld_handler(int signum) {
         static int errors = 0; // children that finished with errors
         static int total = 0; // total of children that finished
         float percent = 0;
         int status = 0;
         
-        // loop into all died children
+        // loop through all died children
         while(waitpid(-1, &status, WNOHANG) > 0) {
             // update counters
             if (WIFEXITED(status) && WEXITSTATUS(status) != EXIT_SUCCESS) {
@@ -328,18 +323,18 @@ Visando implementar estas melhorias, iremos desenvolver um novo programa chamado
         return 0;
     }
 
-A utilização de sinais é uma forma de comunicação entre processos assíncrona e baseada em eventos. Quando um processo filho termina sua execução, [ele envia ao pai um sinal (ou _signal_) **SIGCHLD**](http://docs.oracle.com/cd/E19455-01/806-4750/signals-7/index.html). Por este motivo, definimos a função `sigchld_handler` como _handler_ do sinal **SIGCHLD**. É nesta função que faremos o tratamento dos processo zumbis.
+Quando um processo filho termina sua execução, [ele envia ao pai um sinal (ou _signal_) **`SIGCHLD`**](http://docs.oracle.com/cd/E19455-01/806-4750/signals-7/index.html). Por este motivo, definimos a função `sigchld_handler` como _handler_ do sinal **`SIGCHLD`**. É nesta função que faremos o tratamento dos processo zumbis.
 
-**Obs:** O artigo [Enviando e tratando sinais em processos Linux]({filename}processos-sinais.md) explica vários aspectos relacionados ao envio de sinais e ao uso de _signal handlers_.
+**Obs:** A utilização de sinais é uma forma de comunicação entre processos assíncrona e baseada em eventos. O artigo [Enviando e tratando sinais em processos Linux]({filename}processos-sinais.md) explica vários aspectos relacionados ao envio de sinais e ao uso de _signal handlers_.
 
 Com este novo modelo, conseguimos as seguintes melhorias:
 
-- Otimizamos o tempo de processamento de nossa aplicação, pois `waitpid` apenas é chamada quando é necessário;
-- Tratamos processos zumbis de forma mais rápida pois, assim que o filho termina (e o sinal SIGCHLD é recebido), realizamos rapidamente seu processamento.  
+- Otimizamos o tempo de processamento de nossa aplicação, pois `waitpid` apenas é chamada quando necessário;
+- Tratamos processos zumbis de forma mais rápida pois, assim que o filho termina (e o sinal `SIGCHLD` é recebido), realizamos rapidamente seu processamento.  
 
 As variáveis `errors` e `total`, agora, são definidas como variáveis estáticas. Em C, [variáveis estáticas](http://en.wikipedia.org/wiki/Static_variable) são variáveis cujo tempo de vida é igual ao tempo de execução do programa (assim como ocorrem com variáveis globais), mas possuem escopo local.
 
-Também houve uma mudança na implementação da funcionalidade _sleep_. Esta mudança leva em conta que [a função `sleep` retorna ou após o tempo especificado ou após ser interrompida por um tratamento de sinal (_signal handler_)](http://stackoverflow.com/questions/14266485/understanding-sigchld-when-the-child-process-terminates/14266622#14266622). Ao ser interrompida por um sinal, a função retornará quantos segundos ainda restam para completar o tempo especificado. Nós utilizamos este valor retornado em um loop para garantir que tornaremos a executar `sleep` até que todo o tempo `PAUSE_BETWEEN_LAUNCHES` (alterado para 2 segundos nesta experiência) seja alcançado.
+Também houve uma mudança na implementação da funcionalidade _sleep_. Esta mudança levou em conta que [a função `sleep` também retorna após ser interrompida para o tratamento de um sinal (_signal handler_)](http://stackoverflow.com/questions/14266485/understanding-sigchld-when-the-child-process-terminates/14266622#14266622). Ao ser interrompida para que um sinal seja tratado, a função retornará quantos segundos ainda restam para completar o tempo especificado em sua chamada. Nós utilizamos este valor retornado em um loop para garantir que tornaremos a executar `sleep` até que todo o tempo `PAUSE_BETWEEN_LAUNCHES` (alterado para 2 segundos nesta experiência) seja alcançado.
 
 **Obs:** A função `sleep` recebe e retorna números inteiros. Caso seja necessário uma precisão maior, fazendo com que o loop de operações `sleep` execute um valor muito próximo do tempo especificado, pode-se utilizar a função `nanosleep`. Este [artigo no _cc.byexamples.com_](http://cc.byexamples.com/2007/05/25/nanosleep-is-better-than-sleep-and-usleep/) apresenta um interessante exemplo de uso desta função.
 
@@ -382,7 +377,7 @@ No [primeiro artigo]({filename}processos-zumbis.md) sobre processos zumbis, most
 
 Neste artigo, mostramos como implementar corretamente softwares que tratam processos seus processos filhos finalizados, evitando o acúmulo de processos zumbis no sistema.
 
-Em um outro artigo, iremos apresentar uma experiência real. Iremos mostrar uma situação onde um software que não tratava corretamente seus processos zumbis, bem como as ações realizadas para diagnosticar e solucionar o problema.
+Em um outro artigo, iremos apresentar uma experiência real. Iremos mostrar uma situação na qual um software não tratava corretamente seus processos zumbis, bem como iremos mostrar as ações realizadas para diagnosticar e solucionar o problema.
 
 Referências
 -----------

@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
         pid = fork();
         if (pid >= 0) { // fork successful
             if (pid != 0) { // parent
-                while(waitpid(-1, &status, WNOHANG) > 0) { // loop into all died children
+                while(waitpid(-1, &status, WNOHANG) > 0) { // loop through all died children
                     // update counters
                     if (WIFEXITED(status) && WEXITSTATUS(status) != EXIT_SUCCESS) {
                         errors++;
