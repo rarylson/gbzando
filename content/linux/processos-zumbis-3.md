@@ -1,11 +1,10 @@
 Title: Processos zumbis: Exemplo real (parte 3)
-Date: 2014-03-16 18:46
+Date: 2014-05-25 16:20
 Tags: linux, shell, c, processos, zumbis, real
 Slug: processos-zumbis-3
 Category: Linux
 Author: Rarylson Freitas
-Summary: Neste artigo, iremos apresentar um exemplo de software que possuia uma falha que criava vários processos zumbis no sistema. Este exemplo reflete uma experiência real vivida com o software Symantec Backup Exec 2010, e mostra a identificação, diagnóstico e solução do problema enfrentado. 
-Status: draft
+Summary: Neste artigo, iremos apresentar um caso real de um software que, devido a uma falha, criava vários processos zumbis no sistema. Mais especificamente, este artigo conta uma experiência real vivida com o software Symantec Backup Exec 2010 em um servidor de produção. Iremos mostrar a identificação, o diagnóstico e a solução do problema enfrentado. 
 
 No artigo [Processos zumbis: Introdução (parte 1)]({filename}processos-zumbis.md), mostramos o que são processos zumbis e quais são os problemas que eles podem causar.
 
@@ -102,7 +101,7 @@ Como não possuíamos acesso ao código-fonte do programa, resolvemos adotar uma
 Assim, adicionamos uma entrada no _crontab_ do sistema (comando `crontab -u root -e`) para reiniciar o _deamon_ em períodos adequados:
 
     :::bash
-    # Restart RALUS every saturday due to a bug that causes zumbie process
+    # Restart RALUS every saturday due to a bug that generates zumbie process
     0 14 * * 6 /etc/init.d/VRTSralus.init restart
 
 Com isso, uma vez por semana, forçavamos o processamento dos processos zumbis, liberando PIDs para reuso e permitindo ao usuário _oracle_ executar nossos processos.
