@@ -6,6 +6,7 @@
         {# Articles can override this with your own description/keywords #}
         <meta name="description" content="{% block description %}{{ SITE_DESCRIPTION }}{% endblock %}">
         <meta name="keywords" content="{% block keywords %}{{ SITE_KEYWORDS }}{% endblock %}">
+        <meta name="viewport" content="width=device-width" />
         {% if not WEBASSETS %}
             <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/{{ CSS_FILE }}" />
         {% else %}
@@ -18,7 +19,7 @@
                     <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
                 {% endassets %}
                 {% assets filters="cssmin", output="css/style_mobile.min.css", "css/style_gbzando_mobile.css" %}
-                    <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}" media="screen and (max-device-width: 767px)" >
+                    <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}" media="screen and (max-width: 767px)" >
                 {% endassets %}
             {% else %}
                 {% assets filters="cssmin", output="css/style.%(version)s.min.css", "css/reset.css", "css/pygment.css", 
@@ -26,7 +27,7 @@
                     <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
                 {% endassets %}
                 {% assets filters="cssmin", output="css/style_mobile.%(version)s.min.css", "css/style_gbzando_mobile.css" %}
-                    <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}" media="screen and (max-device-width: 767px)" >
+                    <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}" media="screen and (max-width: 767px)" >
                 {% endassets %}
             {% endif %}
         {% endif %}
@@ -57,11 +58,11 @@
             {# see: http://elsdoerfer.name/docs/webassets/expiring.html #}
             {% if not WEBASSETS_VERSION_IN_FILENAME %}
                 {% assets filters="jsmin", output="js/scripts.min.css", "js/jquery-2.1.4.js" %}
-                    <script type="text/javascript" src="{{ SITEURL }}/{{ ASSET_URL }}">
+                    <script type="text/javascript" src="{{ SITEURL }}/{{ ASSET_URL }}"></script>
                 {% endassets %}
             {% else %}
                 {% assets filters="jsmin", output="js/scripts.%(version)s.min.css", "js/jquery-2.1.4.js" %}
-                    <script type="text/javascript" src="{{ SITEURL }}/{{ ASSET_URL }}">
+                    <script type="text/javascript" src="{{ SITEURL }}/{{ ASSET_URL }}"></script>
                 {% endassets %}
             {% endif %}
         {% endif %}
@@ -111,9 +112,9 @@
                         <h2>Redes sociais</h2>
                         <ul>
                             {% if FEED_ALL_ATOM %}
-                            <li><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate">Feed de notícias</a></li>
+                            <li><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate">Feed</a></li>
                             {% elif FEED_ALL_RSS %}
-                            <li><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate">Feed de notícias</a></li>
+                            <li><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate">Feed</a></li>
                             {% endif %}
 
                         {% for name, link in SOCIAL %}

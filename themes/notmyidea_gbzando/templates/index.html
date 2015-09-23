@@ -12,7 +12,6 @@
                     <hr />
                     {% include 'article_infos.html' %}
                     {{ article.content }}
-                    <a class="readmore" href="{{ SITEURL }}/{{ article.url }}">Leia mais</a>
                     {% include 'comments.html' %}
                 </article>
                 {% if loop.length == 1 %}

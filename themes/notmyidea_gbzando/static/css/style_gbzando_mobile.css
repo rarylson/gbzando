@@ -16,6 +16,9 @@ body {
 #posts-list .hentry {
     padding-left: 0;
 }
+#extras div.blogroll li, #extras div.social li {
+    margin-right: 10px;
+}
 a.github_forkme {
     display: none;
 }
@@ -43,7 +46,7 @@ a.github_forkme {
     max-height: 0;
     overflow: hidden;
     margin-bottom: 0;
-    transition: max-height 1s, margin-bottom 1s;
+    transition: max-height 0.5s, margin-bottom 1s;
     transition-delay: 0;
 }
 #banner #title_wrapper {
@@ -102,9 +105,9 @@ a.github_forkme {
     padding: 5px 0;
 }
 #banner nav.active {
-    max-height: 9999px;
+    max-height: 999px;
     margin-bottom: 28px;
-    transition: max-height 1s, margin-bottom 1s;
+    transition: max-height 0.5s, margin-bottom 1s;
     transition-delay: 0;
 }
 #banner #mobile_wrapper.active span {
@@ -112,13 +115,20 @@ a.github_forkme {
 }
 #banner #mobile_wrapper.active span::before {
     bottom: 0;
+    /* Using prefix in transform
+     * See: http://shouldiprefix.com/#transforms
+     */
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
     transform: rotate(-45deg);
     transition: transform 0.3s;
 }
 #banner #mobile_wrapper.active span::after {
     top: 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
     transform: rotate(45deg);
-    transition: transform 0.3s;
+    transition: -webkit-transform 0.3s, -ms-transform 0.3s, transform 0.3s;
 }
 .entry-title {
     font-size: 2.5em;

@@ -78,6 +78,7 @@ a.tag {
 }
 #posts-list h1 a:hover {
     color: #c74350;
+    text-shadow: 1px 1px 1px #D6747E;
 }
 a.github_forkme:hover {
     background: none;
@@ -96,10 +97,10 @@ a.github_forkme:hover {
 .blogroll a[href*='docs.python.org'] {background-image: url('../images/icons/python.png');}
 .blogroll a[href*='www.linux.com'] {background-image: url('../images/icons/linux.png');}
 #extras div.blogroll {
-    width: 60%;
+    width: 55%;
 }
 #extras div.social {
-    width: 40%;
+    width: 45%;
 }
 #extras div.blogroll li, #extras div.social li {
     width: 28%;
