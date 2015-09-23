@@ -14,3 +14,4 @@
 @import url(//fonts.googleapis.com/css?family=Yanone+Kaffeesatz&subset=latin);
 @import url("style.css");
 @import url("style_gbzando.css");
+@import url("style_gbzando_mobile.css") screen and (max-width: 767px);

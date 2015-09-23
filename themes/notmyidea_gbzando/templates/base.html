@@ -17,10 +17,16 @@
                         "css/style.css", "css/style_gbzando.css" %}
                     <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
                 {% endassets %}
+                {% assets filters="cssmin", output="css/style_mobile.min.css", "css/style_gbzando_mobile.css" %}
+                    <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}" media="screen and (max-device-width: 767px)" >
+                {% endassets %}
             {% else %}
                 {% assets filters="cssmin", output="css/style.%(version)s.min.css", "css/reset.css", "css/pygment.css", 
                         "css/style.css", "css/style_gbzando.css" %}
                     <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
+                {% endassets %}
+                {% assets filters="cssmin", output="css/style_mobile.%(version)s.min.css", "css/style_gbzando_mobile.css" %}
+                    <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}" media="screen and (max-device-width: 767px)" >
                 {% endassets %}
             {% endif %}
         {% endif %}
@@ -31,25 +37,46 @@
         <link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate" title="{{ SITENAME }} RSS Feed" />
         {% endif %}
 
-        {# external scripts #}
-        {# as they aren't inner scripts, there is no need to use webassets #}
-        <!-- MathJax library - Parsing TeX, LaTex, MathML and AsciiMath
-             see: http://docs.mathjax.org/en/latest/start.html 
-                  http://www1.chapman.edu/~jipsen/mathml/asciimath.html
-                  http://www1.chapman.edu/~jipsen/mathml/asciimathsyntax.html
-             -->
-        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        {# External scripts
+           As they aren't inner scripts, there is no need to use webassets.
 
+           MathJax library - Parsing TeX, LaTex, MathML and AsciiMath
+           See: http://docs.mathjax.org/en/latest/start.html
+                http://www1.chapman.edu/~jipsen/mathml/asciimath.html
+                http://www1.chapman.edu/~jipsen/mathml/asciimathsyntax.html
+        #}
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
         <!--[if IE]>
-            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
+
+        {% if not WEBASSETS %}
+            <script type="text/javascript" src="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/js/jquery-2.1.4.js"></script>
+        {% else %}
+            {# Versioning by query string or filename #}
+            {# see: http://elsdoerfer.name/docs/webassets/expiring.html #}
+            {% if not WEBASSETS_VERSION_IN_FILENAME %}
+                {% assets filters="jsmin", output="js/scripts.min.css", "js/jquery-2.1.4.js" %}
+                    <script type="text/javascript" src="{{ SITEURL }}/{{ ASSET_URL }}">
+                {% endassets %}
+            {% else %}
+                {% assets filters="jsmin", output="js/scripts.%(version)s.min.css", "js/jquery-2.1.4.js" %}
+                    <script type="text/javascript" src="{{ SITEURL }}/{{ ASSET_URL }}">
+                {% endassets %}
+            {% endif %}
+        {% endif %}
 </head>
 
 <body id="index" class="home">
 {% include 'github.html' %}
         <header id="banner" class="body">
+            <div id="title_wrapper">
                 <h1><a href="{{ SITEURL }}/">{{ SITENAME }} {% if SITESUBTITLE %} <strong>{{ SITESUBTITLE }}</strong>{% endif %}</a></h1>
-                <nav><ul>
+                <div id="mobile"><div id=mobile_wrapper><span></span></div></div>
+                <div class="clear"></div>
+            </div>
+            <nav>
+            <ul>
                 {% for title, link in MENUITEMS %}
                     <li><a href="{{ link }}">{{ title }}</a></li>
                 {% endfor %}
@@ -63,7 +90,8 @@
                     <li{% if cat == category %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
                 {% endfor %}
                 {% endif %}
-                </ul></nav>
+            </ul>
+            </nav>
         </header><!-- /#banner -->
         {% block content %}
         {% endblock %}
@@ -112,6 +140,43 @@
 
 {% include 'analytics.html' %}
 {% include 'piwik.html' %}
+
+<script type="text/javascript">
+
+(function() {
+    window.is_mobile = ($(window).width() > 768) ? false : true;
+
+    // Mobile event triggering
+    $(window).resize(function() {
+        if (window.is_mobile && $(window).width() > 768) {
+            window.is_mobile = false;
+            $(window).trigger("mobile:false");
+        } else if ((! window.is_mobile) && $(window).width() <= 768) {
+            window.is_mobile = true;
+            $(window).trigger("mobile:true");
+        }
+    });
+
+    // Register menu mobile in mobile mode
+    $(window).on("mobile:true", function() {
+        $('#mobile_wrapper').on('click', function(){
+            $('#mobile_wrapper').toggleClass("active");
+            $('#banner nav').toggleClass("active");
+        });
+    });
+    // Unregister menu mobile in big screen mode
+    $(window).on("mobile:false", function() {
+        $('#mobile_wrapper').removeClass("active");
+        $('#banner nav').removeClass("active");
+        $('#menu-trigger').off('click', false);
+    });
+
+    // First mobile trigger
+    $(window).trigger("mobile:" + window.is_mobile);
+})();
+
+</script>
+
 {% include 'disqus_script.html' %}
 </body>
 </html>
