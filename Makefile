@@ -69,10 +69,10 @@ help:
 clean_html:
 	[ ! -d $(OUTPUTDIR) ] || rm -rf $(OUTPUTDIR)
 
-clean_html_deploy:
+clean_deploy:
 	[ ! -d $(DEPLOYDIR) ] || rm -rf $(DEPLOYDIR)
 
-clean: clean_html clean_html_deploy
+clean: clean_html clean_deploy
 	find $(BASEDIR) -name \*.pyc -delete
 
 html:

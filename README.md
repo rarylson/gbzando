@@ -47,8 +47,8 @@ To publish the blog:
 # Generate config file
 # Edit 'deploy_config.py' after.
 cp deploy_config.py.sample deploy_config.py
-# Publish in homolog
-fab publish_homolog
+# Generate files to publish
+make html_publish
 # Publish
 fab publish
 ```
