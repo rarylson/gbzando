@@ -1,7 +1,7 @@
-/* modified in GBzando
- * the modification was made because these styles may conflict
+/* Modified in GBzando
+ * The modification was made because these styles may conflict
  * with others styles (like MathJax).
- * it was run the follow command in `vim`
+ * It was fixed running the following command in vim:
  *     %s/^\.\(.*\) {/code.\1, pre.\1, code .\1, pre .\1 {/g
  */
 code.hll, pre.hll, code .hll, pre .hll {

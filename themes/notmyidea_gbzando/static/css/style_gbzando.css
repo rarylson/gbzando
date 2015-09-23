@@ -6,16 +6,40 @@
 }
 body {
     width: 90%;
-    min-width: 800px; 
     margin-left: auto;
     margin-right: auto;
 }
 #about, #banner nav, #banner nav ul {
     width: auto;
+    text-align: left;
+}
+#banner nav {
+    letter-spacing: -100em;  /* Whitespace hack */
+    height: auto;
+    font-size: 1em;
+}
+#banner nav li {
+    float: none;
+    letter-spacing: normal;
+}
+#banner h1 {
+    margin-bottom: 0;
+}
+#banner h1 a:link, #banner h1 a:visited {
+    margin: 0 0 0.4em 0.2em;
 }
 #featured, #content {
-    width: 95%;
-    min-width: 760px; 
+    width: 100%;
+    padding: 0;
+}
+#featured article, #content article, #content .wrapper {
+    padding: 20px;
+}
+.clear {
+    clear: both;
+}
+h1.others {
+    margin-bottom: 0;
 }
 article h2 {
     color: #C74451;
@@ -23,8 +47,46 @@ article h2 {
     margin-bottom: 0.333em;
     margin-top: 0.5em;
 }
+h1 + hr {
+    margin-bottom: 2em;
+}
+h1.others + hr {
+    margin-bottom: 0;
+}
+a.tag {
+    border-radius: 5px;
+    border: 1px solid #c74350;
+    margin-left: 1px;
+    margin-right: 1px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.9em;
+}
+.post-info {
+    margin: 10px 0 10px 10px;
+    max-width: 40%;
+}
+#posts-list footer.post-info {
+    float: left;
+    margin: 10px 10px 10px 0;
+    left: 0;
+    top: 0;
+    position: initial;
+}
+#posts-list h1 a {
+    text-decoration: underline;
+}
+#posts-list h1 a:hover {
+    color: #c74350;
+}
+a.github_forkme:hover {
+    background: none;
+}
 
 /* Blogroll and Social */
+#extras {
+    margin: 0 10px 2em;
+}
 #extras .blogroll a {
     background-position: 3px 6px;
     background-repeat: no-repeat;
@@ -33,13 +95,34 @@ article h2 {
 .blogroll a[href*='www.vialink.com.br'] {background-image: url('../images/icons/vialink.png');}
 .blogroll a[href*='docs.python.org'] {background-image: url('../images/icons/python.png');}
 .blogroll a[href*='www.linux.com'] {background-image: url('../images/icons/linux.png');}
+#extras div.blogroll {
+    width: 60%;
+}
+#extras div.social {
+    width: 40%;
+}
+#extras div.blogroll li, #extras div.social li {
+    width: 28%;
+    margin: 0 20px 0 0;
+    float: left;
+}
+#extras div.blogroll li {
+    min-width: 140px;
+}
+#extras div.social li {
+    min-width: 130px;
+}
 
 /* Code highlight */
+table.highlighttable {
+    /* Workaround for responsive table (overflow: auto) */
+    table-layout: fixed;
+}
 td.linenos, td.code {
     padding: 0;
 }
 td.linenos {
-    width: 3%;
+    width: 34px;
     color: #C74451;
 }
 table.highlighttable pre {
@@ -49,7 +132,17 @@ table.highlighttable .na {
     color: #06287E;
 }
 pre, code {
-    font-size: 1.1em;
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 12px;
+}
+pre {
+    border-radius: 5px;
+    border: 1px solid #EEEEEE;
+    background: #FAFAFA;
+}
+.linenodiv pre {
+    border: none;
+    background: transparent;
 }
 
 /* Creative commons */
