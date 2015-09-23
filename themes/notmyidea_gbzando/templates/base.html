@@ -3,23 +3,23 @@
 <head>
         <meta charset="utf-8" />
         <title>{% block title %}{{ SITENAME }}{% endblock %}</title>
-        {# articles can override this with your own description/keywords #}
+        {# Articles can override this with your own description/keywords #}
         <meta name="description" content="{% block description %}{{ SITE_DESCRIPTION }}{% endblock %}">
         <meta name="keywords" content="{% block keywords %}{{ SITE_KEYWORDS }}{% endblock %}">
         {% if not WEBASSETS %}
             <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/{{ CSS_FILE }}" />
         {% else %}
             <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/external.css">
-            {# versioning by query string or filename #}
+            {# Versioning by query string or filename #}
             {# see: http://elsdoerfer.name/docs/webassets/expiring.html #}
             {% if not WEBASSETS_VERSION_IN_FILENAME %}
                 {% assets filters="cssmin", output="css/style.min.css", "css/reset.css", "css/pygment.css", 
-                        "css/typogrify.css", "css/style.css" %}
+                        "css/style.css", "css/style_gbzando.css" %}
                     <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
                 {% endassets %}
             {% else %}
                 {% assets filters="cssmin", output="css/style.%(version)s.min.css", "css/reset.css", "css/pygment.css", 
-                        "css/typogrify.css", "css/style.css", "css/style_gbzando.css" %}
+                        "css/style.css", "css/style_gbzando.css" %}
                     <link rel="stylesheet" href="{{ SITEURL }}/{{ ASSET_URL }}">
                 {% endassets %}
             {% endif %}

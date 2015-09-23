@@ -1,8 +1,7 @@
-Title: Primeiro!
+Title: Sobre o GBzando
 Date: 2013-09-26 21:00
-Tags: geral, gbzando
-Slug: primeiro
-Author: Rarylson Freitas
+Tags: geral
+Slug: sobre-o-gbzando
 Summary: O que é GBzando? Um blog que apresenta temas e problemas de programação e infraestrutura de TI, mas abordando-os de uma forma prática, muito mais divertida. 
 
 GBzando?
