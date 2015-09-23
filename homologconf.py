@@ -13,10 +13,10 @@ from pelicanconf import *
 # Homolog will use publishconf as base
 from publishconf import *
 
+# Disqus must to have tested in a homolog server with a trusted domain
+# See: http://help.disqus.com/customer/portal/articles/472098
+#      http://help.disqus.com/customer/portal/articles/472007-i-m-receiving-the- \
+#          message-%22we-were-unable-to-load-disqus-%22
 SITEURL = 'http://homolog.gbzando.com.br'
 DISQUSURL = 'http://www.gbzando.com.br'
 DEBUG_DISQUS = True
-
-# Disqus must to have tested in a homolog server with a trusted domain
-# See: http://help.disqus.com/customer/portal/articles/472098
-#      http://help.disqus.com/customer/portal/articles/472007-i-m-receiving-the-message-%22we-were-unable-to-load-disqus-%22

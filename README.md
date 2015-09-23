@@ -1,69 +1,73 @@
-GBZando
+GBzando
 =======
 
-A nerd blog (pt-BR) about programming and infrastructure.
+A blog about programming, infrastructure and networking.
 
+This project contains both the source code (theme and plugins) and the blog content (articles).
 
-What is it?
------------
-
-It's a brazilian blog, written in portuguese, about programming and IT infrastructure. It intends to use a practical aproach.
-
+It is a brasilian blog (`pt_BR`). Most of the source code is written in English, and the blog content is written in Portuguese.
 
 How it works?
 -------------
 
-It's made in [Pelican](https://github.com/getpelican/pelican/), a static site generator written in Python. Articles are written in [Markdown](http://daringfireball.net/projects/markdown/) and themes are written in [Jinja2](http://jinja.pocoo.org).
+This project is developed using [Pelican](https://github.com/getpelican/pelican/), a static site generator written in Python.
 
+Some extra plugins are also developed using Python.
+
+Articles are written in [Markdown](http://daringfireball.net/projects/markdown/). Themes are written in [Jinja2](http://jinja.pocoo.org).
 
 Install
 -------
 
 In Ubuntu:
 
-    apt-get install python python-pip
-    pip install pelican
-    pip install fabric
-    pip instamm markdown cssmin webassets requests six tipogrify
-    apt-get install optipng libjpeg8
+```sh
+pip install -r requirements.txt
+apt-get install optipng libjpeg8
+```
 
-How to
-------
+Usage
+-----
 
-Build static content and serve in a simple python webserver:
+To run the local development server:
 
-    pelican content -o output -s pelicanconf.py
-    cd output && python -m SimpleHTTPServer
+```sh
+make devserver
+```
 
-You can use the dev server to do this:
+To stop de local development server:
 
-    ./develop_server.sh start 
+```sh
+make stopserver
+```
 
-The fabfile contains a specific deploy method for GBzando. You can use the `prod_config.py.sample` to generate your `prod_config.py` file:
+To publish the blog:
 
-    # deploy in homolog
-    fab publish_homolog
-    # deploy
-    fab publish
+```sh
+# Generate config file
+# Edit 'deploy_config.py' after.
+cp deploy_config.py.sample deploy_config.py
+# Publish in homolog
+fab publish_homolog
+# Publish
+fab publish
+```
 
 License
 -------
 
-This blog is open and free (both source code and articles content).
+The software is released under the [Revised BSD License](LICENSE).
 
-The blog source code is licensed under [BSD 2 Clause License](LICENSE). The articles content are written under [Creative Commons Attribution-NonCommercialLicense](http://creativecommons.org/licenses/by-nc/3.0/deed.en_US).
-
-So, you're free to fork this project, or to reuse the articles quoting the original author and don't using them for commercial purposes.
+The articles are released under the [Creative Commons Attribution-NonCommercial License](http://creativecommons.org/licenses/by-nc/3.0/deed.en_US).
 
 TODO
 ----
 
-- Author plus: Getting author email from authors page metadata (not from article metadata)
-- Author plus: Page rendered using the pelican readers (not only a markeddown reader)
-- Use i18n in template (http://docs.python.org/2/library/i18n.html)
-- Neighbors: https://github.com/getpelican/pelican-plugins/tree/master/neighbors
-- http://blog.leonardfactory.com/2013/05/05/code-fenced-blocks-pygments-and-line-numbers-with-jekyll/
-- http://pythonhosted.org/Markdown/extensions/tables.html
-- http://packages.python.org/Markdown/extensions/admonition.html
-- Add all the source code and tests in a .tar.gz version for download. Make a plugin for this too.
-- https://github.com/favalex/python-asciimathml
+- Use i18n in template
+	- See: http://docs.python.org/2/library/i18n.html
+- Neighbors
+	- See: https://github.com/getpelican/pelican-plugins/tree/master/neighbors
+- Better use of Pygments
+	- See: http://blog.leonardfactory.com/2013/05/05/code-fenced-blocks-pygments-and-line-numbers-with-jekyll/
+- Admonition:
+	- See: http://packages.python.org/Markdown/extensions/admonition.html

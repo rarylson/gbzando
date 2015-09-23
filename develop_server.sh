@@ -11,6 +11,9 @@ INPUTDIR=$BASEDIR/content
 OUTPUTDIR=$BASEDIR/output
 CONFFILE=$BASEDIR/pelicanconf.py
 
+PORT="8000"
+SERVER="127.0.0.1"
+
 ###
 # Don't change stuff below here unless you are sure
 ###
@@ -18,12 +21,13 @@ CONFFILE=$BASEDIR/pelicanconf.py
 SRV_PID=$BASEDIR/srv.pid
 PELICAN_PID=$BASEDIR/pelican.pid
 
-function usage(){
-  echo "usage: $0 (stop) (start) (restart) [port]"
+function usage() {
+  echo "usage: $0 (stop) (start) (restart) [port] [ip]"
+  echo
   echo "This starts pelican in debug and reload mode and then launches"
   echo "A pelican.server to help site development. It doesn't read"
   echo "your pelican options so you edit any paths in your Makefile"
-  echo "you will need to edit it as well"
+  echo "you will need to edit it as well."
   exit 3
 }
 
@@ -31,7 +35,7 @@ function alive() {
   kill -0 $1 >/dev/null 2>&1
 }
 
-function shut_down(){
+function shut_down() {
   PID=$(cat $SRV_PID)
   if [[ $? -eq 0 ]]; then
     if alive $PID; then
@@ -61,13 +65,16 @@ function shut_down(){
 
 function start_up(){
   local port=$1
+  local server=$2
+  [ -z "$port" ] && port=$PORT
+  [ -z "$server" ] && server=$SERVER
   echo "Starting up Pelican and pelican.server"
   shift
   $PELICAN --debug --autoreload -r $INPUTDIR -o $OUTPUTDIR -s $CONFFILE $PELICANOPTS &
   pelican_pid=$!
   echo $pelican_pid > $PELICAN_PID
   cd $OUTPUTDIR
-  $PY -m pelican.server $port &
+  $PY -m pelican.server $port $server &
   srv_pid=$!
   echo $srv_pid > $SRV_PID
   cd $BASEDIR

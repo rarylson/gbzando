@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
-# This file is only used if you use `make publish` or
-# explicitly specify it as your config file.
-
 import os
 import sys
 sys.path.append(os.curdir)
@@ -18,14 +15,12 @@ FEED_ALL_ATOM = 'feeds/all.atom.xml'
 CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
 DELETE_OUTPUT_DIRECTORY = True 
 WITH_FUTURE_DATES = False   # Don't publish future date articles
-IGNORE_FILES = ['.*.swp', ] # Don't process vim swap files
 
 # Adding production plugins
 PLUGINS.extend(['sitemap', 'gzip_cache', 'optimize_images', ])
 
 # Plugin configurations
 WEBASSETS = True
-WEBASSETS_VERSION_IN_FILENAME = True    # Custom template var
 SITEMAP = {
     'format': 'xml',
     'priorities': {
@@ -42,7 +37,9 @@ SITEMAP = {
 
 # Google Analytics
 GOOGLE_ANALYTICS = "UA-44485503-1"
-# Custom template vars
+
+# Vars for Notmyidea GBzando template
+WEBASSETS_VERSION_IN_FILENAME = True
 GOOGLE_ANALYTICS_UNIVERSAL = True
 GOOGLE_ANALYTICS_DISPLAYFEATURES = True
 GOOGLE_ANALYTICS_DOMAIN = "gbzando.com.br"
@@ -54,4 +51,3 @@ STATIC_PATHS.extend([
 EXTRA_PATH_METADATA.update({
     'extra/robots.txt': {'path': 'robots.txt'},
 })
-

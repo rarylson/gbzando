@@ -4,23 +4,22 @@ from __future__ import unicode_literals
 
 # Site
 SITENAME = u'GBzando'
-SITESUBTITLE = u'Programação e infraestrutura na prática'
-SITE_DESCRIPTION = u'Blog de programação e infraestrutura na prática. Conceitos e problemas do dia-a-dia sobre Python, C, Perl, Shell Script, Servidores, Linux, Nginx e outros'
-SITE_KEYWORDS = u'programação, computação, servidores, linux, python, shell, bash, nginx, gbzando'
+SITESUBTITLE = u'Programação, infraestrutura e redes na prática'
+SITE_DESCRIPTION = (u'Blog de programação, infraestrutura e redes na prática. '
+                    'Artigos sobre Python, C, Shell Script (Bash), Linux, servidores web, '
+                    'email, redes, roteamento e muito mais.')
+SITE_KEYWORDS = u'programação, computação, servidores, linux, python, shell, bash, redes, gbzando'
 SITEURL = ''
 TIMEZONE = 'America/Sao_Paulo'
 DEFAULT_LANG = 'pt_BR'
 LOCALE = 'pt_BR.UTF-8'
-
-# Default author and category
 AUTHOR = u'Rarylson Freitas'
 AUTHOR_EMAIL = u'rarylson@gmail.com'
 DEFAULT_CATEGORY = u'Geral'
 
-# Feed generation is usually not desired when developing
+# Disable feed generation when developing
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
-TRANSLATION_FEED_ATOM = None
 
 # Blogroll
 LINKS = (
@@ -47,20 +46,17 @@ TAG_URL = "tag/{slug}/"
 TAG_SAVE_AS = "tag/{slug}/index.html"
 AUTHOR_URL = "author/{slug}/"
 AUTHOR_SAVE_AS = "author/{slug}/index.html"
-# With those new configs, pay attention in your article slugs. They can't
-# be 'tags', for example
 TAGS_URL = "tags/"
 TAGS_SAVE_AS = "tags/index.html"
-AUTHORS_URL = "authors/"
-AUTHORS_SAVE_AS = "authors/index.html"
-# Don't generate archieve pages
-DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', ]
+# Don't generate archieve pages 
+# At least, for now.
+DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors' ]
 # Don't process 'pages' and 'authors' as articles
-ARTICLE_EXCLUDES = ['pages', 'authors', ]
 # Custom menu item URL
 MENUITEMS = [('Sobre o autor', '/author/rarylson-freitas/'), ]
+ARTICLE_EXCLUDES = ['pages', 'authors', ]
 
-# Vars to template
+# Vars for template
 THEME = 'themes/notmyidea_gbzando'
 DEFAULT_PAGINATION = 10
 USE_FOLDER_AS_CATEGORY = False
@@ -73,15 +69,15 @@ DEBUG_DISQUS = True
 # Markdown extensions
 # See: http://pythonhosted.org/Markdown/extensions/code_hilite.html#usage
 #      http://pythonhosted.org/Markdown/extensions/toc.html#usage
-MD_EXTENSIONS = ['codehilite(css_class=highlight,guess_lang=False)', 
+MD_EXTENSIONS = ['codehilite(css_class=highlight, guess_lang=False)',
         'extra', 'toc(anchorlink=True)', ]
  
-# Custom template vars
+# Vars for Notmyidea GBzando template
 CREATIVE_COMMONS = True
 
 # Plugins
-PLUGIN_PATH = 'plugins'
-PLUGINS = ['gravatar_plus', 'assets', 'author_plus']
+PLUGINS = ['assets', 'gravatar_plus', 'author_plus', 'tag_cloud', ]
+PLUGIN_PATHS = ['pelican-plugins', 'plugins', ]
 WEBASSETS = False
 AUTHOR_PLUS_DIR = 'authors'
 

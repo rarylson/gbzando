@@ -1,0 +1,6 @@
+production = 'root@gbzando:22'
+production_path = '/var/www/gbzando'
+homolog = 'root@gbzando-homolog:22'
+homolog_path = '/var/www/gbzando-homolog'
+key_filename = '~/.ssh/id_rsa'
+
