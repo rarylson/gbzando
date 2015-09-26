@@ -53,15 +53,16 @@
 
         {% if not WEBASSETS %}
             <script type="text/javascript" src="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/js/jquery-2.1.4.js"></script>
+            <script type="text/javascript" src="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/js/scripts.js"></script>
         {% else %}
             {# Versioning by query string or filename #}
             {# see: http://elsdoerfer.name/docs/webassets/expiring.html #}
             {% if not WEBASSETS_VERSION_IN_FILENAME %}
-                {% assets filters="jsmin", output="js/scripts.min.css", "js/jquery-2.1.4.js" %}
+                {% assets filters="jsmin", output="js/scripts.min.css", "js/jquery-2.1.4.js", "js/scripts.js" %}
                     <script type="text/javascript" src="{{ SITEURL }}/{{ ASSET_URL }}"></script>
                 {% endassets %}
             {% else %}
-                {% assets filters="jsmin", output="js/scripts.%(version)s.min.css", "js/jquery-2.1.4.js" %}
+                {% assets filters="jsmin", output="js/scripts.%(version)s.min.css", "js/jquery-2.1.4.js", "js/scripts.js" %}
                     <script type="text/javascript" src="{{ SITEURL }}/{{ ASSET_URL }}"></script>
                 {% endassets %}
             {% endif %}
@@ -145,19 +146,7 @@
 <script type="text/javascript">
 
 (function() {
-    window.is_mobile = ($(window).width() > 768) ? false : true;
-
-    // Mobile event triggering
-    $(window).resize(function() {
-        if (window.is_mobile && $(window).width() > 768) {
-            window.is_mobile = false;
-            $(window).trigger("mobile:false");
-        } else if ((! window.is_mobile) && $(window).width() <= 768) {
-            window.is_mobile = true;
-            $(window).trigger("mobile:true");
-        }
-    });
-
+$(document).ready(function() {
     // Register menu mobile in mobile mode
     $(window).on("mobile:true", function() {
         $('#mobile_wrapper').on('click', function(){
@@ -172,8 +161,9 @@
         $('#menu-trigger').off('click', false);
     });
 
-    // First mobile trigger
-    $(window).trigger("mobile:" + window.is_mobile);
+    // Mobile events
+    gbzando_mobile_events();
+});
 })();
 
 </script>
