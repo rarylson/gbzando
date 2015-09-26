@@ -5,14 +5,16 @@
 {% block content %}
 
 <section id="content" class="body">
-    <h1>Tags</h1>
-
-    {# See: http://docs.getpelican.com/en/3.1.1/settings.html#tag-cloud #}
-    <ul class="tagcloud">
-        {% for tag in tag_cloud %}
-            <li class="tag-{{ tag.1 }}"><a href="{{ SITEURL }}/{{ tag.0.url }}" class="tag">{{ tag.0 }}</a></li>
-        {% endfor %}
-    </ul>
+    <div class="wrapper">
+        <h1 class="entry-title">Tags</h1>
+        <hr />
+        {# See: http://docs.getpelican.com/en/3.1.1/settings.html#tag-cloud #}
+        <ul class="tagcloud">
+            {% for tag in tag_cloud %}
+                <li class="tag-{{ tag.1 }}"><a href="{{ SITEURL }}/{{ tag.0.url }}" class="tag">{{ tag.0 }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
 </section>
 
 {% endblock %}

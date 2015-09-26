@@ -5,12 +5,10 @@
    see: https://github.com/talha131/pelican-elegant/blob/master/templates/article.html#L16 #}
 {% block keywords %}{{ [article.tags|join(', '), article.keywords]|join(', ') }}{% endblock %}
 {% block content %}
-<section id="content" class="body {{article.slug}}">
+<section id="content" class="body {{ article.slug }}">
   <article>
     <header>
-      <h1 class="entry-title">
-        <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark"
-           title="Link para {{ article.title|striptags }}">{{ article.title|striptags}}</a></h1>
+      <h1 class="entry-title">{{ article.title }}</h1>
       <hr />
       {% include 'twitter.html' %}
     </header>

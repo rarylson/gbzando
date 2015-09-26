@@ -28,6 +28,9 @@ body {
 #banner h1 a:link, #banner h1 a:visited {
     margin: 0 0 0.4em 0.2em;
 }
+.entry-title a:link, .entry-title a:visited {
+    padding: 0;
+}
 #featured, #content {
     width: 100%;
     padding: 0;

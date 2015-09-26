@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% block content_title %}{% endblock %}
 {% block content %}
 {% if articles %}
     {% for article in articles_page.object_list %}
@@ -27,7 +26,7 @@
             {% endif %}
         {# other items #}
         {% else %}
-            {% if loop.first and articles_page.has_previous %}
+            {% if loop.first and articles_page.has_previous() %}
                 <section id="content" class="body">
                     <div class="wrapper">
                         <ol id="posts-list" class="hfeed" start="{{ articles_paginator.per_page -1 }}">

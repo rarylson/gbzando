@@ -1,6 +1,5 @@
 Title: Sobre o autor
 Date: 2013-09-26 21:00
-Tags: geral
 Slug: sobre-o-autor
 Summary: Rarylson Freitas, de Fortaleza/CE, autor do blog GBzando. Trabalha na Vialink e estuda diversas áreas da computação: programação, redes e infraestrutura.
 

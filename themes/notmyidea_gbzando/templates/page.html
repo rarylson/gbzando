@@ -3,9 +3,7 @@
 {% block content %}
 <section id="content" class="body {{page.slug}}">
     <article>
-      <h1 class="entry-title">
-        <a href="{{ SITEURL }}/{{ page.url }}" rel="bookmark"
-           title="Link para {{ page.title|striptags }}">{{ page.title|striptags}}</a></h1>
+      <h1 class="entry-title">{{ page.title|striptags}}</h1>
         <hr />
         {% import 'translations.html' as translations with context %}
         {{ translations.translations_for(page) }}
