@@ -41,28 +41,28 @@ Após algum tempo com a solução em produção, percebemos que o backup às vez
 
 Verificamos então que existia um número muito grande de processos no sistema. 
 
-    :::bash
-    ps aux | grep oracle | grep -v grep | wc -l
-    > 18451
+    :::console
+    $ ps aux | grep oracle | grep -v grep | wc -l
+    18451
 
 Vimos que os processos em excesso eram processos zumbis:
 
-    :::bash
-    ps aux | grep oracle | grep -v defunc | grep -v grep | wc -l 
-    > 357
-    ps aux | grep oracle | grep defunc | grep -v grep | wc -l
-    > 18094
+    :::console
+    $ ps aux | grep oracle | grep -v defunc | grep -v grep | wc -l 
+    357
+    $ ps aux | grep oracle | grep defunc | grep -v grep | wc -l
+    18094
 
 Verificamos que estes processos possuiam um processo pai em comum:
 
-    :::bash
-    ps -xal | grep defunct | grep -v grep
-    > F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
-    > [...]
-    > 4   500 32719  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
-    > 4   500 32720  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
-    > 4   500 32721  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
-    > [...]
+    :::console
+    $ ps -xal | grep defunct | grep -v grep
+    F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
+    [...]
+    4   500 32719  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
+    4   500 32720  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
+    4   500 32721  8102  17   0      0     0 exit   Zs   ?          0:00 [ora] <defunct>
+    [...]
 
 Vimos que todos os processos executavam com o mesmo UID e com o mesmo valor de PPID (PID do processo pai).
 
@@ -70,25 +70,25 @@ O UID 500, no nosso caso, pertencia ao usuário _oracle_. Ou seja, existiam muit
 
 Executamos alguns comandos e descobrimos o problema: o usuário _oracle_ havia atingido seu número limite de processos:
 
-    :::bash
-    # total running process running with 'oracle' user
-    ps ax -o oracle | wc -l
-    > 16383
-    # temporary using 'oracle' user
-    su oracle
-    # running process limit for 'oracle'
-    ulimit -a | grep "max user processes"
-    > max user processes              (-u) 16384
-    # exiting from 'oracle' user's shell
-    exit
+    :::console
+    $ # total running process running with 'oracle' user
+    $ ps ax -o oracle | wc -l
+    16383
+    $ # temporary using 'oracle' user
+    $ su oracle
+    $ # running process limit for 'oracle'
+    $ ulimit -a | grep "max user processes"
+    max user processes              (-u) 16384
+    $ # exiting from 'oracle' user's shell
+    $ exit
 
 **Obs:** O primeiro artigo sobre processos zumbis apresenta uma [interessante experiência](/processos-zumbis/#usando-processos-zumbis-para-esgotar-o-numero-maximo-de-processos) onde este mesmo problema é simulado.
 
 Por fim, verificamos quem era o processo de PID 8102:
 
-    :::bash
-    ps ax | grep 8102 | grep -v grep
-    > 8102 ?        Sl   973:06 /opt/VRTSralus/bin/beremote
+    :::console
+    $ ps ax | grep 8102 | grep -v grep
+    8102 ?        Sl   973:06 /opt/VRTSralus/bin/beremote
 
 Ou seja, o _deamon_ do RALUS não estava tratando adequadamente seus processos zumbis e era responsável pelo acúmulo de processos zumbis no sistema.
 

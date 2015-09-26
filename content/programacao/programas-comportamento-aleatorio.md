@@ -70,11 +70,11 @@ De forma semelhante, para simular a probabilidade de falha do programa, retornam
 
 Vamos, agora, compilar e testar nosso programa:
 
-    :::bash
-    gcc -o maybe_it_works maybe_it_works.c
-    ./maybe_it_works
-    echo $?
-    > 0
+    :::console
+    $ gcc -o maybe_it_works maybe_it_works.c
+    $ ./maybe_it_works
+    $ echo $?
+    0
 
 A instrução `echo $?` imprime o código de retorno do último comando executado. No teste realizado, **maybe_it_works** retornou 0. Porém, é importante lembrar que ele poderia ter retornado um valor diferente de zero com probabilidade 25%.
 
@@ -82,13 +82,13 @@ Vamos, agora, utilizar o comando **`time`** para testar melhor nosso programa.
 
 **Obs:** Alguns _shells_ possuem incorporado (_buitin_) uma versão simplificada do comando _time_ (um exemplo é o _shell_ **bash**, padrão em muitas distribuições Linux e no MacOS). Neste caso, para executar o programa _time_ que desejamos apresentar (e não a versão _builtin_), é necessário passar o path completo do programa (conforme explicado em [Why `/usr/bin/time`? (Instead of just `time`)](http://www.thegeekstuff.com/2012/01/time-command-examples/)).
 
-    :::bash
-    /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works
-    > time: 0:04.00
-    > exit: 0
-    /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works
-    > time: 0:03.00
-    > exit: 1
+    :::console
+    $ /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works
+    time: 0:04.00
+    exit: 0
+    $ /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works
+    time: 0:03.00
+    exit: 1
 
 ### Um pouco sobre sementes (_seeds_)
 
@@ -112,20 +112,19 @@ Observe que, se iniciássemos `rand` sempre com o mesmo valor de semente, o noss
 
 O exemplo abaixo mostra essa limitação:
 
-    :::bash
-    # exec 20 times, redirecting each output to a separeted file
-    for i in {1..20}; do
-        ( /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works & ) \
-        2>$i.log; done
-    # print all logs
-    cat *.log
-    > time: 0:01.01
-    > exit: 1
-    > time: 0:01.00
-    > exit: 1
-    > time: 0:01.03
-    > exit: 1
-    > [...]
+    :::console
+    $ # exec 20 times, redirecting each output to a separeted file
+    $ for i in {1..20}; do \
+    $     ( /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works & ) 2>$i.log; done
+    $ # print all logs
+    $ cat *.log
+    time: 0:01.01
+    exit: 1
+    time: 0:01.00
+    exit: 1
+    time: 0:01.03
+    exit: 1
+    [...]
 
 Neste exemplo, todas as execuções possuíram o mesmo comportamento (tempos de processamento e retornos sempre iguais).
 
@@ -183,11 +182,11 @@ Entretanto, o mais interessante é o [módulo `random`](https://docs.python.org/
 
 Para testar o nosso programa em Python, podemos ou executá-lo com o interpretador do Python (`python maybe_it_works.py`) ou simplesmente dar permição de execução ao nosso programa e executá-lo normalmente (a primeira linha do nosso programa indica qual interpretador queremos que seja utilizado). Vamos utilizar a segunda opção:
 
-    :::bash
-    chmod +x maybe_it_works.py
-    /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works.py
-    > time: 0:03.05
-    > exit: 0
+    :::console
+    $ chmod +x maybe_it_works.py
+    $ /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works.py
+    time: 0:03.05
+    exit: 0
 
 Testanto comportamentos aleatórios em Python
 --------------------------------------------
@@ -259,20 +258,20 @@ Por fim, iteramos sobre os nossos dicionários e imprimimos as estatisticas cole
 
 Vamos, agora, testar o nosso programa:
 
-    :::bash
-    chmod +x statistics.py
-    ./ statistics.py
-    > Execution time:
-    > Time        Percent
-    > 1.0s        24.2%
-    > 2.0s        26.2%
-    > 3.0s        23.0%
-    > 4.0s        26.6%
-    > 
-    > Return code:
-    > Code        Percent
-    > 0           78.6%
-    > 1           21.4%
+    :::console
+    $ chmod +x statistics.py
+    $ ./ statistics.py
+    Execution time:
+    Time        Percent
+    1.0s        24.2%
+    2.0s        26.2%
+    3.0s        23.0%
+    4.0s        26.6%
+    
+    Return code:
+    Code        Percent
+    0           78.6%
+    1           21.4%
 
 No teste acima, obvervamos que os valores retornados estão próximos do esperado: próximo a 25% para os tempos de execução, e próximo a 25% para o número de falhas.
 

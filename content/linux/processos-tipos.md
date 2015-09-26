@@ -34,23 +34,23 @@ No Linux, cada processo possui um pai (o processo que o criou). A exceção é o
 
 Para ver a árvore de processos, podemos utilizar o comando `pstree`. Um exemplo de output seria:
 
-    :::bash
-    pstree -a
-    > init
-    >   ├─accounts-daemon
-    >   │   └─{accounts-daemon}
-    >   ├─apache2 -k start
-    >   │   ├─apache2 -k start
-    >   │   ├─apache2 -k start
-    >   │   ├─apache2 -k start
-    >   │   ├─apache2 -k start
-    >   │   └─apache2 -k start
-    >   ├─atd
-    >   ├─automount
-    >   │   └─2*[{automount}]
-    >   ├─cron
-    >   │   └─cron
-    >   │       └─bash /usr/local/bin/gbzando/test.sh
+    :::console
+    $ pstree -a
+    init
+      ├─accounts-daemon
+      │   └─{accounts-daemon}
+      ├─apache2 -k start
+      │   ├─apache2 -k start
+      │   ├─apache2 -k start
+      │   ├─apache2 -k start
+      │   ├─apache2 -k start
+      │   └─apache2 -k start
+      ├─atd
+      ├─automount
+      │   └─2*[{automount}]
+      ├─cron
+      │   └─cron
+      │       └─bash /usr/local/bin/gbzando/test.sh
 
 O argumento `-a` fará com que os argumentos passados na hora da execução dos processos (como o `-k start`) sejam mostrados. O `pstree` possui outros argumentos interessantes, como o `-p`, usado para imprimir os PIDs.
 
@@ -64,37 +64,32 @@ Também podemos usar o comando `ps` para ver a árvore de processos com informa�
 
 Para ver os PIDs dos processos do tipo Apache:
 
-    :::bash
-    ps aux | grep apache | grep -v grep
-    > www-data 17266  0.0  0.2 229916  6792 ?        S    16:14   0:00 /usr/sbin/apache2 -k start
-    > root     22027  0.0  0.3 229808 10828 ?        Ss   16:01   0:00 /usr/sbin/apache2 -k start
-    > www-data 22030  0.0  0.2 230264  7272 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
-    > www-data 22031  0.0  0.2 230280  7300 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
-    > www-data 22032  0.0  0.2 229940  7296 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
-    > www-data 22033  0.0  0.2 229880  7028 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
-    > www-data 22034  0.0  0.2 229880  7028 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
-    > www-data 28571  0.0  0.2 229880  6776 ?        S    16:04   0:00 /usr/sbin/apache2 -k start
+    :::console
+    $ ps aux | grep apache | grep -v grep
+    www-data 17266  0.0  0.2 229916  6792 ?        S    16:14   0:00 /usr/sbin/apache2 -k start
+    root     22027  0.0  0.3 229808 10828 ?        Ss   16:01   0:00 /usr/sbin/apache2 -k start
+    www-data 22030  0.0  0.2 230264  7272 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
+    www-data 22031  0.0  0.2 230280  7300 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
+    www-data 22032  0.0  0.2 229940  7296 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
+    www-data 22033  0.0  0.2 229880  7028 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
+    www-data 22034  0.0  0.2 229880  7028 ?        S    16:01   0:00 /usr/sbin/apache2 -k start
+    www-data 28571  0.0  0.2 229880  6776 ?        S    16:04   0:00 /usr/sbin/apache2 -k start
 
 Nesta execução, novos processos Apache filhos haviam sido criados no sistema. Vemos que o processo master possui **PID 22027**.
 
 O comando abaixo irá mostrar a árvore de processos de uma forma mais detalhada:
 
-    :::bash
-    ps uf -p 22027,17266,22030,22031,22032,22033,22034,28571
-    > USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-    > root     22027  0.0  0.3 229808 10828 ?        Ss   16:01   0:00 /usr/sbin/apache2 -k start
-    > www-data 22030  0.0  0.2 230264  7272 ?        S    16:01   0:00  \_ /usr/sbin/apache2 -k start
-    > www-data 22031  0.0  0.2 230280  7300 ?        S    16:01   0:00  \_ /usr/sbin/apache2 -k start
-    > www-data 22032  0.0  0.2 229940  7296 ?        S    16:01   0:00  \_ /usr/sbin/apache2 -k start
-    > www-data 22033  0.0  0.2 230268  7528 ?        S    16:01   0:00  \_ /usr/sbin/apache2 -k start
-    > www-data 22034  0.0  0.2 229880  7028 ?        S    16:01   0:00  \_ /usr/sbin/apache2 -k start
-    > www-data 28571  0.0  0.2 229880  7032 ?        S    16:04   0:00  \_ /usr/sbin/apache2 -k start
-    > www-data 17266  0.0  0.2 229916  6792 ?        S    16:14   0:00  \_ /usr/sbin/apache2 -k start
-    
-Uma dica mais avançada para obter a mesma árvore é através do comando abaixo, obtido em um [post no Stack Overflow](http://stackoverflow.com/a/5311362). Este comando irá, a partir do PID do pai, mostrar todo o restante da árvore detalhadamente:
-
-    :::bash
-    ps uf -p $(pstree -p 22027 | sed 's/(/\n(/g' | grep '(' | sed 's/(\(.*\)).*/\1/' | tr "\n" " ")
+    :::console
+    $ ps uf -p 22027,17266,22030,22031,22032,22033,22034,28571
+    USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+    root     22027  0.0  0.3 229808 10828 ?        Ss   16:01   0:00 /usr/sbin/ache2 -k start
+    www-data 22030  0.0  0.2 230264  7272 ?        S    16:01   0:00  \_ /usr/sbin/ache2 -k start
+    www-data 22031  0.0  0.2 230280  7300 ?        S    16:01   0:00  \_ /usr/sbin/ache2 -k start
+    www-data 22032  0.0  0.2 229940  7296 ?        S    16:01   0:00  \_ /usr/sbin/ache2 -k start
+    www-data 22033  0.0  0.2 230268  7528 ?        S    16:01   0:00  \_ /usr/sbin/ache2 -k start
+    www-data 22034  0.0  0.2 229880  7028 ?        S    16:01   0:00  \_ /usr/sbin/ache2 -k start
+    www-data 28571  0.0  0.2 229880  7032 ?        S    16:04   0:00  \_ /usr/sbin/ache2 -k start
+    www-data 17266  0.0  0.2 229916  6792 ?        S    16:14   0:00  \_ /usr/sbin/apache2 -k start
 
 Particulamente, gosto de usar o programa `htop` para analisar árvores de processos.
 
@@ -139,29 +134,29 @@ Por fim, ambos entrarão em loop infinito. Este loop consumirá pouca CPU pois, 
 
 Vamos compilar este programa usando o `gcc` e executá-lo:
 
-    :::bash
-    gcc -o fork fork.c
-    ./fork
-    > Parent process... Infinite loop
-    > Child process... Infinite loop
+    :::console
+    $ gcc -o fork fork.c
+    $ ./fork
+    Parent process... Infinite loop
+    Child process... Infinite loop
 
 Em outro terminal (pois o programa **fork** está rodando em _foreground_), iremos executar um `ps` para obter a árvore e os PIDs dos processos.
 
-    :::bash
-    ps af | grep -B 1 fork | grep -v grep
-    > 20062 pts/0    S      0:00          \_ bash
-    > 31351 pts/0    S+     0:00              \_ ./fork
-    > 31352 pts/0    S+     0:00                  \_ ./fork
+    :::console
+    $ ps af | grep -B 1 fork | grep -v grep
+    20062 pts/0    S      0:00          \_ bash
+    31351 pts/0    S+     0:00              \_ ./fork
+    31352 pts/0    S+     0:00                  \_ ./fork
 
 Neste exemplo, vemos que o **fork pai** possui como filho **outro fork** e como pai um processo **bash**.
 
 Vamos, agora, matar o processo **fork pai** e verificar o que ocorre com o filho:
 
-    :::bash
-    kill -s SIGHUP 31351
-    pstree -as 31352
-    > init
-    >   └─fork
+    :::console
+    $ kill -s SIGHUP 31351
+    $ pstree -as 31352
+    init
+      └─fork
 
 O parâmetro `-s` passado ao pstree faz com que ele mostre somente os pais e filhos de um PID. Veja que, em muitos casos, podemos obter a mesma informação de diversas formas diferentes!
 
@@ -169,8 +164,8 @@ Agora, o processo **fork filho** virou um **processo órfão**, que possui como 
 
 Por fim, iremos matar este processo para que ele não fique rodando no sistema.
 
-    ::bash
-    kill -s SIGHUP 31352
+    ::console
+    $ kill -s SIGHUP 31352
 
 Criando processos running, sleeping e waiting
 ---------------------------------------------
@@ -234,30 +229,30 @@ Este programa criará outro processo filho. O processo pai dará um [_lock_](htt
 
 Agora, vamos executar os três processos em _background_ (assim obtemos mais rapidamente o PID e não seremos obrigados a abrir vários shells).
 
-    :::bash
-    ./running &
-    > [1] 11074
-    ./sleeping &
-    > [2] 11115
-    ./waiting &
-    > [3] 11438
+    :::console
+    $ ./running &
+    [1] 11074
+    $ ./sleeping &
+    [2] 11115
+    $ ./waiting &
+    [3] 11438
 
 Lembra que o programa *waiting* cria um filho ao realizar um _fork_? Vamos usar o `pstree` para obter o PID deste filho também:
 
-    :::bash
-    pstree -ap 11438
-    > waiting,11438
-    > └─waiting,11439
+    :::console
+    $ pstree -ap 11438
+    waiting,11438
+    └─waiting,11439
 
 Agora, vamos utilizar o programa `ps` para verificar o estado de cada um dos processos:
 
-    :::bash
-    ps f -o pid,%cpu,state,command -p 11074,11115,11438,11439
-    >   PID %CPU S COMMAND
-    > 11438 42.1 R ./waiting
-    > 11439  0.0 S  \_ ./waiting
-    > 11115  0.0 S ./sleeping
-    > 11074 45.4 R ./running
+    :::console
+    $ ps f -o pid,%cpu,state,command -p 11074,11115,11438,11439
+      PID %CPU S COMMAND
+    11438 42.1 R ./waiting
+    11439  0.0 S  \_ ./waiting
+    11115  0.0 S ./sleeping
+    11074 45.4 R ./running
 
 O parâmetro `-o` nos permite especificar as informações que queremos na saída do commando.
 
@@ -271,20 +266,20 @@ Neste output, podemos destacar dois pontos:
 
 Para deixar a experiência mais legal ainda, vamos matar o processo **waiting** pai. Conforme já explicado, o processo filho passará a ser um processo órfão (filho de **init**):
 
-    :::bash
-    kill -s SIGHUP 11438
-    ps f -o pid,%cpu,state,command -p 11438,11439
-    >   PID %CPU S COMMAND
-    > 11439 37.0 R ./waiting
+    :::console
+    $ kill -s SIGHUP 11438
+    $ ps f -o pid,%cpu,state,command -p 11438,11439
+      PID %CPU S COMMAND
+    11439 37.0 R ./waiting
 
 Neste momento, o segundo processo **waiting** irá obter o lock do arquivo (pois, ao finalizar o primeiro processo, o sistema operacional liberará os recursos obtidos por este, incluindo o lock) e mudará seu estado para _running_. Na sequência, o processo entrará em loop infinito, consumindo bastante CPU.
 
 Com a experiência finalizada, vamos matar todos os processos, para não deixá-los executando indefinidamente no sistema:
 
-    :::bash
-    killall running
-    killall waiting
-    killall sleeping
+    :::console
+    $ killall running
+    $ killall waiting
+    $ killall sleeping
 
 Enviando stop e resume para processos
 -------------------------------------
@@ -297,31 +292,31 @@ O segundo método é mais genérico, e consiste no envio de sinais (através do 
 
 Vamos rodar, mais uma vez, o programa **running** em _background_:
 
-    :::bash
-    ./running &
-    > [1] 11440
+    :::console
+    $ ./running &
+    [1] 11440
 
 Agora, iremos enviar um [sinal SIGSTOP](http://major.io/2009/06/15/two-great-signals-sigstop-and-sigcont/) para este processo:
 
-    :::bash
-    kill -s SIGSTOP 11440
+    :::console
+    $ kill -s SIGSTOP 11440
 
 Vamos, agora, executar o comando `ps` para verificar o estado deste processo:
 
-    :::bash
-    ps -o pid,%cpu,state,command -p 11440
-    >   PID %CPU S COMMAND
-    > 11440  0.0 T ./running
+    :::console
+    $ ps -o pid,%cpu,state,command -p 11440
+      PID %CPU S COMMAND
+    11440  0.0 T ./running
 
 Vemos que **running** agora possui estado _suspended_ (T), e não consome CPU do sistema operacional.
 
 Ao enviar um sinal SIGCONT, este processo tornará a executar do ponto em que parou:
 
-    :::bash
-    kill -s SIGCONT 11440
-    ps -o pid,%cpu,state,command -p 11440
-    >   PID %CPU S COMMAND
-    > 11440 82.7 R ./running
+    :::console
+    $ kill -s SIGCONT 11440
+    $ ps -o pid,%cpu,state,command -p 11440
+      PID %CPU S COMMAND
+    11440 82.7 R ./running
 
 Referências
 -----------
@@ -329,4 +324,3 @@ Referências
 - [Linux process states](https://idea.popcount.org/2012-12-11-linux-process-states/)
 - [Wikipedia - Orphan process](http://en.wikipedia.org/wiki/Orphan_process)
 - [Silberschatz, Galvin e Gagne; Sistemas Operacionais com Java (Operating System Concepts with Java)](http://www.amazon.com/Operating-System-Concepts-Abraham-Silberschatz/dp/047050949X)
-

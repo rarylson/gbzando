@@ -148,6 +148,12 @@ pre {
     border: none;
     background: transparent;
 }
+pre .go {
+    color: #888888;
+}
+pre .gp {
+    color: #c74451;
+}
 
 /* Creative commons */
 #about a.img {

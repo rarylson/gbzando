@@ -76,41 +76,41 @@ Se ocorrer algum erro ao definir o _handler_, este programa imprime a mensagem d
 
 Vamos executá-lo em _foreground_ e, logo após, pressionar algumas vezes `CTRL+C` para enviar sinais SIGINT:
 
-    :::bash
-    gcc -o i_will_survive i_will_survive.c
-    ./i_will_survive
-    > ^CI will survive, baby!
-    > ^CI will survive, baby!
+    :::console
+    $ gcc -o i_will_survive i_will_survive.c
+    $ ./i_will_survive
+    ^CI will survive, baby!
+    ^CI will survive, baby!
 
 Ao receber o sinal, a função `end_handler` é executada e é impresso "I will survive" na tela.
 
 Vamos agora abrir um outro terminal e, após obter o PID do processo, enviar vários sinais usando o comando `kill`:
 
-    :::bash
-    ps aux | grep i_will_survive | grep -v grep
-    > rarylson       55300  98.5  0.0  2432744    480 s003  R+   11:39PM   0:10.66 ./i_will_survive
-    kill 55300
-    kill -s SIGHUP 55300
-    kill -s SIGINT 55300
+    :::console
+    $ ps aux | grep i_will_survive | grep -v grep
+    rarylson       55300  98.5  0.0  2432744    480 s003  R+   11:39PM   0:10.66 ./i_will_survive
+    $ kill 55300
+    $ kill -s SIGHUP 55300
+    $ kill -s SIGINT 55300
 
 Perceba que o primeiro comando `kill` enviará um SIGTERM (o sinal padrão deste comando). 
 
 No primeiro terminal, vemos que o processo continua executando. Pior ainda, após receber cada um dos sinais, ele imprimiu uma mensagem nada humilde na tela:
 
-    :::bash
-    > I will survive, baby!
-    > I will survive, baby!
-    > I will survive, baby!
+    :::console
+    I will survive, baby!
+    I will survive, baby!
+    I will survive, baby!
 
 Agora, no segundo terminal, iremos enviar um sinal SIGKILL:
 
-    :::bash
-    kill -s SIGKILL 55300
+    :::console
+    $ kill -s SIGKILL 55300
 
 Desta vez, no primeiro terminal, verificamos que o processo finalmente morreu (**i_will_survive**, sua hora chegou!):
 
-    :::bash
-    > Killed: 9
+    :::console
+    Killed: 9
 
 **Obs:** SIGKILL é o sinal de número 9. Assim, `kill -9 55300` (`kill -9` é uma expressão comum nos fóruns sobre Linux) faria exatamente a mesma coisa que o último comando executado.
 
@@ -122,17 +122,19 @@ Vamos supor que um certo programador quer sobrescrever o _handler_ de SIGKILL. O
 
 Para realizar este teste, iremos modificar a **linha 13** do programa **i_will_survive.c** para:
 
-    :::c
-    // SIG_ERR) || (signal(SIGTERM, end_handler) == SIG_ERR)) {
-    SIG_ERR) || (signal(SIGTERM, end_handler) == SIG_ERR) ||
-    (signal(SIGKILL, end_handler) == SIG_ERR)) {
+    :::diff
+         if ((signal(SIGINT, end_handler) == SIG_ERR) || (signal(SIGHUP, end_handler) ==
+    -            SIG_ERR) || (signal(SIGTERM, end_handler) == SIG_ERR)) {
+    +            SIG_ERR) || (signal(SIGTERM, end_handler) == SIG_ERR) ||
+    +            (signal(SIGKILL, end_handler) == SIG_ERR)) {
+             printf("Error while setting a signal handler\n");
     
 Recompilando e executando o programa:
 
-    :::bash
-    gcc -o i_will_survive i_will_survive.c
-    ./i_will_survive
-    > Error while setting a signal handler
+    :::console
+    $ gcc -o i_will_survive i_will_survive.c
+    $ ./i_will_survive
+    Error while setting a signal handler
 
 Ou seja, de fato, não é possível sobrescrever o _handler_ default de SIGKILL (e nem de SIGSTOP).
 
@@ -149,8 +151,8 @@ Para isso, vamos utilizar a biblioteca [**libconfig**](http://www.hyperrealm.com
 
 No Ubuntu, esta biblioteca pode ser instalada através do comando:
 
-    :::bash
-    apt-get install libconfig-dev
+    :::console
+    $ apt-get install libconfig-dev
 
 Logo após, iremos definir nosso arquivo de configuração (**gracefull_stop_reload.cfg**):
 
@@ -199,12 +201,12 @@ Este programa inicia a _struct_ `config` com as informações do arquivo de conf
 
 Agora, vamos compilar e executar este programa. Devemos passar a diretiva `-lconfig` para [_linkar_ o nosso programa com a biblioteca **libconfig**](http://www.hyperrealm.com/libconfig/libconfig_manual.html#Using-the-Library-from-a-C-Program).
 
-    :::bash
-    gcc -o gracefull_stop_reload gracefull_stop_reload.c -lconfig
-    ./gracefull_stop_reload
-    > 1 execution(s)
-    > 2 execution(s)
-    > [...]
+    :::console
+    $ gcc -o gracefull_stop_reload gracefull_stop_reload.c -lconfig
+    $ ./gracefull_stop_reload
+    1 execution(s)
+    2 execution(s)
+    [...]
 
 O programa funciona bem. Entretanto, possui as seguintes características:
 
@@ -315,25 +317,24 @@ Desde modo, o código de **gracefull_stop_reload.c** ficará:
         return 0;
     }
 
-
 Agora, ao receber o sinal SIGINT ou SIGTERM, o programa irá persistir o valor do contador, recarregando-o na próxima execução. Para testarmos esta funcionalidade, devemos recompilar o processo e iniciá-lo novamente e, na sequência, enviar um sinal SIGTERM a partir de outro terminal:
 
-    :::bash
-    ps aux | grep gracefull_stop_reload | grep -v grep
-    > root      3806  0.0  0.0   6380   560 pts/0    S+   17:06   0:00 ./gracefull_stop_reload
-    kill -s SIGTERM 3806
+    :::console
+    $ ps aux | grep gracefull_stop_reload | grep -v grep
+    root      3806  0.0  0.0   6380   560 pts/0    S+   17:06   0:00 ./gracefull_stop_reload
+    $ kill -s SIGTERM 3806
 
 Vontando ao primeiro terminal e executando novamente o processo, vemos que o contador foi corretamente persistido:
 
-    :::bash
-    ./gracefull_stop_reload
-    > 1 execution(s)
-    > [...]
-    > 40 execution(s)
+    :::console
+    $ ./gracefull_stop_reload
+    1 execution(s)
+    [...]
+    40 execution(s)
     # script stopped here
-    ./gracefull_stop_reload 
-    > 41 execution(s)
-    > [...]
+    $ ./gracefull_stop_reload 
+    41 execution(s)
+    [...]
     
 Além disso, ao alterarmos o valor do arquivo de configuração, poderemos recarregá-lo enviando um sinal SIGHUP para a aplicação. Para isso, iremos editar o arquivo de configuração (**gracefull_stop_reload.cfg**) no segundo terminal:
 
@@ -343,18 +344,17 @@ Além disso, ao alterarmos o valor do arquivo de configuração, poderemos recar
 
 Agora, iremos enviar o sinal apropriado para que o programa realize o reload:
 
-    :::bash
-    kill -s SIGHUP 3806
+    :::console
+    $ kill -s SIGHUP 3806
 
 Por fim, verificamos que o programa passou a utilizar nosso novo arquivo de configuração:
 
-    :::bash
-    > 48 execution(s)
-    > 49 execution(s)... I am so tired ;(
-    > [...]
+    :::console
+    48 execution(s)
+    49 execution(s)... I am so tired ;(
+    [...]
 
 Esta implementação lembra o que ocorre em vários _deamons_. Por exemplo, o Nginx e o Apache, conforme a [sessão _Signals_ do manual do Nginx](http://www.rootr.net/man/man/nginx/8) e a [página _Stopping and Restart_ do manual do Apache](http://httpd.apache.org/docs/2.2/stopping.html), processam sinais para realizarem operações de stop e reload.
-
 
 Referências
 -----------

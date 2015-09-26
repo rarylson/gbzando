@@ -76,21 +76,21 @@ O programa acima irá gerar um novo filho de 5 em 5 segundos.
     
 Agora, iremos compilar e rodar o processo. Veremos que, de tempos em tempos, uma nova mensagem será impressa na tela:
 
-    :::bash
-    gcc -o the_walking_dead the_walking_dead.c
-    ./the_walking_dead 
-    > Child created and ending... Bye!
-    > Child created and ending... Bye!
-    > Child created and ending... Bye!
+    :::console
+    $ gcc -o the_walking_dead the_walking_dead.c
+    $ ./the_walking_dead 
+    Child created and ending... Bye!
+    Child created and ending... Bye!
+    Child created and ending... Bye!
 
 Após alguns segundos, em outro terminal, iremos imprimir na tela os processos **the\_walking\_dead**:
 
-    :::bash
-    ps aux | grep the_walking | grep -v grep
-    > rarylson 21768  0.0  0.0   4156   356 pts/0    S+   04:28   0:00 ./the_walking_dead
-    > rarylson 21883  0.0  0.0      0     0 pts/0    Z+   04:28   0:00 [the_walking_dea] <defunct>
-    > rarylson 22036  0.0  0.0      0     0 pts/0    Z+   04:28   0:00 [the_walking_dea] <defunct>
-    > rarylson 22049  0.0  0.0      0     0 pts/0    Z+   04:28   0:00 [the_walking_dea] <defunct>
+    :::console
+    $ ps aux | grep the_walking | grep -v grep
+    rarylson 21768  0.0  0.0   4156   356 pts/0    S+   04:28   0:00 ./the_walking_dead
+    rarylson 21883  0.0  0.0      0     0 pts/0    Z+   04:28   0:00 [the_walking_dea] <defunct>
+    rarylson 22036  0.0  0.0      0     0 pts/0    Z+   04:28   0:00 [the_walking_dea] <defunct>
+    rarylson 22049  0.0  0.0      0     0 pts/0    Z+   04:28   0:00 [the_walking_dea] <defunct>
 
 Neste momento, tínhamos 3 processos zumbis no sistema (estado _defunct_, representado pela letra Z).
 
@@ -98,9 +98,9 @@ Neste momento, tínhamos 3 processos zumbis no sistema (estado _defunct_, repres
 
 Após aguardar um tempo, iremos contar a quantidade de processos **the\_walking\_dead** no sistema. Observe que eles estão aumentando indefinidamente:
 
-    :::bash
-    ps aux | grep the_walking | grep -v grep | grep defunct | wc -l
-    > 15
+    :::console
+    $ ps aux | grep the_walking | grep -v grep | grep defunct | wc -l
+    15
 
 ### O processo init e os processos zumbis
 
@@ -112,11 +112,11 @@ Assim, o que ocorre se eliminarmos um processo pai que possui vários processos 
 
 Podemos verificar este comportamento finalizando o processo pai **the\_walking\_dead** no primeiro terminal (executando `CRTL+C`) e, logo após, vendo que não existem mais processos zumbis no sistema:
 
-    :::bash
-    > Child created and ending... Bye!
-    > ^C
-    ps aux | grep the_walking | grep -v grep | grep defunct | wc -l
-    > 0
+    :::console
+    Child created and ending... Bye!
+    ^C
+    $ ps aux | grep the_walking | grep -v grep | grep defunct | wc -l
+    0
 
 Usando processos zumbis para esgotar o número máximo de processos
 -----------------------------------------------------------------
@@ -125,35 +125,35 @@ Em sistemas Linux (e em vários outros _Unix like_), o número máximo de proces
 
 Por exemplo, neste artigo estamos executando processos utilizando o usuário de poucos privilégios **rarylson**. Podemos contar quantos processos este usuário está executando através do comando abaixo:
 
-    :::bash
-    ps ax -o user | grep rarylson | wc -l
-    > 7
+    :::console
+    $ ps ax -o user | grep rarylson | wc -l
+    7
 
 Iremos, agora, abrir dois terminais: um com um usuário de poucos privilégios, e outro com o usuário **root**. No primeiro terminal, iremos utilizar o comando [`ulimit`](http://www.ss64.com/bash/ulimit.html) para limitar o número de processos que o usuário **rarylson** poderá iniciar:
 
-    :::bash
-    ulimit -u 17
+    :::console
+    u$ limit -u 17
 
 Você pode executar o comando `ulimit -a` para verificar que a política foi, de fato, aplicada. O valor acima foi escolhido, neste caso particular, como sendo 10 unidades acima do número de processos que este usuário já está executando. 
 
 Agora, iremos novamente executar nosso processo **the\_walking\_dead**:
 
-    :::bash
-    ./the_walking_dead 
-    > Child created and ending... Bye!
-    > [...]
-    > Child created and ending... Bye!
-    > Error while forking
-    > Error while forking
-    > [...]
+    :::console
+    $ ./the_walking_dead 
+    Child created and ending... Bye!
+    [...]
+    Child created and ending... Bye!
+    Error while forking
+    Error while forking
+    [...]
 
 Vemos que, após algum tempo, o nosso programa não consegue mais criar novos zumbis.
 
 No segundo terminal, iremos contar o número de processos do usuário **rarylson**:
 
-    :::bash
-    ps ax -o user | grep rarylson | wc -l
-    > 16
+    :::console
+    $ ps ax -o user | grep rarylson | wc -l
+    16
 
 **Obs:** Se você esteja intrigado com o fato do número de processos do usuário pouco privilegiado ser uma unidade menor que o número máximo configurado, saiba que eu também estou :(! Se souber da resposta, compartilhe!!!
 

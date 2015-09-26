@@ -46,14 +46,14 @@ O programa **maybe\_it\_works.c** utiliza funções aleatórias para simular doi
 
 Agora, vamos compilar e testar este programa:
 
-    :::bash
-    gcc -o maybe_it_works maybe_it_works.c
-    time ./maybe_it_works
-    > real	0m2.001s
-    > user	0m0.004s
-    > sys	0m0.000s
-    echo $?
-    > 0
+    :::console
+    $ gcc -o maybe_it_works maybe_it_works.c
+    $ time ./maybe_it_works
+    real	0m2.001s
+    user	0m0.004s
+    sys	0m0.000s
+    $ echo $?
+    0
 
 No teste realizado, **maybe\_it\_works** demorou 2 segundos para executar e retornou sucesso. Entretanto, ele poderia ter tido um tempo de execução diferente, ou mesmo ter retornado um valor diferente de zero.
 
@@ -136,32 +136,32 @@ O valor armazenado na variável `status` possui várias informações. Entretant
 
 Vamos, agora, compilar e testar o nosso programa. Devemos executá-lo no mesmo diretório que reside o programa **maybe\_it\_works**.
 
-    :::bash
-    gcc -o keep_calm keep_calm.c
-    ./keep_calm 
-    > Errors: 1, Total: 1, Percent: 100.00%
-    > Errors: 1, Total: 2, Percent: 50.00%
-    > Errors: 2, Total: 3, Percent: 66.67%
-    > [...]
-    > Errors: 5, Total: 21, Percent: 23.81%
-    > Errors: 5, Total: 22, Percent: 22.73%
-    > Errors: 6, Total: 23, Percent: 26.09%
+    :::console
+    $ gcc -o keep_calm keep_calm.c
+    $ ./keep_calm 
+    Errors: 1, Total: 1, Percent: 100.00%
+    Errors: 1, Total: 2, Percent: 50.00%
+    Errors: 2, Total: 3, Percent: 66.67%
+    [...]
+    Errors: 5, Total: 21, Percent: 23.81%
+    Errors: 5, Total: 22, Percent: 22.73%
+    Errors: 6, Total: 23, Percent: 26.09%
 
 Vemos que, após inúmeras execuções, o número de execuções com erro tende a ficar próximo a 25%, conforme esperado.
 
 Vamos agora abrir outro terminal e verificar o status dos nossos processos:
 
-    :::bash
-    ps aux | grep -e keep_calm -e maybe_it_works | grep -v grep
-    > root     20480  0.0  0.0   4204   520 pts/3    S+   13:44   0:00 ./keep_calm
-    > root     22428  0.0  0.0   4200   364 pts/3    S+   14:24   0:00 ./maybe_it_works
+    :::console
+    $ ps aux | grep -e keep_calm -e maybe_it_works | grep -v grep
+    root     20480  0.0  0.0   4204   520 pts/3    S+   13:44   0:00 ./keep_calm
+    root     22428  0.0  0.0   4200   364 pts/3    S+   14:24   0:00 ./maybe_it_works
 
 Aguardando mais alguns instantes e repetindo a experiência:
 
-    :::bash
-    ps aux | grep -e keep_calm -e maybe_it_works | grep -v grep
-    > root     20480  0.0  0.0   4204   520 pts/3    S+   13:44   0:00 ./keep_calm
-    > root     22456  0.0  0.0   4200   364 pts/3    S+   14:26   0:00 ./maybe_it_works 
+    :::console
+    $ ps aux | grep -e keep_calm -e maybe_it_works | grep -v grep
+    root     20480  0.0  0.0   4204   520 pts/3    S+   13:44   0:00 ./keep_calm
+    root     22456  0.0  0.0   4200   364 pts/3    S+   14:26   0:00 ./maybe_it_works 
 
 Vemos o mesmo processo pai em ambos os testes (PID 20480), porém processos filhos diferentes (PIDs 22428 e 22456). Além disso, vemos que sempre há 2 processos executando, não havendo nenhum processo zumbi.
 
@@ -209,19 +209,19 @@ Já a mudança do cálculo da porcentagem foi necessária para evitarmos um erro
 
 Vamos agora compilar e testar o nosso programa:
 
-    :::bash
-    gcc -o dont_keep_calm dont_keep_calm.c
+    :::console
+    $ gcc -o dont_keep_calm dont_keep_calm.c
     ./dont_keep_calm 
-    > Errors: 0, Total: 0, Percent: 0.00%
-    > Errors: 0, Total: 0, Percent: 0.00%
-    > Errors: 0, Total: 0, Percent: 0.00%
-    > Errors: 1, Total: 1, Percent: 100.00%
-    > Errors: 2, Total: 2, Percent: 100.00%
-    > [...]
-    > Errors: 5, Total: 17, Percent: 29.41%
-    > Errors: 5, Total: 17, Percent: 29.41%
-    > Errors: 5, Total: 19, Percent: 26.32%
-    > Errors: 5, Total: 20, Percent: 25.00%
+    Errors: 0, Total: 0, Percent: 0.00%
+    Errors: 0, Total: 0, Percent: 0.00%
+    Errors: 0, Total: 0, Percent: 0.00%
+    Errors: 1, Total: 1, Percent: 100.00%
+    Errors: 2, Total: 2, Percent: 100.00%
+    [...]
+    Errors: 5, Total: 17, Percent: 29.41%
+    Errors: 5, Total: 17, Percent: 29.41%
+    Errors: 5, Total: 19, Percent: 26.32%
+    Errors: 5, Total: 20, Percent: 25.00%
 
 Neste teste, podemos ver que:
 
@@ -233,21 +233,21 @@ Neste teste, podemos ver que:
 
 Assim como no exemplo anterior, vamos abrir outro terminal e verificar o status dos processos:
 
-    :::bash
-    ps aux | grep -e dont_keep_calm -e maybe_it_works | grep -v grep
-    > root     24565  0.0  0.0   4204   516 pts/3    S+   17:15   0:00 ./dont_keep_calm
-    > root     24592  0.0  0.0   4200   368 pts/3    S+   17:15   0:00 ./maybe_it_works
-    > root     24593  0.0  0.0   4200   368 pts/3    S+   17:15   0:00 ./maybe_it_works
+    :::console
+    $ ps aux | grep -e dont_keep_calm -e maybe_it_works | grep -v grep
+    root     24565  0.0  0.0   4204   516 pts/3    S+   17:15   0:00 ./dont_keep_calm
+    root     24592  0.0  0.0   4200   368 pts/3    S+   17:15   0:00 ./maybe_it_works
+    root     24593  0.0  0.0   4200   368 pts/3    S+   17:15   0:00 ./maybe_it_works
 
 Após aguardar alguns instantes, vamos repetir novamente o comando anterior:
 
-    :::bash
-    ps aux | grep -e dont_keep_calm -e maybe_it_works | grep -v grep
-    > root     24565  0.0  0.0   4204   516 pts/3    S+   17:15   0:00 ./dont_keep_calm
-    > root     24708  0.0  0.0   4200   368 pts/3    S+   17:17   0:00 ./maybe_it_works
-    > root     24709  0.0  0.0      0     0 pts/3    Z+   17:17   0:00 [maybe_it_works] <defunct>
-    > root     24713  0.0  0.0   4200   368 pts/3    S+   17:17   0:00 ./maybe_it_works
-    > root     24723  0.0  0.0   4200   368 pts/3    S+   17:17   0:00 ./maybe_it_works
+    :::console
+    $ ps aux | grep -e dont_keep_calm -e maybe_it_works | grep -v grep
+    root     24565  0.0  0.0   4204   516 pts/3    S+   17:15   0:00 ./dont_keep_calm
+    root     24708  0.0  0.0   4200   368 pts/3    S+   17:17   0:00 ./maybe_it_works
+    root     24709  0.0  0.0      0     0 pts/3    Z+   17:17   0:00 [maybe_it_works] <defunct>
+    root     24713  0.0  0.0   4200   368 pts/3    S+   17:17   0:00 ./maybe_it_works
+    root     24723  0.0  0.0   4200   368 pts/3    S+   17:17   0:00 ./maybe_it_works
 
 Vemos que:
 
@@ -340,18 +340,18 @@ Também houve uma mudança na implementação da funcionalidade _sleep_. Esta mu
 
 Vamos, agora, compilar e testar nosso programa:
 
-    :::bash
-    gcc -o work_hard_play_hard work_hard_play_hard.c
-    ./work_hard_play_hard
-    > Errors: 0, Total: 1, Percent: 0.00%
-    > Errors: 1, Total: 2, Percent: 50.00%
-    > Errors: 2, Total: 3, Percent: 66.67%
-    > Errors: 2, Total: 4, Percent: 50.00%
-    > [...]
-    > Errors: 9, Total: 23, Percent: 39.13%
-    > Errors: 11, Total: 25, Percent: 44.00%
-    > [...]
-    > Errors: 16, Total: 65, Percent: 24.62%
+    :::console
+    $ gcc -o work_hard_play_hard work_hard_play_hard.c
+    $ ./work_hard_play_hard
+    Errors: 0, Total: 1, Percent: 0.00%
+    Errors: 1, Total: 2, Percent: 50.00%
+    Errors: 2, Total: 3, Percent: 66.67%
+    Errors: 2, Total: 4, Percent: 50.00%
+    [...]
+    Errors: 9, Total: 23, Percent: 39.13%
+    Errors: 11, Total: 25, Percent: 44.00%
+    [...]
+    Errors: 16, Total: 65, Percent: 24.62%
 
 Analisando o resultado, vemos que:
 
@@ -362,11 +362,11 @@ Analisando o resultado, vemos que:
 
 Vamos, agora, em um novo terminal, verificar o status dos processos em execução:
 
-    :::bash
-    ps aux | grep -e work_hard_play_hard -e maybe_it_works | grep -v grep
-    > root     12200  0.0  0.0   4204   520 pts/3    S+   22:53   0:00 ./work_hard_play_hard
-    > root     12450  0.0  0.0   4200   368 pts/3    S+   22:54   0:00 ./maybe_it_works
-    > root     12451  0.0  0.0   4200   364 pts/3    S+   22:54   0:00 ./maybe_it_works
+    :::console
+    $ ps aux | grep -e work_hard_play_hard -e maybe_it_works | grep -v grep
+    root     12200  0.0  0.0   4204   520 pts/3    S+   22:53   0:00 ./work_hard_play_hard
+    root     12450  0.0  0.0   4200   368 pts/3    S+   22:54   0:00 ./maybe_it_works
+    root     12451  0.0  0.0   4200   364 pts/3    S+   22:54   0:00 ./maybe_it_works
 
 Mesmo repetindo este comando inúmeras vezes, vemos que é muito difícil a ocorrência de um processo zumbi, visto que nosso programa os trata quase que imediatamente após aparecerem.
 
