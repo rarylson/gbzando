@@ -137,9 +137,12 @@ table.highlighttable .na {
 }
 pre, code {
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    font-size: 12px;
+}
+code {
+    font-size: 0.9em;
 }
 pre {
+    font-size: 12px;
     border-radius: 5px;
     border: 1px solid #EEEEEE;
     background: #FAFAFA;
@@ -179,7 +182,6 @@ a, a div#disqus_thread {
 }
 
 /* Author */
-
 .sobre-o-autor img {
     float: right;
     margin: 0 10px 10px;
@@ -203,8 +205,6 @@ a, a div#disqus_thread {
     padding: 4px 5px 6px 25px;
     display: block;
 }
-
-/* Icons */
 .sobre-o-autor ul a[href*='about.me'] {background-image: url('../images/icons/aboutme.png');}
 .sobre-o-autor ul a[href*='bitbucket.org'] {background-image: url('../images/icons/bitbucket.png');}
 .sobre-o-autor ul a[href*='delicious.com'] {background-image: url('../images/icons/delicious.png');}
@@ -301,4 +301,31 @@ h3 a.toclink:visited, h4 a.toclink:visited, h5 a.toclink:visited, h6 a.toclink:v
 h3 a.toclink:hover:after, h4 a.toclink:hover:after, h5 a.toclink:hover:after, 
         h6 a.toclink:hover:after {
     color: #CCCCCC;
+}
+
+/* MathJAX */
+p.math {
+    text-align: center;
+}
+
+/* Quotes */
+blockquote {
+    position: relative;
+    width: 95%;
+    margin: 10px auto;
+    padding: 10px 20px;
+    border-left: 4px solid #eeeeee;
+    quotes: "\201C""\201D""\2018""\2019";
+    color: #666666;
+}
+blockquote::before {
+    content: open-quote;
+    position: absolute;
+    font-size: 2em;
+    top: 0;
+    left: 5px;
+}
+blockquote p {
+    margin-top: 10px;
+    margin-bottom: 0;
 }

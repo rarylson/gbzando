@@ -96,25 +96,18 @@ A função `rand`, na realidade, não retorna um número realmente aleatório. E
 
 Este tipo de função gera uma sequência de números que possui propriedades semelhantes às de uma distribuição realmente aleatória. Nestas funções, um conjunto de valores iniciais (chamado de semente, ou _seed_) é utilizado como base para a geração dos novos valores.
 
-**Observações:**
-
-- Embora a explicação acima seja bastante subjetiva, existe uma [definição matemática](http://en.wikipedia.org/wiki/Pseudorandom_number_generator#Mathematical_definition) por trás destas funções;
-- A título de curiosidade, esta [resposta no Stack Overflow](http://stackoverflow.com/a/4768189/2530295) apresenta uma implementação de exemplo da função `rand`. Embora útil para compreender como estas funções funcionam, na prática, implementações mais complexas são utilizadas.
-
 Observe que a semente utilizada determina unicamente toda a sequência gerada pelo algoritmo. Isto tem um lado bom e um ruim:
 
-- **Vantagem:** É mais fácil gerar casos de testes para estes programas, ou mesmo documentar falhas que possam ser reproduzidas, pois podemos limitar o conjunto de sementes utilizadas nestes casos. 
-- **Desvantagem:** Em aplicações em produção, devemos ter cuidados especiais com o valor da semente adotada;
-    - Descobrir o valor da semente equivale a saber como o programa irá se comportar daquele ponto em diante (algumas pessoas adorariam descobrir as sementes utilizadas nas máquinas existentes nos cassinos de Las Vegas :O );
-    - Também não podemos repetir sementes. Mesmo que seu valor seja desconhecido, as próximas execuções de um programa teriam comportamento previsível.
+- **Vantagem:** É mais fácil testar e depurar programas, pois podemos utilizar sempre a mesma semente para ter um comportamente previsível para o programa. 
+- **Desvantagem:** Descobrir o valor da semente equivale a saber como o programa irá se comportar daquele ponto em diante (algumas pessoas adorariam descobrir as sementes utilizadas nas máquinas existentes nos cassinos de Las Vegas :O ).
 
-Observe que, se iniciássemos `rand` sempre com o mesmo valor de semente, o nosso programa sempre iria ter o mesmo comportamento. Assim, percebemos que o nosso programa possui uma limitação: como ele utiliza o tempo atual, em segundos, para alimentar a semente (_seed_), dois processos executados no mesmo instante (mesmo segundo) apresentarão o mesmo comportamento (mesmo tempo de execução e mesmo retorno).
+Como o nosso programa utiliza o tempo atual, em segundos, para alimentar a semente, dois processos executados no mesmo instante (mesmo segundo) apresentarão o mesmo comportamento (mesmo tempo de execução e mesmo retorno).
 
 O exemplo abaixo mostra essa limitação:
 
     :::console
-    $ # exec 20 times, redirecting each output to a separeted file
-    $ for i in {1..20}; do \
+    $ # exec 10 times, redirecting each output to a separeted file
+    $ for i in {1..10}; do \
     $     ( /usr/bin/time --quiet -f "time: %E\nexit: %x" ./maybe_it_works & ) 2>$i.log; done
     $ # print all logs
     $ cat *.log
