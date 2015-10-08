@@ -70,10 +70,11 @@ TAG_CLOUD_MAX_ITEMS = 1000
 TAG_CLOUD_SORTING = "alphabetically"
 
 # Markdown extensions
-# See: http://pythonhosted.org/Markdown/extensions/code_hilite.html#usage
-#      http://pythonhosted.org/Markdown/extensions/toc.html#usage
+# See: http://pythonhosted.org/Markdown/extensions/code_hilite.html
+#      http://pythonhosted.org/Markdown/extensions/toc.html
+#      http://pythonhosted.org/Markdown/extensions/attr_list.html
 MD_EXTENSIONS = ['codehilite(css_class=highlight, guess_lang=False)', 'extra',
-        'toc(anchorlink=True)', ]
+        'toc(anchorlink=True)', 'attr_list', ]
  
 # Vars for Notmyidea GBzando template
 CREATIVE_COMMONS = True

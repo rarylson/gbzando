@@ -303,8 +303,8 @@ h3 a.toclink:hover:after, h4 a.toclink:hover:after, h5 a.toclink:hover:after,
     color: #CCCCCC;
 }
 
-/* MathJAX */
-p.math {
+/* MathJAX and centered images */
+.center {
     text-align: center;
 }
 
