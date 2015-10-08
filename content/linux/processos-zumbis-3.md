@@ -1,6 +1,6 @@
 Title: Processos zumbis: Exemplo real (parte 3)
 Date: 2014-05-25 16:20
-Tags: linux, shell, c, processos, zumbis, real
+Tags: linux, shell, processos, zumbis, real
 Slug: processos-zumbis-3
 Category: Linux
 Author: Rarylson Freitas

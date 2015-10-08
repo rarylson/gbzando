@@ -1,12 +1,12 @@
 Title: Programas com comportamento aleatório: Números pseudo-aleatórios e aleatórios verdadeiros (parte 2)
 Date: 2015-09-27 19:39
-Tags: c, python, programação, random
+Tags: c, python, programação, aleatoriedade
 Slug: programas-comportamento-aleatorio-2
 Category: Programação
 Author: Rarylson Freitas
 Summary: Neste artigo, vamos mostrar o que são sementes (seeds) e como elas são usadas na geração de números pseudo-aleatórios. Vamos também mostrar sua importância e como elas estão relacionadas à segurança de uma aplicação.
 
-No artigo [Programas com comportamento aleatório: Introdução (parte 1)]({filename}/programas-comportamento-aleatorio.md), mostramos como construir programas simples com comportamento aleatório. Além disso, mostramos um exemplo de como podemos verificá-los, para ver se os resultados que eles geram estão dentro do esperado.
+No artigo [Programas com comportamento aleatório: Introdução (parte 1)]({filename}programas-comportamento-aleatorio.md), mostramos como construir programas simples com comportamento aleatório. Além disso, mostramos um exemplo de como podemos verificá-los, para ver se os resultados que eles geram estão dentro do esperado.
 
 Também falamos um pouquinho sobre sementes (_seeds_). Mas bem pouquinho mesmo...
 
@@ -31,18 +31,18 @@ Para isso, vamos criar o arquivo `lcg.c` com o seguinte código:
 #define LCG_C 77
 #define LCG_M 32
 
-static unsigned int last_seed = 0;
+static unsigned int current_seed = 0;
 
 // update the seed
 void lcg_seed(unsigned int seed) {
-    last_seed = seed;
+    current_seed = seed;
 }
 
 // generate a random number using a linear congruential generator
 unsigned int lcg_rand(void) {
     // cast the multiplication to 'long unsigned int' to avoid overflows
-    last_seed = ((long unsigned int)(LCG_A * last_seed) + LCG_C) % LCG_M;
-    return last_seed;
+    current_seed = ((long unsigned int)(LCG_A * current_seed) + LCG_C) % LCG_M;
+    return current_seed;
 }
 ```
 
@@ -59,9 +59,8 @@ unsigned int lcg_rand(void);
 
 Dando um pouco de base matemática, um LCG gera números através da função:
 
-<p class="math">
-` x_n = ( ax_(n-1) + c ) mod m `
-</p>
+\` x_n = ( ax_(n-1) + c ) mod m \`
+{: .center }
 
 A semente, ou _seed_, é usada para iniciar a sequência (\` x_0 \`).
 
@@ -219,7 +218,7 @@ Random numbers: 56, 97, 83, 46, 57, 20, 53, 39, 29, 49
 
 Além disso, se um atacante perceber que estamos usando o tempo em segundos como gerador de sementes, isso pode comprometer nossa segurança.
 
-Esse é o mesmo problema que existe no programa `maybe_it_works.c`, apresentado [no nosso artigo anterior (parte 1)]({filename}/programas-comportamento-aleatorio.md).
+Esse é o mesmo problema que existe no programa `maybe_it_works.c`, apresentado [no nosso artigo anterior (parte 1)]({filename}programas-comportamento-aleatorio.md).
 
 A verdade é que `time(NULL)` não nos retorna um número aleatório verdadeiro e difícil de predizer, e ele é um método ruim para gerar sementes em aplicações mais sérias. Para estar aplicações, devemos usar números aleatórios verdadeiros com melhor aleatoriedade.
 
