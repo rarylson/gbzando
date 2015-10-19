@@ -25,15 +25,16 @@ a.github_forkme {
 #banner {
     padding: 0;
     position: relative;
+    margin-bottom: 10px;
 }
 #banner h1 {
+    margin: 0;
     line-height: 100%; 
     max-width: 380px;
     float: left;
 }
 #banner h1 a:link, #banner h1 a:visited {
-    margin-top: 10px;
-    margin-right: 40px;
+    margin: 10px 40px 10px 10px;
 }
 #banner h1 strong {
     display: block;
@@ -56,7 +57,7 @@ a.github_forkme {
     position: absolute;
     float: right;
     right: 10px;
-    bottom: 20px;
+    bottom: 10px;
     width: 25px;
     height: 24px;
 }
@@ -106,8 +107,8 @@ a.github_forkme {
 }
 #banner nav.active {
     max-height: 999px;
-    margin-bottom: 28px;
-    transition: max-height 0.5s, margin-bottom 1s;
+    margin-bottom: 20px;
+    transition: max-height 0.5s, margin-bottom 0.8s;
     transition-delay: 0;
 }
 #banner #mobile_wrapper.active span {

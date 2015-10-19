@@ -13,20 +13,25 @@ body {
     width: auto;
     text-align: left;
 }
+#banner {
+    padding: 0;
+}
 #banner nav {
-    letter-spacing: -100em;  /* Whitespace hack */
+    font-size: 0; /* Whitespace hack */
     height: auto;
-    font-size: 1em;
+    margin-bottom: 20px;
 }
 #banner nav li {
+    font-size: 14px; /* Whitespace hack */
     float: none;
     letter-spacing: normal;
 }
 #banner h1 {
-    margin-bottom: 0;
+    line-height: 0.8em;
+    margin: 0.4em 0 0 0.2em;
 }
 #banner h1 a:link, #banner h1 a:visited {
-    margin: 0 0 0.4em 0.2em;
+    margin: 0;
 }
 .entry-title a:link, .entry-title a:visited {
     padding: 0;
@@ -82,6 +87,9 @@ a.tag {
 #posts-list h1 a:hover {
     color: #c74350;
     text-shadow: 1px 1px 1px #D6747E;
+}
+a.github_forkme {
+    padding: 0;
 }
 a.github_forkme:hover {
     background: none;
