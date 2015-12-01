@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <time.h>    
+#include <time.h>
 
 #define MIN_EXECUTION_TIME 1
 #define MAX_EXECUTION_TIME 4
@@ -24,12 +24,12 @@ int main(int argc, char *argv[]) {
     // generate return status
     probability = (float)(PROBABILITY_FAILURE) / PROBABILITY_RUNS;
     rand_float = (float)(rand()) / RAND_MAX; // random number in [0,1]
-    if (rand_float < probability) {
+    if (rand_float <= probability) {
         return_status = EXIT_FAILURE;
     } else {
         return_status = EXIT_SUCCESS;
     }
-    
+
     // simulate the program execution time 
     sleep(execution_time);
     // simulate a program which sometimes fails

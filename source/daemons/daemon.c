@@ -3,6 +3,7 @@
 #include <sys/resource.h>
 #include <fcntl.h>
 
+// transform the program into a daemon
 void daemonize(void) {
     int i = 0;
     pid_t pid = 0;

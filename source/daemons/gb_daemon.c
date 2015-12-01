@@ -4,7 +4,7 @@
 #define SLEEP_TIME 10
 
 int main(int argc, char *argv[]) {
-    // turn itself a daemon
+    // turn itself in a daemon
     daemonize();
     syslog(LOG_NOTICE, "Program started");
 

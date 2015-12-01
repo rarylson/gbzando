@@ -22,17 +22,17 @@ def statistics():
         return_history.append(return_code)
     # Count items, dividing them by the total
     # Example: [1, 2, 2] -> {'1': 0.33, '2': 0.66}
-    # See: http://stackoverflow.com/a/9604768/2530295
+    # Based in this code: http://stackoverflow.com/a/9604768/2530295
     counter_time = dict([(i, float(time_history.count(i)) / len(time_history)) 
             for i in set(time_history)])
     counter_return = dict([(i, float(return_history.count(i)) / len(return_history)) 
             for i in set(return_history)])
     # Print statistics
-    print "Execution time:\n"
+    print "Execution time:"
     print "Time\t\tPercent"
     for key, value in counter_time.iteritems():
         print "{}s\t\t{}%".format(key, value * 100)
-    print "\nReturn code:\n"
+    print "\nReturn code:"
     print "Code\t\tPercent"
     for key, value in counter_return.iteritems():
         print "{}\t\t{}%".format(key, value * 100)

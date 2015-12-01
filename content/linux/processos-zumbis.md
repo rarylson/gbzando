@@ -132,7 +132,7 @@ Por exemplo, neste artigo estamos executando processos utilizando o usuário de 
 Iremos, agora, abrir dois terminais: um com um usuário de poucos privilégios, e outro com o usuário **root**. No primeiro terminal, iremos utilizar o comando [`ulimit`](http://www.ss64.com/bash/ulimit.html) para limitar o número de processos que o usuário **rarylson** poderá iniciar:
 
     :::console
-    u$ limit -u 17
+    $ limit -u 17
 
 Você pode executar o comando `ulimit -a` para verificar que a política foi, de fato, aplicada. O valor acima foi escolhido, neste caso particular, como sendo 10 unidades acima do número de processos que este usuário já está executando. 
 
