@@ -180,3 +180,9 @@ h1 + hr {
 #content .wrapper {
     padding-bottom: 0;
 }
+/* Auto-generated links for images */
+.center a.img:hover,
+.center a.img:active {
+    background: none;
+    text-shadow: none;
+}

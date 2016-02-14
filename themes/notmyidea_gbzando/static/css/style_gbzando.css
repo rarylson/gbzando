@@ -315,6 +315,9 @@ h3 a.toclink:hover:after, h4 a.toclink:hover:after, h5 a.toclink:hover:after,
 .center {
     text-align: center;
 }
+.center img {
+    max-width: 100%;
+}
 
 /* Quotes */
 blockquote {

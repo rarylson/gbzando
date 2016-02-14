@@ -161,6 +161,17 @@ $(document).ready(function() {
         $('#menu-trigger').off('click', false);
     });
 
+    // Add img hyperlinks in mobile mode
+    $(window).on("mobile:true", function() {
+        $('.center img').wrap(function() {
+            return '<a class="img" target="_blank" href="' + $(this).attr('src') + '"></a>';
+        });
+    });
+    // Remove img hyperlinks in big screen mode
+    $(window).on("mobile:false", function() {
+        $('.center a.img > img').unwrap();
+    });
+
     // Mobile events
     gbzando_mobile_events();
 });
