@@ -44,10 +44,8 @@ GOOGLE_ANALYTICS_UNIVERSAL = True
 GOOGLE_ANALYTICS_DISPLAYFEATURES = True
 GOOGLE_ANALYTICS_DOMAIN = "gbzando.com.br"
 
-# Static files
-STATIC_PATHS.extend([
-    'extra/robots.txt',
-])
-EXTRA_PATH_METADATA.update({
-    'extra/robots.txt': {'path': 'robots.txt'},
-})
+# Robots file
+# Using tip from Pelican Wiki - Tips-n-Tricks - Generate sitemap.xml
+# See: https://github.com/getpelican/pelican/wiki/Tips-n-Tricks#generate-sitemapxml
+DIRECT_TEMPLATES.extend(['robots'])
+ROBOTS_SAVE_AS = 'robots.txt'
