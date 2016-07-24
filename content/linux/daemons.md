@@ -198,17 +198,14 @@ void daemonize(void) {
     } else { // error
         exit(1);
     }
-
     // become a session leader
     if (setsid() < 0) {
         exit(1); // error
     }
-
     // ignore SIGHUP
     if ((signal(SIGHUP, SIG_IGN) == SIG_ERR)) {
         exit(1); // error
     }
-
     // second fork and die (generate second child)
     pid = fork();
     if (pid >= 0) { // fork successful
@@ -218,15 +215,12 @@ void daemonize(void) {
     } else { // error
         exit(1);
     }
-
     // set appropriate umask
     umask(0);
-
     // set root as working dir
     if (chdir("/") < 0) {
         exit(1); // error
     }
-
     // close all file descriptors
     if (getrlimit(RLIMIT_NOFILE, &rlimit) < 0) {
         exit(1); // error
@@ -234,7 +228,6 @@ void daemonize(void) {
     for (i = 0; i < rlimit.rlim_max; i++) {
         close(i);
     }
-
     // redirect stdin/stdout/stderr to null
     open("/dev/null", O_RDONLY);
     open("/dev/null", O_RDWR);
@@ -246,8 +239,8 @@ Vamos também criar o protótipo dessa função em `daemon.h`:
 
 ```
 #!c
-#ifndef DAEMON
-#define DAEMON
+#ifndef DAEMON_H
+#define DAEMON_H
 void daemonize(void);
 #endif
 ```
@@ -288,13 +281,14 @@ int main(int argc, char *argv[]) {
     // turn itself in a daemon
     daemonize();
     syslog(LOG_NOTICE, "Program started");
-
     // main loop
     while (1) {
         syslog(LOG_INFO, "Going to sleep %d seconds...", SLEEP_TIME);
         sleep(SLEEP_TIME);
         syslog(LOG_INFO, "Woke up!");
     }
+
+    return 0;
 }
 ```
 
