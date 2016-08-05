@@ -7,7 +7,6 @@ int main(int argc, char *argv[]) {
     // turn itself in a daemon
     daemonize();
     syslog(LOG_NOTICE, "Program started");
-
     // main loop
     while (1) {
         syslog(LOG_INFO, "Going to sleep %d seconds...", SLEEP_TIME);
