@@ -38,7 +38,16 @@ Assim, para que possamos iniciar um daemon durante o boot, temos que fazer duas 
 
 Para registrar um serviço em um sistema operacional que utiliza o modelo SysV Init, temos que criar um script de controle de serviço, chamado de **SysV Init script**.
 
-Estes scripts possuem permissão de execução e aceitam um argumento que representa a ação de controle que deve tomada. As mais comuns são `start`, `stop` e `restart` (que são obrigatórias para este tipo de script), além das ações `status` e `reload` (que não são abrigatórias, mas são muito comuns). Na maioria das distribuições, ficam no diretório `/etc/init.d`.
+Estes scripts possuem permissão de execução e aceitam um argumento que representa a ação de controle que deve ser tomada. Na maioria das distribuições, ficam no diretório `/etc/init.d`.
+
+Os comandos mais comuns que usados em um SysV Init script são os seguintes:
+
+- `start`: Iniciar o serviço;
+- `stop`: Parar o serviço;
+- `restart`: Reiniciar o serviço (parar e depois iniciar novamente o serviço);
+- `status`: Verificar se o serviço está ou não rodando;
+- `reload`: Recarregar a configuração do serviço (carregar uma nova configuração sem precisar parar o serviço, _on the fly_);
+- `force-reload`: Caso o serviço permita sua reconfiguração _on the fly_, recarregá-lo (_reload_). Caso contrário, reiniciar o serviço (_restart_).
 
 Como exemplo, no servidor Ubuntu 14.04 LTS de teste que usamos para criar os exemplos deste artigo, existem vários scripts SysV Init. Vamos mostrar alguns:
 
@@ -59,9 +68,10 @@ Primeiramente, vamos copiá-lo para o diretório `/usr/local/bin`:
 $ cp gb_daemon /usr/local/bin
 ```
 
-Vamos, agora, criar uma primeira versão do nosso script de serviço em `/etc/init.d/gb_daemon`:
+Vamos, agora, criar uma primeira versão do nosso script de serviço em `/etc/init.d/gb_daemon_service`:
 
-```bash
+```
+#!sh
 #!/bin/sh
 
 GB_DAEMON="gb_daemon"
@@ -76,7 +86,7 @@ case "$1" in
         killall "$GB_DAEMON"
         echo "GB daemon stopped"
         ;;
-    restart|reload)
+    restart|force-reload)
 		killall "$GB_DAEMON"
 		echo "GB daemon stopped"
 		"$COMMAND"
@@ -90,7 +100,7 @@ case "$1" in
         fi
         ;;
     *)
-        echo "Usage: $0 <start|stop|restart|reload|status>"
+        echo "Usage: $0 <start|stop|restart|force-reload|status>"
         ;;
 esac
 ```
@@ -98,15 +108,15 @@ esac
 Agora, só falta dar permissão de execução neste script:
 
 ```console
-$ chmod +x /etc/init.d/gb_daemon
+$ chmod +x /etc/init.d/gb_daemon_service
 ```
 
 Vamos, agora, iniciar nosso daemon e nos certificar que ele está rodando:
 
 ```console
-$ /etc/init.d/gb_daemon start
+$ /etc/init.d/gb_daemon_service start
 GB daemon started
-$ /etc/init.d/gb_daemon status
+$ /etc/init.d/gb_daemon_service status
 GB daemon is running
 $ ps aux | grep gb_daemon | grep -v grep
 root      3259  0.0  0.0   4320   428 ?        S    22:09   0:00 /usr/local/bin/gb_daemon
@@ -115,9 +125,9 @@ root      3259  0.0  0.0   4320   428 ?        S    22:09   0:00 /usr/local/bin/
 Por fim, vamos parar o nosso daemon (verificando depois que ele, de fato, parou):
 
 ```console
-$ /etc/init.d/gb_daemon stop
+$ /etc/init.d/gb_daemon_service stop
 GB daemon stopped
-$ /etc/init.d/gb_daemon status
+$ /etc/init.d/gb_daemon_servive status
 GB daemon is not running
 $ ps aux | grep gb_daemon | grep -v grep
 ```
@@ -134,9 +144,11 @@ Algumas considerações sobre a nossa implementação:
     - O correto seria que o comando `start` apenas tentasse iniciar um daemon caso nenhuma instância estivesse rodando. Caso contrário, ele deveria informar ao administrador que o serviço já estava rodando e que não foi preciso iniciar um novo;
 - Utilizamos o comando `killall gb_daemon` para parar o daemon (enviando para ele um `SIGHUP`);
     - Essa implementação possui uma grande limitação. Caso tenhamos vários processos rodando no sistema também chamados de `gb_daemon` (programas diferentes do nosso, mas que por coincidência usem o mesmo nome), ou caso tenhamos iniciado mais de uma instância do nosso daemon de propósito (casa um com um PID diferente), todos esses programas seriam finalizados;
+    - Justamente por causa da limitação acima é que o nosso script de inicialização de serviço se chama `gb_daemon_service`, e não apenas `gb_daemon`, para não termos dois processos diferentes com o mesmo nome);
     - O correto seria que o comando `stop` do nosso script finalizasse apenas o daemon que ele mesmo iniciou no comando `start`, e informasse ao administrador caso o serviço já estive parado e que não foi necessário encerrar nenhum processo;
 - Utilizamos o comando `ps -C gb_daemon` para verificar se o nosso serviço está ou não rodando;
     - Perceba que, caso tenhamos vários processos rodando no sistema, diferentes do nosso daemon, mas também chamados `gb_daemon` (caso já apresentado anteriormente no comando `stop`), o nosso `status` iria dizer que o nosso serviço está rodando;
+    - Este foi outro motivo para chamarmos o nosso script de inicialização de `gb_daemon_service`, e não simplesmente `gb_daemon`;
     - O correto seria que o comando `status` informasse ao administrador se um daemon iniciado pelo nosso script está ou não rodando (ignorando outros processos iniciados de outras formas);
 - Chamados, em sequência, os comandos `killall gb_daemon` e `/usr/local/bin/gb_daemon` para reiniciar o serviço;
 	- Além de possuir as mesmas limitações já apresentadas para os serviços `stop` e `start`, o nosso `restart` possui código duplicado, fazendo com que qualquer programador que se preze sinta calafrios (a menos que ele seja adepto a ["metodologia" de programação Go Horse](http://www.mochilabinaria.com.br/metodo-de-desenvolvimento-ghp-esqueca-tudo-o-que-voce-aprendeu/) :));
@@ -147,9 +159,9 @@ Por estes e outros problemas (acredite, existem mais problemas), esta implementa
 A maioria das distribuições Linux possui o comando [`service`](http://linux.die.net/man/8/service). Em resumo, esse comando procura e roda o SysV Init script correspondente. Ou seja, também podemos rodar:
 
 ```console
-$ service gb_daemon start
+$ service gb_daemon_service start
 GB daemon started
-$ service gb_daemon stop
+$ service gb_daemon_service stop
 GB daemon stopped
 ```
 
@@ -184,18 +196,18 @@ Já os números que vem depois da primeira letra (20, no caso do nosso serviço 
 Agora vamos registrar o nosso serviço para subir no boot do sistema. No caso do meu Ubuntu de testes, podemos usar o comando `update-rc.d`:
 
 ```console
-$ update-rc.d gb_daemon defaults
+$ update-rc.d gb_daemon_service defaults
 ```
 
-**Obs:** Por ora, vamos ignorar os warning que o comando vai gerar. Como falei, o nosso script inicial é muito simples, tão simples que o `update-rc.d` reclama. Vamos resolver isso mais para frente.
+**Obs:** Por ora, vamos ignorar os _warnings_ que o comando vai gerar. Como falei, o nosso script inicial é muito simples, tão simples que o `update-rc.d` reclama. Vamos resolver isso mais para frente.
 
 Ao rodar este comando com o parâmetro `defaults`, links simbólicos são criados de forma com que o nosso daemon suba nos runlevels de 2 a 5, ficando desativado nos demais (incluindo o runlevel 1).
 
 Para conferir:
 
 ```console
-$ ls -lh /etc/rc2.d/ | grep gb_daemon
-lrwxrwxrwx 1 root root  19 Jul  9 23:56 S20gb_daemon -> ../init.d/gb_daemon
+$ ls -lh /etc/rc2.d/ | grep gb_daemon_service
+lrwxrwxrwx 1 root root  19 Jul  9 23:56 S20gb_daemon_service -> ../init.d/gb_daemon_service
 ```
 
 Mais informações sobre os conceitos discutidos até aqui podem ser encontrados [neste artigo do site _The Linux Fundation_](https://www.linux.com/news/introduction-services-runlevels-and-rcd-scripts), e [neste artigo no site _Ubuntu Help_](https://help.ubuntu.com/community/UbuntuBootupHowto#Traditional_Sysvinit_and_Before_Ubuntu_6.10).
@@ -250,8 +262,146 @@ $ service nginx configtest
  * Testing nginx configuration                                                    [ OK ]
 ```
 
-Mais sobre scripts do SysV Init
--------------------------------
+Scripts do SysV Init melhores
+-----------------------------
+
+O script de SysV Init que criamos na sessão anterior, conforme já falado, era apenas um exemplo simples, conceitual, e que apresenta vários problemas.
+
+Vamos, agora, criar scripts SysV Init melhores, bons para uso em produção e sem os vários problemas mostrados anteriormente. Vamos fazer isso em 2 etapas: inicialmente, vamos criar um script mais manual, onde iremos implementar várias melhorias importantes; depois, vamos reusar alguns recursos do Ubuntu para simplificar e padronizar melhor o nosso script.
+
+### Criando scripts SysV Init melhores
+
+Vamos, agora, criar uma segunda versão do nosso script de serviço (init script). Ele será melhor e mais completa que a sua versão anterior e, como vamos corrigir algumas limitações que ele possui, vamos poder mudar seu nome de `/etc/init.d/gb_daemon_service` para simplesmente `/etc/init.d/gb_daemon`.
+
+Assim, vamos primeiro apagar quaisquer resquícios do script anterior:
+
+```console
+$ rm /etc/init.d/gb_daemon_service
+$ rm rc*.d/*gb_daemon_service
+```
+
+E criar o nosso novo init script, agora em `/etc/init.d/gb_daemon`:
+
+```
+#!sh
+#!/bin/sh
+
+GB_DAEMON="gb_daemon"
+PID="/run/$GB_DAEMON.pid"
+COMMAND="/usr/local/bin/$GB_DAEMON"
+
+[ -x "$COMMAND" ] || exit 0
+
+do_start () {
+    do_status >/dev/null && return 1
+    "$COMMAND"
+    sleep 0.1
+    echo "GB daemon started"
+}
+
+do_stop() {
+    do_status >/dev/null || return 1
+    kill $(cat "$PID")
+    sleep 0.1
+    echo "GB daemon stopped"
+}
+
+do_status() {
+    if [ -f "$PID" ]; then
+        echo "GB daemon is running"
+        return 0
+    else
+        echo "GB daemon is not running"
+        return 1
+    fi
+}
+
+case "$1" in
+    start)
+        do_start || exit 1
+        ;;
+    stop)
+        do_stop || exit 1
+        ;;
+    restart|force-reload)
+        do_stop
+        do_start || exit 1
+        ;;
+    status)
+        do_status || exit 1
+        ;;
+    *)
+        echo "Usage: $0 <start|stop|restart|force-reload|status>"
+        ;;
+esac
+```
+
+Vamos nos concentrar nas novidades:
+
+- Antes de tudo, verificamos se o arquivo do nosso `gb_daemon` realmente existe e é executável (a instrução `[ -x "$COMMAND" ]` faz isso para a gente). Caso contrário, entendemos que o nosso daemon não está instalado e não fazemos nada, apenas retornando;
+    - Essa é uma prática comum, que evita erros no caso de uma aplicação ser desinstalada, mas o SysV Init script dela não ser removido;
+- A nossa implementação faz uso de funções. Elas são as funções `do_start`, `do_stop` e `do_status`;
+    - Além de deixar o nosso código mais organizado, usar funções permite a reutilização de código;
+    - Por exemplo, o comando `restart` (e também o `force-reload`) chama a função `do_stop` e, em seguida, a `do_start`, reaproveitando o código. Outro exemplo são as funções `do_start` e `do_stop`, que chamam a função `do_status` em sua implementação;
+- Sempre quando algo der errado, estamos retornando o _exit code_ 1 para informar apropriadamente o administrador ou o sistema;
+    - Além disso, neste caso, nenhuma mensagem de sucesso é erradamente impressa na tela;
+- A função `do_status` verifica se o _pidfile_ do nosso daemon existe ou não (a instrução `[ -f "$PID" ]` faz isso). Caso o pidfile exista, ela considera que o serviço está rodando. Do contrário, ela conclui que o serviço não está rodando;
+    - Essa função retorna 0 se o serviço estiver rodando e 1 caso contrário;
+- A função `do_stop` usa o comando `kill` para enviar um sinal para o processo adequado, extraindo o PID deste processo de acordo com o valor encontrado no pidfile (comando `cat "$PID"`);
+- A função `do_start` verifica se o serviço já está rodando antes de tentar executá-lo. De forma semelhante, a função `do_stop` verifica se o serviço já está parado. Caso estes casos de excessão ocorram, estas funções retornam 1 para indicar que algo deu errado;
+- Após rodar o comando que inicializa o serviço (em `do_start`) ou após enviar um sinal para o término do serviço (em `do_stop`), nós esperamos 0.1 segundos antes de retornar (`sleep 0.1`);
+    - No caso de `do_start`, nós fazemos isto porque, quando o comando que cria o daemon retorna (o daemon se coloca em _background_, logo após seu primeiro _fork_), o pidfile ainda não estará criado, sendo somente criado um pouquinho depois. Durante esse curto intervalo de tempo, estaríamos sugeitos a uma condição de corrida. Assim, usamos um `sleep` para garantir que `do_start` apenas retorne depois do nosso pidfile ter sido escrito;
+    - No caso de `do_stop`, ocorre coisa parecida: demora um tempo desde o momento que o comando `kill` retorna e o momento em que o pidfile é, de fato, removido.
+
+Vamos registrar o nosso novo daemon para inicializar no boot do sistema:
+
+```console
+$ update-rc.d gb_daemon defaults
+```
+
+**Obs:** Assim como fizemos anteriormente, vamos continuar ignorando os warnings que o comando vai gerar.
+
+E testá-lo, verificando que ele se comporta muito melhor nos casos de excessão:
+
+```console
+$ service gb_daemon start
+GB daemon started
+$ echo $?
+0
+$ service gb_daemon status
+GB daemon is running
+$ echo $?
+0
+$ service gb_daemon start
+$ echo $?
+1
+$ service gb_daemon restart
+GB daemon stopped
+GB daemon started
+$ service gb_daemon stop
+GB daemon stopped
+$ echo $?
+0
+$ service gb_daemon status
+GB daemon is not running
+$ echo $?
+1
+$ service gb_daemon stop
+$ echo $?
+1
+```
+
+Opa, bem melhor...
+
+Mesmo com todos esses avanços, o nosso script ainda tem algumas limitações.
+
+A primeira delas é que a função `sleep` pode não ser a melhor maneira
+
+
+- Sleep é ruim
+- Stale pidfile
+
+### Criando scripts SysV Init melhores ainda
 
 
 
@@ -261,3 +411,5 @@ Referências
 https://www.linux.com/news/introduction-services-runlevels-and-rcd-scripts
 https://help.ubuntu.com/community/UbuntuBootupHowto
 https://www.digitalocean.com/community/tutorials/how-to-configure-a-linux-service-to-start-automatically-after-a-crash-or-reboot-part-2-reference
+https://wiki.debian.org/LSBInitScripts
+https://refspecs.linuxbase.org/LSB_3.0.0/LSB-PDA/LSB-PDA/iniscrptact.html
