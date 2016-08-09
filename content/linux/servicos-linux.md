@@ -391,17 +391,31 @@ $ echo $?
 1
 ```
 
-Opa, bem melhor...
+Mas, mesmo com todos esses avanços, o nosso script ainda tem algumas limitações:
 
-Mesmo com todos esses avanços, o nosso script ainda tem algumas limitações.
+- A função `sleep` não é a melhor maneira de aguardar até que as operações de criação e remoção de pidfiles sejam concluídas;
+    - Por exemplo, vamos supor que a criação de um pidfile ocorra em 1 milisegundo (0,001 segundos) em um sistema rápido, mas possa levar até 100 milisegundos (0,1 segundos) em um sistema lento (com um disco mais lento, uma CPU mais lenta, ou com uma forte atividade de I/O). Rodar o comando `sleep 0.1` resolve em ambos os casos, mas faz o primeiro sistema (mais rápido) esperar 99 milisegundos (0,099 segundos) à toa em cada execução de `stop` ou `start`;
+    - Agora, imagine também que o nosso sistema mais rápido possua 20 serviços registrados para subir durante o boot do sistema e que cada um desses 20 serviços use uma instrução `sleep 0.1` para aguardar pela criação dos pidfiles. Assim, teremos um boot 1,98 milesegundos (quase 2 segundos) mais lento do que poderia ser;
+    - Implementações melhores esperam de forma assíncrona pela criação ou remoção do pidfile e retornam imediatamente. Com isso, eles não geram ineficiências ou demoras desnecessárias na hora do boot;
+- Não fazemos nenhum tratamento específico no caso do pidfile existir, mas nenhum daemon estar executando;
+    - Neste caso, dizemos que temos um _stale pidfile_;
+    - Isso geralmente ocorre quando um _crash_ ocorre e o daemon para de funcionar abruptamente;
+    - Neste caso, o comando `start` não funciona, pois o pidfile ainda existe. O comando `stop` também não funciona, pois ele tenta enviar um sinal para um processo que não existe mais (ou, caso o sistema tenha reaproveitado o PID em outro processo diferente, iniciado depois, iremos enviar o sinal para o processo errado);
+    - Implementações melhores devem identificar o caso onde um stale pidfile ocorre, removendo este pidfile e iniciando normalmente o daemon.
 
-A primeira delas é que a função `sleep` pode não ser a melhor maneira
+Assim, embora o nosso último script tenha melhorado bastante, ele ainda tem alguns probleminhas (que vamos corrigir na próxima sessão). Não recomendamos seu uso em produção.
 
-
-- Sleep é ruim
-- Stale pidfile
+Uma explicação bem mais detalhada sobre o problema do stale pidfile pode ser encontrada no [artigo _The Stale pidfile Syndrome_](http://perfec.to/stalepid.html).
 
 ### Criando scripts SysV Init melhores ainda
+
+Nesta sessão, vamos melhorar mais ainda os nossos SysV Init scripts sobre três aspectos diferentes:
+
+- Vamos tornar os nossos scripts mais padronizados, usando uma especificação apropriada;
+- Vamos corrigir os problemas que o nosso último script possui, apresentados no fim da sessão anterior;
+- Vamos usar funções e comandos que já existem no Ubuntu e em sistemas semelhantes para facilitar nossa implementação.
+
+Com isso, teremos um SysV Init script simples, fácil de criar e entender e, ao mesmo tempo, sem nenhum dos problemas apresentados anteriormente.
 
 
 
@@ -411,5 +425,7 @@ Referências
 https://www.linux.com/news/introduction-services-runlevels-and-rcd-scripts
 https://help.ubuntu.com/community/UbuntuBootupHowto
 https://www.digitalocean.com/community/tutorials/how-to-configure-a-linux-service-to-start-automatically-after-a-crash-or-reboot-part-2-reference
+http://perfec.to/stalepid.html
 https://wiki.debian.org/LSBInitScripts
 https://refspecs.linuxbase.org/LSB_3.0.0/LSB-PDA/LSB-PDA/iniscrptact.html
+http://www.thegeekstuff.com/2012/03/lsbinit-script/
