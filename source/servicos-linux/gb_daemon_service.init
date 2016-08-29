@@ -1,0 +1,31 @@
+#!/bin/sh
+
+GB_DAEMON="gb_daemon"
+COMMAND="/usr/local/bin/$GB_DAEMON"
+
+case "$1" in
+    start)
+        "$COMMAND"
+        echo "GB daemon started"
+        ;;
+    stop)
+        killall "$GB_DAEMON"
+        echo "GB daemon stopped"
+        ;;
+    restart|force-reload)
+        killall "$GB_DAEMON"
+        echo "GB daemon stopped"
+        "$COMMAND"
+        echo "GB daemon started"
+        ;;
+    status)
+        if ps -C "$GB_DAEMON" >/dev/null; then
+            echo "GB daemon is running"
+        else
+            echo "GB daemon is not running"
+        fi
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|force-reload|status}"
+        ;;
+esac

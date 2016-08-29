@@ -1,0 +1,50 @@
+#!/bin/sh
+
+GB_DAEMON="gb_daemon"
+PIDFILE="/run/$GB_DAEMON.pid"
+COMMAND="/usr/local/bin/$GB_DAEMON"
+
+[ -x "$COMMAND" ] || exit 0
+
+do_start () {
+    do_status >/dev/null && return 0
+    "$COMMAND"
+    sleep 0.1
+    echo "GB daemon started"
+}
+
+do_stop() {
+    do_status >/dev/null || return 0
+    kill $(cat "$PIDFILE")
+    sleep 0.1
+    echo "GB daemon stopped"
+}
+
+do_status() {
+    if [ -f "$PIDFILE" ]; then
+        echo "GB daemon is running"
+        return 0
+    else
+        echo "GB daemon is not running"
+        return 1
+    fi
+}
+
+case "$1" in
+    start)
+        do_start
+        ;;
+    stop)
+        do_stop
+        ;;
+    restart|force-reload)
+        do_stop
+        do_start
+        ;;
+    status)
+        do_status || exit 1
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|force-reload|status}"
+        ;;
+esac
