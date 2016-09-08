@@ -356,9 +356,10 @@ Vamos nos concentrar nas novidades:
 
 Caso precise entender melhor os comandos que verificam a existência de artigos, o [artigo _The classic test command_](http://wiki.bash-hackers.org/commands/classictest) deve ajudar.
 
-Vamos registrar o nosso novo daemon para inicializar no boot do sistema:
+Vamos dar permissão de execução ao nosso novo daemon, além de registrá-lo para inicializar no boot do sistema:
 
 ```console
+$ chmod +x /etc/init.d/gb_daemon
 $ update-rc.d gb_daemon defaults
 ```
 
