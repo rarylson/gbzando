@@ -8,7 +8,7 @@ sys.path.append(os.curdir)
 from pelicanconf import *
 
 # Production changes
-SITEURL = 'http://www.gbzando.com.br'
+SITEURL = 'https://www.gbzando.com.br'
 RELATIVE_URLS = False
 DEBUG_DISQUS = False
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
