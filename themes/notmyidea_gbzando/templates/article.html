@@ -24,8 +24,8 @@
     <div class="comments">
       <h2>Comentários!</h2>
       <p><small><strong>Dica:</strong> 
-        O Disqus suporta <a href="http://help.disqus.com/customer/portal/articles/832143-mentions">marcar outros usuários</a> 
-        e <a href="http://help.disqus.com/customer/portal/articles/665057">código-fonte nos comentários</a>.
+        O Disqus suporta <a href="https://help.disqus.com/commenting/mentions">marcar outros usuários</a> 
+        e <a href="https://help.disqus.com/commenting/syntax-highlighting">código-fonte nos comentários</a>.
       </small></p>
       <div id="disqus_thread"></div>
       <script type="text/javascript">
@@ -35,7 +35,7 @@
         var disqus_url = "{{ DISQUSURL }}/{{ article.url }}";
         (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://{{ DISQUS_SITENAME }}.disqus.com/embed.js';
+        dsq.src = 'https://{{ DISQUS_SITENAME }}.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         })();
       </script>
