@@ -6,8 +6,8 @@ from __future__ import unicode_literals
 SITENAME = u'GBzando'
 SITESUBTITLE = u'Programação, infraestrutura e redes na prática'
 SITE_DESCRIPTION = (u'Blog de programação, infraestrutura e redes na prática. '
-        'Artigos sobre Python, C, Shell Script (Bash), Linux, servidores web, email, redes, '
-        'roteamento e muito mais.')
+        'Artigos sobre Python, C, Shell Script (Bash), Linux, servidores web, email, redes '
+        'e muito mais.')
 SITE_KEYWORDS = u'programação, computação, servidores, linux, python, shell, bash, redes, gbzando'
 SITEURL = ''
 TIMEZONE = 'America/Sao_Paulo'
@@ -50,6 +50,10 @@ TAG_URL = "tag/{slug}/"
 TAG_SAVE_AS = "tag/{slug}/index.html"
 TAGS_URL = "tags/"
 TAGS_SAVE_AS = "tags/index.html"
+PAGINATION_PATTERNS = (
+    (1, '{base_name}/', '{base_name}/index.html'),
+    (2, '{base_name}/page/{number}/', '{base_name}/page/{number}/index.html'),
+)
 # Don't generate archieve pages 
 # At least, for now.
 DIRECT_TEMPLATES = ['index', 'tags', 'categories', ]
