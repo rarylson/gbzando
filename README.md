@@ -23,7 +23,9 @@ In Ubuntu:
 
 ```sh
 pip install -r requirements.txt
-apt-get install optipng libjpeg8
+brew install optipng
+# On Ubuntu, run:
+#     apt install optipng libjpeg8
 ```
 
 Usage
@@ -50,7 +52,7 @@ cp deploy_config.py.sample deploy_config.py
 # Generate files to publish
 make html_publish
 # Publish
-fab publish
+invoke publish
 ```
 
 License

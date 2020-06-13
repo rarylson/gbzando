@@ -95,31 +95,17 @@ a.github_forkme:hover {
     background: none;
 }
 
-/* Blogroll and Social */
+/* Social */
 #extras {
     margin: 0 10px 2em;
 }
-#extras .blogroll a {
-    background-position: 3px 6px;
-    background-repeat: no-repeat;
-    padding-left: 25px;
-}
-.blogroll a[href*='www.vialink.com.br'] {background-image: url('../images/icons/vialink.png');}
-.blogroll a[href*='docs.python.org'] {background-image: url('../images/icons/python.png');}
-.blogroll a[href*='www.linux.com'] {background-image: url('../images/icons/linux.png');}
-#extras div.blogroll {
-    width: 55%;
-}
 #extras div.social {
-    width: 45%;
+    width: 100%;
 }
-#extras div.blogroll li, #extras div.social li {
-    width: 28%;
+#extras div.social li {
+    width: 20%;
     margin: 0 20px 0 0;
     float: left;
-}
-#extras div.blogroll li {
-    min-width: 140px;
 }
 #extras div.social li {
     min-width: 130px;

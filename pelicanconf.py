@@ -1,9 +1,8 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
 # Site
-SITENAME = u'GBzando'
+SITENAME = 'GBzando'
 SITESUBTITLE = u'Programação, infraestrutura e redes na prática'
 SITE_DESCRIPTION = (u'Blog de programação, infraestrutura e redes na prática. '
         'Artigos sobre Python, C, Shell Script (Bash), Linux, servidores web, email, redes '
@@ -13,8 +12,8 @@ SITEURL = ''
 TIMEZONE = 'America/Sao_Paulo'
 DEFAULT_LANG = 'pt_BR'
 LOCALE = 'pt_BR.UTF-8'
-AUTHOR = u'Rarylson Freitas'
-AUTHOR_EMAIL = u'rarylson@gmail.com'
+AUTHOR = 'Rarylson Freitas'
+AUTHOR_EMAIL = 'rarylson@gmail.com'
 
 # Disable feed generation when developing
 # Ignore also the borring warning that appears in development mode.
@@ -23,17 +22,11 @@ LOG_FILTER = [(logging.WARN, 'Feeds generated without SITEURL set properly may n
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 
-# Blogroll
-LINKS = (
-    ('Vialink', 'http://www.vialink.com.br'),
-    ('Aprenda Python', 'http://docs.python.org/2/tutorial/'),
-    ('Aprenda Linux', 'http://www.linux.com/learn/tutorials'),
-)
 # Social widget
 SOCIAL = (
-    ('Facebook', 'https://facebook.com/rarylson'),
-    ('Stack Overflow', 'http://stackoverflow.com/users/2530295/rarylson-freitas'),
+    ('LinkedIn', 'https://www.linkedin.com/in/rarylson/'),
     ('GitHub', 'https://github.com/rarylson'),
+    ('Stack Overflow', 'http://stackoverflow.com/users/2530295/rarylson-freitas'),
 )
 
 # Input / output
@@ -58,7 +51,7 @@ PAGINATION_PATTERNS = (
 # At least, for now.
 DIRECT_TEMPLATES = ['index', 'tags', 'categories', ]
 # Don't process 'pages' as articles
-ARTICLE_EXCLUDES = ['pages', ]
+#ARTICLE_EXCLUDES = ['pages', ]
 
 # Vars for template
 THEME = 'themes/notmyidea_gbzando'
@@ -77,8 +70,18 @@ TAG_CLOUD_SORTING = "alphabetically"
 # See: http://pythonhosted.org/Markdown/extensions/code_hilite.html
 #      http://pythonhosted.org/Markdown/extensions/toc.html
 #      http://pythonhosted.org/Markdown/extensions/attr_list.html
-MD_EXTENSIONS = ['codehilite(css_class=highlight, guess_lang=False)', 'extra',
-        'toc(anchorlink=True)', 'attr_list', ]
+MARKDOWN = {
+    'extension_configs': {
+        'markdown.extensions.codehilite': {
+            'css_class': 'highlight',
+            'guess_lang': False
+        },
+        'markdown.extensions.extra': {},
+        'markdown.extensions.meta': {},
+        'markdown.extensions.toc': {'anchorlink': True},
+        'markdown.extensions.attr_list': {},
+    },
+}
  
 # Vars for Notmyidea GBzando template
 CREATIVE_COMMONS = True

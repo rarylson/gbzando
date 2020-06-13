@@ -1,6 +1,4 @@
-production = 'root@gbzando:22'
-production_path = '/var/www/gbzando'
-homolog = 'root@gbzando-homolog:22'
-homolog_path = '/var/www/gbzando-homolog'
-key_filename = '~/.ssh/id_rsa'
-
+# S3 based deploy
+s3_production = 'gbzando'
+s3_homolog = 'gbzando-homolog'
+aws_profile = 'deploy-gbzando'
