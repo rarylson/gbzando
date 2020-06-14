@@ -51,7 +51,7 @@ PAGINATION_PATTERNS = (
 # At least, for now.
 DIRECT_TEMPLATES = ['index', 'tags', 'categories', ]
 # Don't process 'pages' as articles
-#ARTICLE_EXCLUDES = ['pages', ]
+ARTICLE_EXCLUDES = ['pages', ]
 
 # Vars for template
 THEME = 'themes/notmyidea_gbzando'
@@ -65,6 +65,7 @@ DEBUG_DISQUS = True
 TAG_CLOUD_STEPS = 4
 TAG_CLOUD_MAX_ITEMS = 1000
 TAG_CLOUD_SORTING = "alphabetically"
+DISPLAY_PAGES_ON_MENU = True
 
 # Markdown extensions
 # See: http://pythonhosted.org/Markdown/extensions/code_hilite.html

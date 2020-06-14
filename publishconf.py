@@ -10,9 +10,9 @@ SITEURL = 'https://www.gbzando.com.br'
 RELATIVE_URLS = False
 DEBUG_DISQUS = False
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
-CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
+CATEGORY_FEED_ATOM = 'feeds/{slug}.atom.xml'
 DELETE_OUTPUT_DIRECTORY = True 
-WITH_FUTURE_DATES = False   # Don't publish future date articles
+WITH_FUTURE_DATES = False   # Don't publish drafts in production
 
 # Adding production plugins
 PLUGINS.extend(['sitemap', 'gzip_cache', 'optimize_images', ])
