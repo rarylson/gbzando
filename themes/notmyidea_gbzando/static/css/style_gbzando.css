@@ -2,7 +2,11 @@
 
 /* General */
 .body {
+    font-size: 115%;
     width: auto;
+}
+footer .body {
+    font-size: 100%;
 }
 body {
     width: 90%;
@@ -22,7 +26,7 @@ body {
     margin-bottom: 20px;
 }
 #banner nav li {
-    font-size: 14px; /* Whitespace hack */
+    font-size: 16px; /* Whitespace hack */
     float: none;
     letter-spacing: normal;
 }
@@ -51,9 +55,14 @@ h1.others {
 }
 article h2 {
     color: #C74451;
-    font-size: 1.714em;
     margin-bottom: 0.333em;
     margin-top: 0.5em;
+}
+article h2, #featured h2 {
+    font-size: 2.1em;
+}
+article h3, #featured h3 {
+    font-size: 1.8em;
 }
 h1 + hr {
     margin-bottom: 2em;
@@ -133,10 +142,11 @@ pre, code {
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 code {
-    font-size: 0.9em;
+    color: #C74451;
+    font-size: 0.92em;
 }
 pre {
-    font-size: 12px;
+    font-size: 13.5px;
     border-radius: 5px;
     border: 1px solid #EEEEEE;
     background: #FAFAFA;
@@ -258,12 +268,12 @@ a.toclink:hover {
 }
 a.toclink:hover:after {
     content: " $";
-    font-size: 0.8em;
+    font-size: 0.85em;
     color: #FFCCCC;
 }
 div.toc {
     background-color: #EEEEEE;
-    font-size: 0.8em;
+    font-size: 0.85em;
     padding: 4px 6px 6px 2px;
     float: left;
     margin-bottom: 10px;
